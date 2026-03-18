@@ -62,7 +62,7 @@ Automatically expose CRUD operations from any mapping:
 from py2mcp import mk_mcp_from_store
 
 projects = {'proj1': {'name': 'Project 1'}, 'proj2': {'name': 'Project 2'}}
-mcp = mk_mcp_from_store(projects, name="projects")
+mcp = mk_mcp_from_store(projects, name="project")
 
 # Automatically creates: list_projects, get_project, set_project, delete_project
 ```

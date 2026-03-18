@@ -61,20 +61,22 @@ def mk_mcp_from_store(
     store: MutableMapping[Any, Any],
     *,
     name: str = "item",
+    plural: str = "",
     server_name: Optional[str] = None,
 ) -> FastMCP:
     """Create an MCP server from a MutableMapping with CRUD operations.
-    
+
     Automatically generates list, get, set, and delete functions for the store.
-    
+
     Args:
         store: A MutableMapping to expose via MCP
         name: Singular name for items (e.g., 'project', 'user')
+        plural: Plural form (defaults to name + 's')
         server_name: Name of the MCP server (defaults to "{name} Store")
-    
+
     Returns:
         A FastMCP server with CRUD operations
-    
+
     Examples:
         >>> projects = {'p1': {'name': 'Project 1'}, 'p2': {'name': 'Project 2'}}
         >>> mcp = mk_mcp_from_store(projects, name='project')
@@ -83,8 +85,7 @@ def mk_mcp_from_store(
     """
     if server_name is None:
         server_name = f"{name} Store"
-    
-    # Generate CRUD functions from the store
-    funcs = store_to_funcs(store, name=name)
-    
+
+    funcs = store_to_funcs(store, name=name, plural=plural)
+
     return mk_mcp_server(funcs, name=server_name)
