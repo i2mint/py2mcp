@@ -1,0 +1,183 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>py2mcp.util &mdash; py2mcp 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            py2mcp
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp.html">py2mcp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/base.html">py2mcp.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/main.html">py2mcp.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/trans.html">py2mcp.trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/util.html">py2mcp.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">py2mcp</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">py2mcp.util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for py2mcp.util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;General utilities for py2mcp.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+
+<span class="n">KT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;KT&#39;</span><span class="p">)</span>
+<span class="n">VT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;VT&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_store_to_funcs</span><span class="p">(</span>
+    <span class="n">store</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">singular</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span>
+    <span class="n">plural</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate CRUD functions from a MutableMapping.</span>
+
+<span class="sd">    &gt;&gt;&gt; store = {&#39;a&#39;: 1, &#39;b&#39;: 2}</span>
+<span class="sd">    &gt;&gt;&gt; funcs = dict(_store_to_funcs(store, singular=&#39;item&#39;))</span>
+<span class="sd">    &gt;&gt;&gt; sorted(funcs[&#39;list_items&#39;]())</span>
+<span class="sd">    [&#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; funcs[&#39;get_item&#39;](&#39;a&#39;)</span>
+<span class="sd">    1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plural</span> <span class="o">=</span> <span class="n">plural</span> <span class="ow">or</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s1">s&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_items</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">KT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List all keys.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_item</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a value by key.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_item</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">VT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a value.&quot;&quot;&quot;</span>
+        <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Set </span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s2"> &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_item</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a value.&quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Deleted </span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s2"> &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+
+    <span class="k">for</span> <span class="n">func</span><span class="p">,</span> <span class="n">func_name</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">list_items</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;list_</span><span class="si">{</span><span class="n">plural</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">get_item</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;get_</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">set_item</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;set_</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">delete_item</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;delete_</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+    <span class="p">]:</span>
+        <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">func_name</span>
+        <span class="k">yield</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">func</span>
+
+
+<div class="viewcode-block" id="store_to_funcs">
+<a class="viewcode-back" href="../../module_docs/py2mcp/util.html#py2mcp.util.store_to_funcs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">store_to_funcs</span><span class="p">(</span>
+    <span class="n">store</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span>
+    <span class="n">plural</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a MutableMapping into CRUD functions.</span>
+
+<span class="sd">    &gt;&gt;&gt; projects = {&#39;p1&#39;: {&#39;name&#39;: &#39;Project 1&#39;}}</span>
+<span class="sd">    &gt;&gt;&gt; funcs = store_to_funcs(projects, name=&#39;project&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; len(funcs)</span>
+<span class="sd">    4</span>
+<span class="sd">    &gt;&gt;&gt; [f.__name__ for f in funcs]</span>
+<span class="sd">    [&#39;list_projects&#39;, &#39;get_project&#39;, &#39;set_project&#39;, &#39;delete_project&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">func</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">_store_to_funcs</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">singular</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">plural</span><span class="o">=</span><span class="n">plural</span><span class="p">)]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

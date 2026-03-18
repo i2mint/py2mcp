@@ -1,0 +1,9 @@
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   module_docs/py2mcp
+   module_docs/py2mcp/base
+   module_docs/py2mcp/main
+   module_docs/py2mcp/trans
+   module_docs/py2mcp/util

@@ -1,0 +1,4 @@
+py2mcp.base
+===========
+.. automodule:: py2mcp.base
+   :members:

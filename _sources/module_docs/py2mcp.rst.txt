@@ -1,0 +1,4 @@
+py2mcp
+======
+.. automodule:: py2mcp
+   :members:
