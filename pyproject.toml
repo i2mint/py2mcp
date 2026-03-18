@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "py2mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "Quick MCP server creation from Python functions"
 readme = "README.md"
 requires-python = ">=3.10"

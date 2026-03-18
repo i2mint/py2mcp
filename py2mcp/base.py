@@ -6,7 +6,7 @@ from functools import wraps
 
 def _wrap_with_input_trans(func: Callable, input_trans: Optional[Callable]) -> Callable:
     """Wrap a function to apply input transformation.
-    
+
     >>> def double(x): return x * 2
     >>> def add_one_trans(kwargs): return {k: v + 1 for k, v in kwargs.items()}
     >>> wrapped = _wrap_with_input_trans(double, add_one_trans)
@@ -15,12 +15,12 @@ def _wrap_with_input_trans(func: Callable, input_trans: Optional[Callable]) -> C
     """
     if input_trans is None:
         return func
-    
+
     @wraps(func)
     def wrapper(**kwargs):
         transformed = input_trans(kwargs)
         return func(**transformed)
-    
+
     # Preserve original function metadata for introspection
     wrapper.__wrapped__ = func
     return wrapper
@@ -28,7 +28,7 @@ def _wrap_with_input_trans(func: Callable, input_trans: Optional[Callable]) -> C
 
 def _normalize_to_iterable(funcs: Any) -> Iterable[Callable]:
     """Normalize input to an iterable of callables.
-    
+
     >>> def f(): pass
     >>> def g(): pass
     >>> list(_normalize_to_iterable(f))
@@ -44,4 +44,6 @@ def _normalize_to_iterable(funcs: Any) -> Iterable[Callable]:
             raise TypeError("All items must be callable")
         return result
     else:
-        raise TypeError(f"Expected callable or iterable of callables, got {type(funcs)}")
+        raise TypeError(
+            f"Expected callable or iterable of callables, got {type(funcs)}"
+        )

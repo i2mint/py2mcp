@@ -3,15 +3,15 @@
 from typing import MutableMapping, Callable, TypeVar
 from collections.abc import Iterator
 
-KT = TypeVar('KT')
-VT = TypeVar('VT')
+KT = TypeVar("KT")
+VT = TypeVar("VT")
 
 
 def _store_to_funcs(
     store: MutableMapping[KT, VT],
     *,
-    singular: str = 'item',
-    plural: str = '',
+    singular: str = "item",
+    plural: str = "",
 ) -> Iterator[tuple[str, Callable]]:
     """Generate CRUD functions from a MutableMapping.
 
@@ -22,7 +22,7 @@ def _store_to_funcs(
     >>> funcs['get_item']('a')
     1
     """
-    plural = plural or f'{singular}s'
+    plural = plural or f"{singular}s"
 
     def list_items() -> list[KT]:
         """List all keys."""
@@ -43,10 +43,10 @@ def _store_to_funcs(
         return f"Deleted {singular} '{key}'"
 
     for func, func_name in [
-        (list_items, f'list_{plural}'),
-        (get_item, f'get_{singular}'),
-        (set_item, f'set_{singular}'),
-        (delete_item, f'delete_{singular}'),
+        (list_items, f"list_{plural}"),
+        (get_item, f"get_{singular}"),
+        (set_item, f"set_{singular}"),
+        (delete_item, f"delete_{singular}"),
     ]:
         func.__name__ = func_name
         yield func_name, func
@@ -55,8 +55,8 @@ def _store_to_funcs(
 def store_to_funcs(
     store: MutableMapping[KT, VT],
     *,
-    name: str = 'item',
-    plural: str = '',
+    name: str = "item",
+    plural: str = "",
 ) -> list[Callable]:
     """Convert a MutableMapping into CRUD functions.
 
