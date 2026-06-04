@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>py2mcp.util &mdash; py2mcp 0.1.0 documentation</title>
+  <title>py2mcp.util &mdash; py2mcp 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,9 +14,9 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -80,18 +80,49 @@
   <h1>Source code for py2mcp.util</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;General utilities for py2mcp.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
 
-<span class="n">KT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;KT&#39;</span><span class="p">)</span>
-<span class="n">VT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;VT&#39;</span><span class="p">)</span>
+<span class="n">KT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;KT&quot;</span><span class="p">)</span>
+<span class="n">VT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;VT&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="import_object">
+<a class="viewcode-back" href="../../module_docs/py2mcp/util.html#py2mcp.import_object">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">import_object</span><span class="p">(</span><span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve a ``&#39;module.path:attr&#39;`` (preferred) or ``&#39;module.path.attr&#39;`` reference.</span>
+
+<span class="sd">    Useful for building MCP servers from configuration strings (e.g. tool</span>
+<span class="sd">    references declared in a file), so callers don&#39;t reimplement the</span>
+<span class="sd">    ``importlib`` dance.</span>
+
+<span class="sd">    &gt;&gt;&gt; import_object(&#39;json:dumps&#39;)  # doctest: +ELLIPSIS</span>
+<span class="sd">    &lt;function dumps at ...&gt;</span>
+<span class="sd">    &gt;&gt;&gt; import_object(&#39;os.path.join&#39;)  # doctest: +ELLIPSIS</span>
+<span class="sd">    &lt;function join at ...&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">in</span> <span class="n">ref</span><span class="p">:</span>
+        <span class="n">module_name</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">module_name</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">module_name</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">attr</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid object reference </span><span class="si">{</span><span class="n">ref</span><span class="si">!r}</span><span class="s2">; expected &#39;module:attr&#39; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;or &#39;module.path.attr&#39;.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span></div>
+
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_store_to_funcs</span><span class="p">(</span>
     <span class="n">store</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">singular</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span>
-    <span class="n">plural</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">singular</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;item&quot;</span><span class="p">,</span>
+    <span class="n">plural</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate CRUD functions from a MutableMapping.</span>
 
@@ -102,7 +133,7 @@
 <span class="sd">    &gt;&gt;&gt; funcs[&#39;get_item&#39;](&#39;a&#39;)</span>
 <span class="sd">    1</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">plural</span> <span class="o">=</span> <span class="n">plural</span> <span class="ow">or</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s1">s&#39;</span>
+    <span class="n">plural</span> <span class="o">=</span> <span class="n">plural</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s2">s&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">list_items</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">KT</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;List all keys.&quot;&quot;&quot;</span>
@@ -123,22 +154,22 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Deleted </span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s2"> &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
 
     <span class="k">for</span> <span class="n">func</span><span class="p">,</span> <span class="n">func_name</span> <span class="ow">in</span> <span class="p">[</span>
-        <span class="p">(</span><span class="n">list_items</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;list_</span><span class="si">{</span><span class="n">plural</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">get_item</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;get_</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">set_item</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;set_</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">delete_item</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;delete_</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">list_items</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;list_</span><span class="si">{</span><span class="n">plural</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">get_item</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;get_</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">set_item</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;set_</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">delete_item</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;delete_</span><span class="si">{</span><span class="n">singular</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
     <span class="p">]:</span>
         <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">func_name</span>
         <span class="k">yield</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">func</span>
 
 
 <div class="viewcode-block" id="store_to_funcs">
-<a class="viewcode-back" href="../../module_docs/py2mcp/util.html#py2mcp.util.store_to_funcs">[docs]</a>
+<a class="viewcode-back" href="../../module_docs/py2mcp/util.html#py2mcp.store_to_funcs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">store_to_funcs</span><span class="p">(</span>
     <span class="n">store</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span>
-    <span class="n">plural</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;item&quot;</span><span class="p">,</span>
+    <span class="n">plural</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a MutableMapping into CRUD functions.</span>
 
