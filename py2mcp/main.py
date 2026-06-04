@@ -4,7 +4,7 @@ from typing import Callable, Iterable, Optional, MutableMapping, Any
 from fastmcp import FastMCP
 
 from py2mcp.base import _normalize_to_iterable, _wrap_with_input_trans
-from py2mcp.util import store_to_funcs
+from py2mcp.util import import_object, store_to_funcs
 
 
 def mk_mcp_server(
@@ -55,6 +55,28 @@ def mk_mcp_server(
         mcp.tool(func)
 
     return mcp
+
+
+def mk_mcp_from_refs(
+    refs: Iterable[str],
+    *,
+    name: str = "py2mcp Server",
+    input_trans: Optional[Callable[[dict], dict]] = None,
+) -> FastMCP:
+    """Create an MCP server from ``'module:function'`` reference strings.
+
+    Resolves each reference to a callable via :func:`py2mcp.util.import_object`
+    and delegates to :func:`mk_mcp_server`. One call from config strings to a
+    runnable server — what tools that read tool references from a file (e.g.
+    ``coact``'s ``mcp`` backend) need.
+
+    Examples:
+        >>> mcp = mk_mcp_from_refs(['os.path:basename', 'os.path:dirname'], name='Paths')
+        >>> mcp.name
+        'Paths'
+    """
+    funcs = [import_object(ref) for ref in refs]
+    return mk_mcp_server(funcs, name=name, input_trans=input_trans)
 
 
 def mk_mcp_from_store(

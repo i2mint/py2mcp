@@ -3,7 +3,13 @@
 import pytest
 import asyncio
 
-from py2mcp import mk_mcp_server, mk_mcp_from_store, mk_input_trans
+from py2mcp import (
+    mk_mcp_server,
+    mk_mcp_from_store,
+    mk_mcp_from_refs,
+    mk_input_trans,
+    import_object,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -235,6 +241,32 @@ def test_e2e_input_trans():
     mcp = mk_mcp_server(compute, input_trans=trans)
 
     assert _call(mcp, 'compute', {'x': 3, 'y': 1}) == 31
+
+
+# ---------------------------------------------------------------------------
+# Reference resolution
+# ---------------------------------------------------------------------------
+
+
+def test_import_object_colon_and_dotted():
+    import os.path
+
+    assert import_object('os.path:basename') is os.path.basename
+    assert import_object('os.path.basename') is os.path.basename
+
+
+def test_import_object_invalid_raises():
+    with pytest.raises(ValueError):
+        import_object('no-separator')
+
+
+def test_mk_mcp_from_refs_builds_and_calls():
+    mcp = mk_mcp_from_refs(['os.path:basename'], name='Paths')
+    assert mcp.name == 'Paths'
+    tool = _run(mcp.get_tool('basename'))
+    assert tool.name == 'basename'
+    result = _run(mcp.call_tool('basename', {'p': '/a/b/c.txt'}))
+    assert result.content[0].text == 'c.txt'
 
 
 if __name__ == '__main__':

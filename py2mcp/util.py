@@ -1,10 +1,38 @@
 """General utilities for py2mcp."""
 
-from typing import MutableMapping, Callable, TypeVar
+from importlib import import_module
+from typing import Any, MutableMapping, Callable, TypeVar
 from collections.abc import Iterator
 
 KT = TypeVar("KT")
 VT = TypeVar("VT")
+
+
+def import_object(ref: str) -> Any:
+    """Resolve a ``'module.path:attr'`` (preferred) or ``'module.path.attr'`` reference.
+
+    Useful for building MCP servers from configuration strings (e.g. tool
+    references declared in a file), so callers don't reimplement the
+    ``importlib`` dance.
+
+    >>> import_object('json:dumps')  # doctest: +ELLIPSIS
+    <function dumps at ...>
+    >>> import_object('os.path.join')  # doctest: +ELLIPSIS
+    <function join at ...>
+    """
+    if ":" in ref:
+        module_name, _, attr = ref.partition(":")
+    else:
+        module_name, _, attr = ref.rpartition(".")
+    if not module_name or not attr:
+        raise ValueError(
+            f"Invalid object reference {ref!r}; expected 'module:attr' "
+            f"or 'module.path.attr'."
+        )
+    obj = import_module(module_name)
+    for part in attr.split("."):
+        obj = getattr(obj, part)
+    return obj
 
 
 def _store_to_funcs(
