@@ -31,6 +31,9 @@ Homepage = "https://github.com/i2mint/py2mcp"
 Repository = "https://github.com/i2mint/py2mcp"
 Documentation = "https://i2mint.github.io/py2mcp"
 
+[project.scripts]
+py2mcp = "py2mcp.serve:main"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
