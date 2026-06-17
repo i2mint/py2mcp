@@ -17,6 +17,7 @@ Basic usage:
 
 from py2mcp.main import mk_mcp_server, mk_mcp_from_store, mk_mcp_from_refs
 from py2mcp.serve import serve_stdio, resolve_server_config, load_server_config
+from py2mcp.http import mk_http_app, serve_http, mk_auth_provider
 from py2mcp.trans import mk_input_trans
 from py2mcp.util import import_object
 
@@ -47,4 +48,8 @@ __all__ = [
     "serve_stdio",
     "resolve_server_config",
     "load_server_config",
+    # remote (Streamable-HTTP + OAuth resource-server) serving
+    "mk_http_app",
+    "serve_http",
+    "mk_auth_provider",
 ]

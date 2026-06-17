@@ -96,7 +96,8 @@ def main(argv: Optional[list[str]] = None) -> None:
     """CLI: ``python -m py2mcp --config cfg.json`` (or ``--ref mod:func ...``)."""
     parser = argparse.ArgumentParser(
         prog="py2mcp",
-        description="Serve an MCP server over stdio from 'module:function' refs.",
+        description="Serve an MCP server from 'module:function' refs — over stdio "
+        "(default) or Streamable HTTP (--http).",
     )
     parser.add_argument(
         "--config",
@@ -113,6 +114,18 @@ def main(argv: Optional[list[str]] = None) -> None:
     parser.add_argument(
         "--name", default=None, help="Server name (overrides the config's name)."
     )
+    parser.add_argument(
+        "--http",
+        action="store_true",
+        help="Serve over Streamable HTTP instead of stdio (a remote MCP server). "
+        "OAuth/host/port come from the config's 'auth'/'host'/'port' keys.",
+    )
+    parser.add_argument(
+        "--host", default=None, help="HTTP bind host (with --http; default 127.0.0.1)."
+    )
+    parser.add_argument(
+        "--port", type=int, default=None, help="HTTP bind port (with --http; default 8000)."
+    )
     args = parser.parse_args(argv)
     try:
         refs, name = resolve_server_config(
@@ -120,7 +133,23 @@ def main(argv: Optional[list[str]] = None) -> None:
         )
     except (ValueError, OSError) as e:
         parser.error(str(e))
-    serve_stdio(refs, name=name)
+
+    if args.http:
+        from py2mcp.http import serve_http
+
+        cfg = load_server_config(args.config) if args.config else {}
+        try:
+            serve_http(
+                refs,
+                name=name,
+                host=args.host or cfg.get("host") or "127.0.0.1",
+                port=args.port or cfg.get("port") or 8000,
+                auth=cfg.get("auth"),
+            )
+        except (ValueError, OSError) as e:
+            parser.error(str(e))
+    else:
+        serve_stdio(refs, name=name)
 
 
 if __name__ == "__main__":
