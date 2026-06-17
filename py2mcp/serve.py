@@ -100,7 +100,7 @@ def main(argv: Optional[list[str]] = None) -> None:
     )
     parser.add_argument(
         "--config",
-        help="Path to a JSON config: {\"name\": str, \"refs\": [\"module:function\", ...]}.",
+        help='Path to a JSON config: {"name": str, "refs": ["module:function", ...]}.',
     )
     parser.add_argument(
         "--ref",
