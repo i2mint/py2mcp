@@ -1,0 +1,185 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>py2mcp.serve &mdash; py2mcp 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=360bc84d"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="py2mcp.trans" href="trans.html" />
+    <link rel="prev" title="py2mcp.main" href="main.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            py2mcp
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../py2mcp.html">py2mcp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="__main__.html">py2mcp.__main__</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">py2mcp.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">py2mcp.main</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">py2mcp.serve</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#py2mcp.serve.DFLT_SERVER_NAME"><code class="docutils literal notranslate"><span class="pre">DFLT_SERVER_NAME</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#py2mcp.serve.load_server_config"><code class="docutils literal notranslate"><span class="pre">load_server_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#py2mcp.serve.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#py2mcp.serve.resolve_server_config"><code class="docutils literal notranslate"><span class="pre">resolve_server_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#py2mcp.serve.serve_stdio"><code class="docutils literal notranslate"><span class="pre">serve_stdio()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="trans.html">py2mcp.trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">py2mcp.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">py2mcp</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">py2mcp.serve</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/py2mcp/serve.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-py2mcp.serve">
+<span id="py2mcp-serve"></span><h1>py2mcp.serve<a class="headerlink" href="#module-py2mcp.serve" title="Link to this heading"></a></h1>
+<p>Serve a py2mcp <code class="docutils literal notranslate"><span class="pre">FastMCP</span></code> server over <strong>stdio</strong> — the runner a packaged
+integration launches.</p>
+<p><a class="reference internal" href="../py2mcp.html#py2mcp.mk_mcp_server" title="py2mcp.mk_mcp_server"><code class="xref py py-func docutils literal notranslate"><span class="pre">py2mcp.mk_mcp_server()</span></code></a> / <a class="reference internal" href="../py2mcp.html#py2mcp.mk_mcp_from_refs" title="py2mcp.mk_mcp_from_refs"><code class="xref py py-func docutils literal notranslate"><span class="pre">py2mcp.mk_mcp_from_refs()</span></code></a> build a server
+<em>object</em> but deliberately leave <em>running</em> it to the caller (the only run hint in
+<code class="docutils literal notranslate"><span class="pre">main</span></code> is a comment). This module adds the thin “actually serve it over stdio”
+layer plus a small JSON-config loader, so a one-click bundle (e.g. a Claude
+Desktop <code class="docutils literal notranslate"><span class="pre">.mcpb</span></code> Desktop Extension) can point its <code class="docutils literal notranslate"><span class="pre">manifest.json</span></code> at:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>python -m py2mcp --config ${__dirname}/server/py2mcp_config.json
+</pre></div>
+</div>
+<p>and get a live MCP server. The config is just <code class="docutils literal notranslate"><span class="pre">{&quot;name&quot;:</span> <span class="pre">...,</span> <span class="pre">&quot;refs&quot;:</span> <span class="pre">[...]}</span></code>
+where each ref is a <code class="docutils literal notranslate"><span class="pre">'module:function'</span></code> string resolved by
+<a class="reference internal" href="util.html#py2mcp.util.import_object" title="py2mcp.util.import_object"><code class="xref py py-func docutils literal notranslate"><span class="pre">py2mcp.util.import_object()</span></code></a>.</p>
+<p>stdio note: an MCP stdio server speaks newline-delimited JSON-RPC on
+stdout, so nothing else may be written there. <code class="docutils literal notranslate"><span class="pre">FastMCP</span></code>’s <code class="docutils literal notranslate"><span class="pre">run</span></code> handles this;
+keep application logging on stderr.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="py2mcp.serve.DFLT_SERVER_NAME">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.serve.</span></span><span class="sig-name descname"><span class="pre">DFLT_SERVER_NAME</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'py2mcp</span> <span class="pre">Server'</span></span><a class="headerlink" href="#py2mcp.serve.DFLT_SERVER_NAME" title="Link to this definition"></a></dt>
+<dd><p>Default server name when neither a config nor <code class="docutils literal notranslate"><span class="pre">--name</span></code> supplies one.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="py2mcp.serve.load_server_config">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.serve.</span></span><span class="sig-name descname"><span class="pre">load_server_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/py2mcp/serve.html#load_server_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.serve.load_server_config" title="Link to this definition"></a></dt>
+<dd><p>Load a server config JSON of the form <code class="docutils literal notranslate"><span class="pre">{&quot;name&quot;:</span> <span class="pre">str,</span> <span class="pre">&quot;refs&quot;:</span> <span class="pre">[str,</span> <span class="pre">...]}</span></code>.</p>
+<p>Raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if the file is not a JSON object carrying a <code class="docutils literal notranslate"><span class="pre">refs</span></code>
+list — an actionable error beats a server that starts with no tools.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="py2mcp.serve.main">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.serve.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/py2mcp/serve.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.serve.main" title="Link to this definition"></a></dt>
+<dd><p>CLI: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">py2mcp</span> <span class="pre">--config</span> <span class="pre">cfg.json</span></code> (or <code class="docutils literal notranslate"><span class="pre">--ref</span> <span class="pre">mod:func</span> <span class="pre">...</span></code>).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="py2mcp.serve.resolve_server_config">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.serve.</span></span><span class="sig-name descname"><span class="pre">resolve_server_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/py2mcp/serve.html#resolve_server_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.serve.resolve_server_config" title="Link to this definition"></a></dt>
+<dd><p>Merge a config file and explicit <code class="docutils literal notranslate"><span class="pre">refs</span></code>/<code class="docutils literal notranslate"><span class="pre">name</span></code> into <code class="docutils literal notranslate"><span class="pre">(refs,</span> <span class="pre">name)</span></code>.</p>
+<p>Refs from <code class="docutils literal notranslate"><span class="pre">--ref</span></code> are appended after any from the config file; an explicit
+<code class="docutils literal notranslate"><span class="pre">name</span></code> wins over the config’s. Pure (no I/O beyond reading <code class="docutils literal notranslate"><span class="pre">config</span></code>), so
+it is unit-testable without standing up a server.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resolve_server_config</span><span class="p">(</span><span class="n">refs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;os.path:basename&#39;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Paths&#39;</span><span class="p">)</span>
+<span class="go">([&#39;os.path:basename&#39;], &#39;Paths&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="py2mcp.serve.serve_stdio">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.serve.</span></span><span class="sig-name descname"><span class="pre">serve_stdio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'py2mcp</span> <span class="pre">Server'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_trans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/py2mcp/serve.html#serve_stdio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.serve.serve_stdio" title="Link to this definition"></a></dt>
+<dd><p>Build an MCP server from <code class="docutils literal notranslate"><span class="pre">'module:function'</span></code> refs and run it over stdio.</p>
+<p>Blocks, serving the MCP protocol on stdin/stdout until the host disconnects.
+Thin wrapper over <a class="reference internal" href="../py2mcp.html#py2mcp.mk_mcp_from_refs" title="py2mcp.mk_mcp_from_refs"><code class="xref py py-func docutils literal notranslate"><span class="pre">py2mcp.mk_mcp_from_refs()</span></code></a> + <code class="docutils literal notranslate"><span class="pre">FastMCP.run</span></code> so that
+packaged integrations have one command to launch.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="main.html" class="btn btn-neutral float-left" title="py2mcp.main" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="trans.html" class="btn btn-neutral float-right" title="py2mcp.trans" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

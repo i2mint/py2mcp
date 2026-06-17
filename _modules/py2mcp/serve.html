@@ -1,0 +1,251 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>py2mcp.serve &mdash; py2mcp 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=360bc84d"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            py2mcp
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp.html">py2mcp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/__main__.html">py2mcp.__main__</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/base.html">py2mcp.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/main.html">py2mcp.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/serve.html">py2mcp.serve</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/trans.html">py2mcp.trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/util.html">py2mcp.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">py2mcp</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">py2mcp.serve</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for py2mcp.serve</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Serve a py2mcp ``FastMCP`` server over **stdio** — the runner a packaged</span>
+<span class="sd">integration launches.</span>
+
+<span class="sd">:func:`py2mcp.mk_mcp_server` / :func:`py2mcp.mk_mcp_from_refs` build a server</span>
+<span class="sd">*object* but deliberately leave *running* it to the caller (the only run hint in</span>
+<span class="sd">``main`` is a comment). This module adds the thin &quot;actually serve it over stdio&quot;</span>
+<span class="sd">layer plus a small JSON-config loader, so a one-click bundle (e.g. a Claude</span>
+<span class="sd">Desktop ``.mcpb`` Desktop Extension) can point its ``manifest.json`` at::</span>
+
+<span class="sd">    python -m py2mcp --config ${__dirname}/server/py2mcp_config.json</span>
+
+<span class="sd">and get a live MCP server. The config is just ``{&quot;name&quot;: ..., &quot;refs&quot;: [...]}``</span>
+<span class="sd">where each ref is a ``&#39;module:function&#39;`` string resolved by</span>
+<span class="sd">:func:`py2mcp.util.import_object`.</span>
+
+<span class="sd">stdio note: an MCP stdio server speaks newline-delimited JSON-RPC on</span>
+<span class="sd">stdout, so nothing else may be written there. ``FastMCP``&#39;s ``run`` handles this;</span>
+<span class="sd">keep application logging on stderr.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_mcp_from_refs</span>
+
+<span class="c1">#: Default server name when neither a config nor ``--name`` supplies one.</span>
+<span class="n">DFLT_SERVER_NAME</span> <span class="o">=</span> <span class="s2">&quot;py2mcp Server&quot;</span>
+
+
+<div class="viewcode-block" id="load_server_config">
+<a class="viewcode-back" href="../../module_docs/py2mcp/serve.html#py2mcp.load_server_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_server_config</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a server config JSON of the form ``{&quot;name&quot;: str, &quot;refs&quot;: [str, ...]}``.</span>
+
+<span class="sd">    Raises ``ValueError`` if the file is not a JSON object carrying a ``refs``</span>
+<span class="sd">    list — an actionable error beats a server that starts with no tools.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;refs&quot;</span><span class="p">),</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;py2mcp server config </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">!r}</span><span class="s2"> must be a JSON object with a &quot;</span>
+            <span class="s1">&#39;&quot;refs&quot; list, e.g. {&quot;name&quot;: &quot;My Tools&quot;, &quot;refs&quot;: [&quot;pkg.mod:func&quot;]}.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="resolve_server_config">
+<a class="viewcode-back" href="../../module_docs/py2mcp/serve.html#py2mcp.resolve_server_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_server_config</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">refs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge a config file and explicit ``refs``/``name`` into ``(refs, name)``.</span>
+
+<span class="sd">    Refs from ``--ref`` are appended after any from the config file; an explicit</span>
+<span class="sd">    ``name`` wins over the config&#39;s. Pure (no I/O beyond reading ``config``), so</span>
+<span class="sd">    it is unit-testable without standing up a server.</span>
+
+<span class="sd">    &gt;&gt;&gt; resolve_server_config(refs=[&#39;os.path:basename&#39;], name=&#39;Paths&#39;)</span>
+<span class="sd">    ([&#39;os.path:basename&#39;], &#39;Paths&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cfg_refs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cfg_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">load_server_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">cfg_refs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;refs&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="n">cfg_name</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+    <span class="n">merged_refs</span> <span class="o">=</span> <span class="n">cfg_refs</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">refs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">merged_refs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;No tool references to serve. Provide a --config file with a &#39;refs&#39; &quot;</span>
+            <span class="s2">&quot;list and/or one or more --ref &#39;module:function&#39; arguments.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">merged_refs</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span> <span class="ow">or</span> <span class="n">cfg_name</span> <span class="ow">or</span> <span class="n">DFLT_SERVER_NAME</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="serve_stdio">
+<a class="viewcode-back" href="../../module_docs/py2mcp/serve.html#py2mcp.serve_stdio">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">serve_stdio</span><span class="p">(</span>
+    <span class="n">refs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_SERVER_NAME</span><span class="p">,</span>
+    <span class="n">input_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an MCP server from ``&#39;module:function&#39;`` refs and run it over stdio.</span>
+
+<span class="sd">    Blocks, serving the MCP protocol on stdin/stdout until the host disconnects.</span>
+<span class="sd">    Thin wrapper over :func:`py2mcp.mk_mcp_from_refs` + ``FastMCP.run`` so that</span>
+<span class="sd">    packaged integrations have one command to launch.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_from_refs</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="s2">&quot;stdio&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../module_docs/py2mcp/serve.html#py2mcp.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CLI: ``python -m py2mcp --config cfg.json`` (or ``--ref mod:func ...``).&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;py2mcp&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Serve an MCP server over stdio from &#39;module:function&#39; refs.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--config&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to a JSON config: {</span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2">: str, </span><span class="se">\&quot;</span><span class="s2">refs</span><span class="se">\&quot;</span><span class="s2">: [</span><span class="se">\&quot;</span><span class="s2">module:function</span><span class="se">\&quot;</span><span class="s2">, ...]}.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--ref&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;refs&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;module:function&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A tool reference to expose (repeatable; merged after --config refs).&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--name&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Server name (overrides the config&#39;s name).&quot;</span>
+    <span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">refs</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">resolve_server_config</span><span class="p">(</span>
+            <span class="n">config</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">refs</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">refs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+    <span class="n">serve_stdio</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+py2mcp.__main__
+===============
+.. automodule:: py2mcp.__main__
+   :members:

@@ -1,0 +1,4 @@
+py2mcp.serve
+============
+.. automodule:: py2mcp.serve
+   :members:
