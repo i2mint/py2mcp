@@ -56,8 +56,10 @@ def mk_auth_provider(auth: Optional[dict]) -> Optional[Any]:
 
     - ``jwks_uri`` *or* ``public_key`` — where to get the IdP's signing key(s).
     - ``issuer`` — the IdP issuer URL (the token's ``iss``).
-    - ``audience`` — **this** server's resource id (the token's ``aud``; RFC 8707
-      audience binding that stops a token for another service being replayed here).
+    - ``audience`` (**required**) — **this** server's resource id (the token's
+      ``aud``). RFC 8707 audience binding is mandatory: it stops a token minted for
+      another service being replayed here (the confused-deputy defense), so this
+      helper refuses to build a verifier that would skip it.
     - ``authorization_servers`` (or a single ``issuer``) — IdP issuer URL(s)
       advertised in the RFC 9728 protected-resource metadata.
     - ``base_url`` — this server's public base URL.
@@ -96,6 +98,15 @@ def mk_auth_provider(auth: Optional[dict]) -> Optional[Any]:
             "jwt auth needs 'base_url' (this server's public base URL, for the "
             "RFC 9728 protected-resource metadata)."
         )
+    audience = auth.get("audience")
+    if not audience:
+        raise ValueError(
+            "jwt auth needs 'audience' (this server's resource id). Without it the "
+            "token's audience is NOT validated, which re-opens the confused-deputy "
+            "vulnerability (a token minted for another service could be replayed "
+            "here) — RFC 8707 audience binding is mandatory for an MCP resource "
+            "server. Set it to this connector's public resource URL."
+        )
     authorization_servers = auth.get("authorization_servers")
     if not authorization_servers and auth.get("issuer"):
         authorization_servers = [auth["issuer"]]
@@ -110,7 +121,7 @@ def mk_auth_provider(auth: Optional[dict]) -> Optional[Any]:
         jwks_uri=jwks_uri,
         public_key=public_key,
         issuer=auth.get("issuer"),
-        audience=auth.get("audience"),
+        audience=audience,
         required_scopes=required_scopes,
         base_url=base_url,
     )
