@@ -1,0 +1,222 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>py2mcp.http &mdash; py2mcp 0.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="py2mcp.main" href="main.html" />
+    <link rel="prev" title="py2mcp.base" href="base.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            py2mcp
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../py2mcp.html">py2mcp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="__main__.html">py2mcp.__main__</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">py2mcp.base</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">py2mcp.http</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#py2mcp.http.DFLT_TRANSPORT"><code class="docutils literal notranslate"><span class="pre">DFLT_TRANSPORT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#py2mcp.http.SUPPORTED_AUTH_TYPES"><code class="docutils literal notranslate"><span class="pre">SUPPORTED_AUTH_TYPES</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#py2mcp.http.mk_auth_provider"><code class="docutils literal notranslate"><span class="pre">mk_auth_provider()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#py2mcp.http.mk_http_app"><code class="docutils literal notranslate"><span class="pre">mk_http_app()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#py2mcp.http.serve_http"><code class="docutils literal notranslate"><span class="pre">serve_http()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">py2mcp.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="serve.html">py2mcp.serve</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trans.html">py2mcp.trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">py2mcp.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">py2mcp</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">py2mcp.http</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/py2mcp/http.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-py2mcp.http">
+<span id="py2mcp-http"></span><h1>py2mcp.http<a class="headerlink" href="#module-py2mcp.http" title="Link to this heading"></a></h1>
+<p>Serve a py2mcp <code class="docutils literal notranslate"><span class="pre">FastMCP</span></code> server over <strong>Streamable HTTP</strong> with optional
+OAuth 2.1 — the <em>remote</em> counterpart to <a class="reference internal" href="serve.html#module-py2mcp.serve" title="py2mcp.serve"><code class="xref py py-mod docutils literal notranslate"><span class="pre">py2mcp.serve</span></code></a> (stdio).</p>
+<p>A <em>remote</em> MCP server (e.g. a claude.ai custom connector) is reached over public
+HTTPS from the vendor’s cloud and authenticates with <strong>OAuth 2.1</strong>. Per the MCP
+authorization spec the MCP server is an OAuth 2.1 <strong>resource server</strong> — it
+<em>validates</em> bearer tokens minted by a <strong>managed identity provider</strong> (the
+authorization server) and <strong>never issues tokens itself</strong>. Two hard rules fall out
+of that and are enforced here by construction:</p>
+<ul class="simple">
+<li><p><strong>Audience binding (RFC 8707).</strong> The verifier checks the token’s <code class="docutils literal notranslate"><span class="pre">aud</span></code> equals
+<em>this</em> server’s resource id, so a token minted for another service cannot be
+replayed here (the confused-deputy defense).</p></li>
+<li><p><strong>No token passthrough.</strong> This layer only <em>verifies</em> the inbound token; it never
+forwards it upstream. Any upstream call your tools make must use their own
+credentials.</p></li>
+</ul>
+<p>It wraps FastMCP’s native machinery (no transport/OAuth code is reinvented):</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#py2mcp.http.mk_auth_provider" title="py2mcp.http.mk_auth_provider"><code class="xref py py-func docutils literal notranslate"><span class="pre">mk_auth_provider()</span></code></a> — an auth-config dict → a
+<code class="docutils literal notranslate"><span class="pre">fastmcp.server.auth.RemoteAuthProvider</span></code> (a <code class="docutils literal notranslate"><span class="pre">JWTVerifier</span></code> resource server
+that validates the IdP’s JWTs and publishes the RFC 9728
+<code class="docutils literal notranslate"><span class="pre">/.well-known/oauth-protected-resource</span></code> document pointing at the IdP).</p></li>
+<li><p><a class="reference internal" href="#py2mcp.http.mk_http_app" title="py2mcp.http.mk_http_app"><code class="xref py py-func docutils literal notranslate"><span class="pre">mk_http_app()</span></code></a> — build the server (via <a class="reference internal" href="../py2mcp.html#py2mcp.mk_mcp_from_refs" title="py2mcp.mk_mcp_from_refs"><code class="xref py py-func docutils literal notranslate"><span class="pre">py2mcp.mk_mcp_from_refs()</span></code></a>),
+attach the auth provider, and return a Streamable-HTTP <strong>ASGI app</strong> to run under
+any ASGI server (uvicorn, gunicorn, a serverless adapter).</p></li>
+<li><p><a class="reference internal" href="#py2mcp.http.serve_http" title="py2mcp.http.serve_http"><code class="xref py py-func docutils literal notranslate"><span class="pre">serve_http()</span></code></a> — build and <em>run</em> it (blocking), for a self-hosted process.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">coact</span></code>’s <code class="docutils literal notranslate"><span class="pre">claude-remote-connector</span></code> publish target scaffolds a deployable
+service around these — coact writes packaging, py2mcp builds and serves the MCP
+server (the same division of labour as the stdio <code class="docutils literal notranslate"><span class="pre">.mcpb</span></code> path).</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="py2mcp.http.DFLT_TRANSPORT">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.http.</span></span><span class="sig-name descname"><span class="pre">DFLT_TRANSPORT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'streamable-http'</span></span><a class="headerlink" href="#py2mcp.http.DFLT_TRANSPORT" title="Link to this definition"></a></dt>
+<dd><p>Default Streamable-HTTP transport (the current remote MCP transport).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="py2mcp.http.SUPPORTED_AUTH_TYPES">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.http.</span></span><span class="sig-name descname"><span class="pre">SUPPORTED_AUTH_TYPES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('jwt',)</span></span><a class="headerlink" href="#py2mcp.http.SUPPORTED_AUTH_TYPES" title="Link to this definition"></a></dt>
+<dd><p>Auth <code class="docutils literal notranslate"><span class="pre">type</span></code> values <a class="reference internal" href="#py2mcp.http.mk_auth_provider" title="py2mcp.http.mk_auth_provider"><code class="xref py py-func docutils literal notranslate"><span class="pre">mk_auth_provider()</span></code></a> understands. <code class="docutils literal notranslate"><span class="pre">'jwt'</span></code> is the
+vendor-neutral resource-server pattern (validate a managed IdP’s JWTs);
+managed-provider shortcuts (auth0/workos/…) can be added as new types.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="py2mcp.http.mk_auth_provider">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.http.</span></span><span class="sig-name descname"><span class="pre">mk_auth_provider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/py2mcp/http.html#mk_auth_provider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.http.mk_auth_provider" title="Link to this definition"></a></dt>
+<dd><p>Build a FastMCP <strong>resource-server</strong> auth provider from an auth-config dict.</p>
+<p><code class="docutils literal notranslate"><span class="pre">auth</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>/falsy (no auth) or a dict with a <code class="docutils literal notranslate"><span class="pre">type</span></code> key:</p>
+<p><code class="docutils literal notranslate"><span class="pre">type='jwt'</span></code> (default) — validate JWTs issued by a managed IdP. Keys:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">jwks_uri</span></code> <em>or</em> <code class="docutils literal notranslate"><span class="pre">public_key</span></code> — where to get the IdP’s signing key(s).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">issuer</span></code> — the IdP issuer URL (the token’s <code class="docutils literal notranslate"><span class="pre">iss</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">audience</span></code> — <strong>this</strong> server’s resource id (the token’s <code class="docutils literal notranslate"><span class="pre">aud</span></code>; RFC 8707
+audience binding that stops a token for another service being replayed here).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">authorization_servers</span></code> (or a single <code class="docutils literal notranslate"><span class="pre">issuer</span></code>) — IdP issuer URL(s)
+advertised in the RFC 9728 protected-resource metadata.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">base_url</span></code> — this server’s public base URL.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">required_scopes</span></code> (optional) — scopes every request must carry.</p></li>
+</ul>
+<p>Returns a <code class="docutils literal notranslate"><span class="pre">RemoteAuthProvider</span></code> (a resource server), or <code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">auth</span></code>
+is falsy. Raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> on an unknown <code class="docutils literal notranslate"><span class="pre">type</span></code> or a missing required key.
+Building the provider performs <strong>no network I/O</strong> (key fetching is lazy, on the
+first request), so this is safe to call at scaffold/import time.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="py2mcp.http.mk_http_app">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.http.</span></span><span class="sig-name descname"><span class="pre">mk_http_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'py2mcp</span> <span class="pre">Server'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_trans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'streamable-http'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stateless_http</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/py2mcp/http.html#mk_http_app"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.http.mk_http_app" title="Link to this definition"></a></dt>
+<dd><p>Build a Streamable-HTTP <strong>ASGI app</strong> from <code class="docutils literal notranslate"><span class="pre">refs</span></code> (+ optional OAuth).</p>
+<p>Returns the ASGI application (a Starlette app), so any ASGI server can run it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># server/app.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_http_app</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">mk_http_app</span><span class="p">([</span><span class="s1">&#39;mypkg.tools:summarize&#39;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Connector&#39;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">AUTH</span><span class="p">)</span>
+<span class="c1"># then:  uvicorn server.app:app --host 0.0.0.0 --port 8000</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">auth</span></code> is resolved by <a class="reference internal" href="#py2mcp.http.mk_auth_provider" title="py2mcp.http.mk_auth_provider"><code class="xref py py-func docutils literal notranslate"><span class="pre">mk_auth_provider()</span></code></a> (<code class="docutils literal notranslate"><span class="pre">None</span></code> → no auth; a remote
+connector should always set it). <code class="docutils literal notranslate"><span class="pre">stateless_http=True</span></code> is recommended behind
+a load balancer (MCP sessions are stateful, so default in-memory sessions break
+across replicas — go stateless or externalize session state). Builds the app
+with <strong>no network I/O</strong>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="py2mcp.http.serve_http">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.http.</span></span><span class="sig-name descname"><span class="pre">serve_http</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'py2mcp</span> <span class="pre">Server'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'127.0.0.1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_trans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'streamable-http'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stateless_http</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/py2mcp/http.html#serve_http"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.http.serve_http" title="Link to this definition"></a></dt>
+<dd><p>Build and <strong>run</strong> a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.</p>
+<p>For a self-hosted process. Binds <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> by default — expose a public
+interface only behind a TLS-terminating reverse proxy (a remote connector must
+be reachable over public <strong>HTTPS</strong>, and binding locally is the spec’s
+DNS-rebinding-safe default). <code class="docutils literal notranslate"><span class="pre">auth</span></code> is resolved by <a class="reference internal" href="#py2mcp.http.mk_auth_provider" title="py2mcp.http.mk_auth_provider"><code class="xref py py-func docutils literal notranslate"><span class="pre">mk_auth_provider()</span></code></a>.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="base.html" class="btn btn-neutral float-left" title="py2mcp.base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="main.html" class="btn btn-neutral float-right" title="py2mcp.main" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

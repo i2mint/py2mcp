@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>py2mcp.http &mdash; py2mcp 0.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            py2mcp
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp.html">py2mcp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/__main__.html">py2mcp.__main__</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/base.html">py2mcp.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/http.html">py2mcp.http</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/main.html">py2mcp.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/serve.html">py2mcp.serve</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/trans.html">py2mcp.trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/util.html">py2mcp.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">py2mcp</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">py2mcp.http</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for py2mcp.http</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Serve a py2mcp ``FastMCP`` server over **Streamable HTTP** with optional</span>
+<span class="sd">OAuth 2.1 — the *remote* counterpart to :mod:`py2mcp.serve` (stdio).</span>
+
+<span class="sd">A *remote* MCP server (e.g. a claude.ai custom connector) is reached over public</span>
+<span class="sd">HTTPS from the vendor&#39;s cloud and authenticates with **OAuth 2.1**. Per the MCP</span>
+<span class="sd">authorization spec the MCP server is an OAuth 2.1 **resource server** — it</span>
+<span class="sd">*validates* bearer tokens minted by a **managed identity provider** (the</span>
+<span class="sd">authorization server) and **never issues tokens itself**. Two hard rules fall out</span>
+<span class="sd">of that and are enforced here by construction:</span>
+
+<span class="sd">- **Audience binding (RFC 8707).** The verifier checks the token&#39;s ``aud`` equals</span>
+<span class="sd">  *this* server&#39;s resource id, so a token minted for another service cannot be</span>
+<span class="sd">  replayed here (the confused-deputy defense).</span>
+<span class="sd">- **No token passthrough.** This layer only *verifies* the inbound token; it never</span>
+<span class="sd">  forwards it upstream. Any upstream call your tools make must use their own</span>
+<span class="sd">  credentials.</span>
+
+<span class="sd">It wraps FastMCP&#39;s native machinery (no transport/OAuth code is reinvented):</span>
+
+<span class="sd">- :func:`mk_auth_provider` — an auth-config dict → a</span>
+<span class="sd">  ``fastmcp.server.auth.RemoteAuthProvider`` (a ``JWTVerifier`` resource server</span>
+<span class="sd">  that validates the IdP&#39;s JWTs and publishes the RFC 9728</span>
+<span class="sd">  ``/.well-known/oauth-protected-resource`` document pointing at the IdP).</span>
+<span class="sd">- :func:`mk_http_app` — build the server (via :func:`py2mcp.mk_mcp_from_refs`),</span>
+<span class="sd">  attach the auth provider, and return a Streamable-HTTP **ASGI app** to run under</span>
+<span class="sd">  any ASGI server (uvicorn, gunicorn, a serverless adapter).</span>
+<span class="sd">- :func:`serve_http` — build and *run* it (blocking), for a self-hosted process.</span>
+
+<span class="sd">``coact``&#39;s ``claude-remote-connector`` publish target scaffolds a deployable</span>
+<span class="sd">service around these — coact writes packaging, py2mcp builds and serves the MCP</span>
+<span class="sd">server (the same division of labour as the stdio ``.mcpb`` path).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_mcp_from_refs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.serve</span><span class="w"> </span><span class="kn">import</span> <span class="n">DFLT_SERVER_NAME</span>
+
+<span class="c1">#: Auth ``type`` values :func:`mk_auth_provider` understands. ``&#39;jwt&#39;`` is the</span>
+<span class="c1">#: vendor-neutral resource-server pattern (validate a managed IdP&#39;s JWTs);</span>
+<span class="c1">#: managed-provider shortcuts (auth0/workos/...) can be added as new types.</span>
+<span class="n">SUPPORTED_AUTH_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;jwt&quot;</span><span class="p">,)</span>
+
+<span class="c1">#: Default Streamable-HTTP transport (the current remote MCP transport).</span>
+<span class="n">DFLT_TRANSPORT</span> <span class="o">=</span> <span class="s2">&quot;streamable-http&quot;</span>
+
+
+<div class="viewcode-block" id="mk_auth_provider">
+<a class="viewcode-back" href="../../module_docs/py2mcp/http.html#py2mcp.mk_auth_provider">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_auth_provider</span><span class="p">(</span><span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a FastMCP **resource-server** auth provider from an auth-config dict.</span>
+
+<span class="sd">    ``auth`` is ``None``/falsy (no auth) or a dict with a ``type`` key:</span>
+
+<span class="sd">    ``type=&#39;jwt&#39;`` (default) — validate JWTs issued by a managed IdP. Keys:</span>
+
+<span class="sd">    - ``jwks_uri`` *or* ``public_key`` — where to get the IdP&#39;s signing key(s).</span>
+<span class="sd">    - ``issuer`` — the IdP issuer URL (the token&#39;s ``iss``).</span>
+<span class="sd">    - ``audience`` — **this** server&#39;s resource id (the token&#39;s ``aud``; RFC 8707</span>
+<span class="sd">      audience binding that stops a token for another service being replayed here).</span>
+<span class="sd">    - ``authorization_servers`` (or a single ``issuer``) — IdP issuer URL(s)</span>
+<span class="sd">      advertised in the RFC 9728 protected-resource metadata.</span>
+<span class="sd">    - ``base_url`` — this server&#39;s public base URL.</span>
+<span class="sd">    - ``required_scopes`` (optional) — scopes every request must carry.</span>
+
+<span class="sd">    Returns a ``RemoteAuthProvider`` (a resource server), or ``None`` when ``auth``</span>
+<span class="sd">    is falsy. Raises ``ValueError`` on an unknown ``type`` or a missing required key.</span>
+<span class="sd">    Building the provider performs **no network I/O** (key fetching is lazy, on the</span>
+<span class="sd">    first request), so this is safe to call at scaffold/import time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">auth</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;auth must be a dict (or None), e.g. {&#39;type&#39;: &#39;jwt&#39;, ...}&quot;</span><span class="p">)</span>
+    <span class="n">auth_type</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;jwt&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">auth_type</span> <span class="o">!=</span> <span class="s2">&quot;jwt&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unsupported auth type </span><span class="si">{</span><span class="n">auth_type</span><span class="si">!r}</span><span class="s2">. Supported: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SUPPORTED_AUTH_TYPES</span><span class="p">)</span><span class="si">}</span><span class="s2">. Use &#39;jwt&#39; for the resource-server &quot;</span>
+            <span class="s2">&quot;pattern (validate a managed IdP&#39;s JWTs); managed-provider shortcuts &quot;</span>
+            <span class="s2">&quot;can be added as new types.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp.server.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteAuthProvider</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp.server.auth.providers.jwt</span><span class="w"> </span><span class="kn">import</span> <span class="n">JWTVerifier</span>
+
+    <span class="n">jwks_uri</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jwks_uri&quot;</span><span class="p">)</span>
+    <span class="n">public_key</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;public_key&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">jwks_uri</span> <span class="ow">or</span> <span class="n">public_key</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;jwt auth needs &#39;jwks_uri&#39; (or &#39;public_key&#39;) to validate token signatures.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base_url&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">base_url</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;jwt auth needs &#39;base_url&#39; (this server&#39;s public base URL, for the &quot;</span>
+            <span class="s2">&quot;RFC 9728 protected-resource metadata).&quot;</span>
+        <span class="p">)</span>
+    <span class="n">authorization_servers</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authorization_servers&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">authorization_servers</span> <span class="ow">and</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issuer&quot;</span><span class="p">):</span>
+        <span class="n">authorization_servers</span> <span class="o">=</span> <span class="p">[</span><span class="n">auth</span><span class="p">[</span><span class="s2">&quot;issuer&quot;</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">authorization_servers</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;jwt auth needs &#39;authorization_servers&#39; (or &#39;issuer&#39;) — the managed IdP &quot;</span>
+            <span class="s2">&quot;that issues tokens, advertised via RFC 9728 discovery.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">required_scopes</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required_scopes&quot;</span><span class="p">)</span>
+
+    <span class="n">verifier</span> <span class="o">=</span> <span class="n">JWTVerifier</span><span class="p">(</span>
+        <span class="n">jwks_uri</span><span class="o">=</span><span class="n">jwks_uri</span><span class="p">,</span>
+        <span class="n">public_key</span><span class="o">=</span><span class="n">public_key</span><span class="p">,</span>
+        <span class="n">issuer</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issuer&quot;</span><span class="p">),</span>
+        <span class="n">audience</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audience&quot;</span><span class="p">),</span>
+        <span class="n">required_scopes</span><span class="o">=</span><span class="n">required_scopes</span><span class="p">,</span>
+        <span class="n">base_url</span><span class="o">=</span><span class="n">base_url</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">RemoteAuthProvider</span><span class="p">(</span>
+        <span class="n">token_verifier</span><span class="o">=</span><span class="n">verifier</span><span class="p">,</span>
+        <span class="n">authorization_servers</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">authorization_servers</span><span class="p">),</span>
+        <span class="n">base_url</span><span class="o">=</span><span class="n">base_url</span><span class="p">,</span>
+        <span class="n">scopes_supported</span><span class="o">=</span><span class="n">required_scopes</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="mk_http_app">
+<a class="viewcode-back" href="../../module_docs/py2mcp/http.html#py2mcp.mk_http_app">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_http_app</span><span class="p">(</span>
+    <span class="n">refs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_SERVER_NAME</span><span class="p">,</span>
+    <span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">input_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">transport</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_TRANSPORT</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">stateless_http</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a Streamable-HTTP **ASGI app** from ``refs`` (+ optional OAuth).</span>
+
+<span class="sd">    Returns the ASGI application (a Starlette app), so any ASGI server can run it::</span>
+
+<span class="sd">        # server/app.py</span>
+<span class="sd">        from py2mcp.http import mk_http_app</span>
+<span class="sd">        app = mk_http_app([&#39;mypkg.tools:summarize&#39;], name=&#39;My Connector&#39;, auth=AUTH)</span>
+<span class="sd">        # then:  uvicorn server.app:app --host 0.0.0.0 --port 8000</span>
+
+<span class="sd">    ``auth`` is resolved by :func:`mk_auth_provider` (``None`` → no auth; a remote</span>
+<span class="sd">    connector should always set it). ``stateless_http=True`` is recommended behind</span>
+<span class="sd">    a load balancer (MCP sessions are stateful, so default in-memory sessions break</span>
+<span class="sd">    across replicas — go stateless or externalize session state). Builds the app</span>
+<span class="sd">    with **no network I/O**.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">provider</span> <span class="o">=</span> <span class="n">mk_auth_provider</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_from_refs</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">provider</span><span class="p">)</span>
+    <span class="n">http_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;transport&quot;</span><span class="p">:</span> <span class="n">transport</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">http_kwargs</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="k">if</span> <span class="n">stateless_http</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">http_kwargs</span><span class="p">[</span><span class="s2">&quot;stateless_http&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stateless_http</span>
+    <span class="k">return</span> <span class="n">server</span><span class="o">.</span><span class="n">http_app</span><span class="p">(</span><span class="o">**</span><span class="n">http_kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="serve_http">
+<a class="viewcode-back" href="../../module_docs/py2mcp/http.html#py2mcp.serve_http">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">serve_http</span><span class="p">(</span>
+    <span class="n">refs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_SERVER_NAME</span><span class="p">,</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">,</span>
+    <span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">input_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">transport</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_TRANSPORT</span><span class="p">,</span>
+    <span class="n">stateless_http</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.</span>
+
+<span class="sd">    For a self-hosted process. Binds ``127.0.0.1`` by default — expose a public</span>
+<span class="sd">    interface only behind a TLS-terminating reverse proxy (a remote connector must</span>
+<span class="sd">    be reachable over public **HTTPS**, and binding locally is the spec&#39;s</span>
+<span class="sd">    DNS-rebinding-safe default). ``auth`` is resolved by :func:`mk_auth_provider`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">provider</span> <span class="o">=</span> <span class="n">mk_auth_provider</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_from_refs</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">provider</span><span class="p">)</span>
+    <span class="n">run_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;transport&quot;</span><span class="p">:</span> <span class="n">transport</span><span class="p">,</span> <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="n">port</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">stateless_http</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">run_kwargs</span><span class="p">[</span><span class="s2">&quot;stateless_http&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stateless_http</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">run_kwargs</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

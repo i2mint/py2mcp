@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>py2mcp.main &mdash; py2mcp 0.1.3 documentation</title>
+  <title>py2mcp.main &mdash; py2mcp 0.1.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=360bc84d"></script>
+      <script src="../../_static/documentation_options.js?v=fd825880"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -49,6 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp.html">py2mcp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/__main__.html">py2mcp.__main__</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/base.html">py2mcp.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/http.html">py2mcp.http</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/main.html">py2mcp.main</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/serve.html">py2mcp.serve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/trans.html">py2mcp.trans</a></li>
@@ -96,6 +97,7 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;py2mcp Server&quot;</span><span class="p">,</span>
     <span class="n">input_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an MCP server from Python functions.</span>
 
@@ -106,6 +108,10 @@
 <span class="sd">        funcs: A function or iterable of functions to expose as MCP tools</span>
 <span class="sd">        name: Name of the MCP server</span>
 <span class="sd">        input_trans: Optional function to transform input kwargs before calling tools</span>
+<span class="sd">        auth: Optional ``fastmcp.server.auth`` provider attached at construction —</span>
+<span class="sd">            used by the remote (HTTP) path for OAuth 2.1 (see :mod:`py2mcp.http`).</span>
+<span class="sd">            ``None`` (the default) leaves the server unauthenticated, which is</span>
+<span class="sd">            correct for the local stdio path.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server instance ready to run</span>
@@ -124,7 +130,7 @@
 <span class="sd">        &gt;&gt;&gt; mcp.name</span>
 <span class="sd">        &#39;Math &amp; Greetings&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">mcp</span> <span class="o">=</span> <span class="n">FastMCP</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">mcp</span> <span class="o">=</span> <span class="n">FastMCP</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
 
     <span class="c1"># Normalize to list of functions</span>
     <span class="n">func_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_normalize_to_iterable</span><span class="p">(</span><span class="n">funcs</span><span class="p">))</span>
@@ -149,13 +155,15 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;py2mcp Server&quot;</span><span class="p">,</span>
     <span class="n">input_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an MCP server from ``&#39;module:function&#39;`` reference strings.</span>
 
 <span class="sd">    Resolves each reference to a callable via :func:`py2mcp.util.import_object`</span>
 <span class="sd">    and delegates to :func:`mk_mcp_server`. One call from config strings to a</span>
 <span class="sd">    runnable server — what tools that read tool references from a file (e.g.</span>
-<span class="sd">    ``coact``&#39;s ``mcp`` backend) need.</span>
+<span class="sd">    ``coact``&#39;s ``mcp`` backend) need. ``auth`` is forwarded to</span>
+<span class="sd">    :func:`mk_mcp_server` (the remote/HTTP path attaches an OAuth provider here).</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; mcp = mk_mcp_from_refs([&#39;os.path:basename&#39;, &#39;os.path:dirname&#39;], name=&#39;Paths&#39;)</span>
@@ -163,7 +171,7 @@
 <span class="sd">        &#39;Paths&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">import_object</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">mk_mcp_server</span><span class="p">(</span><span class="n">funcs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">mk_mcp_server</span><span class="p">(</span><span class="n">funcs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span></div>
 
 
 

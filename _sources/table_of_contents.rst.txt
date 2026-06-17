@@ -5,6 +5,7 @@
    module_docs/py2mcp
    module_docs/py2mcp/__main__
    module_docs/py2mcp/base
+   module_docs/py2mcp/http
    module_docs/py2mcp/main
    module_docs/py2mcp/serve
    module_docs/py2mcp/trans
