@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>py2mcp.http &mdash; py2mcp 0.1.4 documentation</title>
+  <title>py2mcp.http &mdash; py2mcp 0.1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../_static/documentation_options.js?v=59fadc99"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -141,8 +141,10 @@
 
 <span class="sd">    - ``jwks_uri`` *or* ``public_key`` — where to get the IdP&#39;s signing key(s).</span>
 <span class="sd">    - ``issuer`` — the IdP issuer URL (the token&#39;s ``iss``).</span>
-<span class="sd">    - ``audience`` — **this** server&#39;s resource id (the token&#39;s ``aud``; RFC 8707</span>
-<span class="sd">      audience binding that stops a token for another service being replayed here).</span>
+<span class="sd">    - ``audience`` (**required**) — **this** server&#39;s resource id (the token&#39;s</span>
+<span class="sd">      ``aud``). RFC 8707 audience binding is mandatory: it stops a token minted for</span>
+<span class="sd">      another service being replayed here (the confused-deputy defense), so this</span>
+<span class="sd">      helper refuses to build a verifier that would skip it.</span>
 <span class="sd">    - ``authorization_servers`` (or a single ``issuer``) — IdP issuer URL(s)</span>
 <span class="sd">      advertised in the RFC 9728 protected-resource metadata.</span>
 <span class="sd">    - ``base_url`` — this server&#39;s public base URL.</span>
@@ -181,6 +183,15 @@
             <span class="s2">&quot;jwt auth needs &#39;base_url&#39; (this server&#39;s public base URL, for the &quot;</span>
             <span class="s2">&quot;RFC 9728 protected-resource metadata).&quot;</span>
         <span class="p">)</span>
+    <span class="n">audience</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audience&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">audience</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;jwt auth needs &#39;audience&#39; (this server&#39;s resource id). Without it the &quot;</span>
+            <span class="s2">&quot;token&#39;s audience is NOT validated, which re-opens the confused-deputy &quot;</span>
+            <span class="s2">&quot;vulnerability (a token minted for another service could be replayed &quot;</span>
+            <span class="s2">&quot;here) — RFC 8707 audience binding is mandatory for an MCP resource &quot;</span>
+            <span class="s2">&quot;server. Set it to this connector&#39;s public resource URL.&quot;</span>
+        <span class="p">)</span>
     <span class="n">authorization_servers</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authorization_servers&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">authorization_servers</span> <span class="ow">and</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issuer&quot;</span><span class="p">):</span>
         <span class="n">authorization_servers</span> <span class="o">=</span> <span class="p">[</span><span class="n">auth</span><span class="p">[</span><span class="s2">&quot;issuer&quot;</span><span class="p">]]</span>
@@ -195,7 +206,7 @@
         <span class="n">jwks_uri</span><span class="o">=</span><span class="n">jwks_uri</span><span class="p">,</span>
         <span class="n">public_key</span><span class="o">=</span><span class="n">public_key</span><span class="p">,</span>
         <span class="n">issuer</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issuer&quot;</span><span class="p">),</span>
-        <span class="n">audience</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audience&quot;</span><span class="p">),</span>
+        <span class="n">audience</span><span class="o">=</span><span class="n">audience</span><span class="p">,</span>
         <span class="n">required_scopes</span><span class="o">=</span><span class="n">required_scopes</span><span class="p">,</span>
         <span class="n">base_url</span><span class="o">=</span><span class="n">base_url</span><span class="p">,</span>
     <span class="p">)</span>

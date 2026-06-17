@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>py2mcp.http &mdash; py2mcp 0.1.4 documentation</title>
+  <title>py2mcp.http &mdash; py2mcp 0.1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../_static/documentation_options.js?v=59fadc99"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -145,8 +145,10 @@ managed-provider shortcuts (auth0/workos/…) can be added as new types.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">jwks_uri</span></code> <em>or</em> <code class="docutils literal notranslate"><span class="pre">public_key</span></code> — where to get the IdP’s signing key(s).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">issuer</span></code> — the IdP issuer URL (the token’s <code class="docutils literal notranslate"><span class="pre">iss</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">audience</span></code> — <strong>this</strong> server’s resource id (the token’s <code class="docutils literal notranslate"><span class="pre">aud</span></code>; RFC 8707
-audience binding that stops a token for another service being replayed here).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">audience</span></code> (<strong>required</strong>) — <strong>this</strong> server’s resource id (the token’s
+<code class="docutils literal notranslate"><span class="pre">aud</span></code>). RFC 8707 audience binding is mandatory: it stops a token minted for
+another service being replayed here (the confused-deputy defense), so this
+helper refuses to build a verifier that would skip it.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">authorization_servers</span></code> (or a single <code class="docutils literal notranslate"><span class="pre">issuer</span></code>) — IdP issuer URL(s)
 advertised in the RFC 9728 protected-resource metadata.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">base_url</span></code> — this server’s public base URL.</p></li>
