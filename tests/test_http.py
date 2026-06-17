@@ -57,6 +57,14 @@ def test_missing_base_url_raises():
         mk_auth_provider(auth)
 
 
+def test_missing_audience_raises():
+    # RFC 8707 audience binding is mandatory — without it JWTVerifier would skip
+    # audience validation (confused-deputy risk), so the helper must refuse.
+    auth = {k: v for k, v in _AUTH.items() if k != "audience"}
+    with pytest.raises(ValueError, match="audience"):
+        mk_auth_provider(auth)
+
+
 def test_missing_authorization_servers_raises():
     auth = {
         k: v
