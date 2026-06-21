@@ -16,19 +16,29 @@ keywords = [
     "llm",
     "ai",
 ]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 authors = [
     { name = "Thor Whalen" },
 ]
+license = "MIT"
 dependencies = [
     "fastmcp",
 ]
 
-[project.license]
-text = "mit"
-
 [project.urls]
-Homepage = "https://github.com/i2mint/py2mcp"
+Homepage = "https://i2mint.github.io/py2mcp/"
 Repository = "https://github.com/i2mint/py2mcp"
+Issues = "https://github.com/i2mint/py2mcp/issues"
+Changelog = "https://github.com/i2mint/py2mcp/blob/main/CHANGELOG.md"
 Documentation = "https://i2mint.github.io/py2mcp"
 
 [project.scripts]
