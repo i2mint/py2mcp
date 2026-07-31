@@ -12,7 +12,7 @@ import asyncio
 from fastmcp import Client
 from fastmcp.server.middleware import Middleware
 
-from py2mcp import mk_mcp_server, mk_mcp_from_refs
+from py2mcp import mk_mcp_server, mk_mcp_from_refs, mk_mcp_from_store
 from py2mcp.http import mk_http_app
 
 
@@ -69,10 +69,31 @@ def test_mk_mcp_from_refs_forwards_middleware():
     assert rec in server.middleware
 
 
-def test_mk_http_app_accepts_middleware():
+def test_mk_http_app_builds_with_middleware():
+    # integration: the real fastmcp Streamable-HTTP path accepts middleware.
     rec = _Recorder()
     app = mk_http_app(["os.path:basename"], name="conn", middleware=[rec])
-    assert callable(app)  # a real ASGI app built with the middleware attached
+    assert callable(app)
+
+
+def test_mk_http_app_forwards_middleware(monkeypatch):
+    # prove forwarding precisely: capture what reaches mk_mcp_from_refs.
+    from py2mcp import http as http_mod
+
+    captured = {}
+
+    class _DummyServer:
+        def http_app(self, **kwargs):
+            return object()
+
+    def _fake_mk(refs, **kwargs):
+        captured.update(kwargs)
+        return _DummyServer()
+
+    monkeypatch.setattr(http_mod, "mk_mcp_from_refs", _fake_mk)
+    rec = _Recorder()
+    http_mod.mk_http_app(["os.path:basename"], name="conn", middleware=rec)
+    assert captured["middleware"] is rec
 
 
 def test_serve_http_forwards_middleware(monkeypatch):
@@ -92,5 +113,55 @@ def test_serve_http_forwards_middleware(monkeypatch):
     monkeypatch.setattr(http_mod, "mk_mcp_from_refs", _fake_mk)
     rec = _Recorder()
     http_mod.serve_http(["os.path:basename"], name="conn", middleware=rec)
+    assert captured["middleware"] is rec
+    assert captured["ran"] is True
+
+
+def test_generator_of_middleware_is_attached():
+    # regression (#6 review): a non-list/tuple iterable (generator) must be
+    # materialized and each middleware attached — not wrapped as one bogus element
+    # that builds fine then fails every tool call.
+    a, b = _Recorder(), _Recorder()
+    server = mk_mcp_server([add], middleware=(m for m in (a, b)))
+    assert a in server.middleware and b in server.middleware
+
+
+def test_set_of_middleware_is_attached():
+    a, b = _Recorder(), _Recorder()
+    server = mk_mcp_server([add], middleware={a, b})
+    assert a in server.middleware and b in server.middleware
+
+
+def test_empty_middleware_matches_plain_construction():
+    # An empty iterable means "no middleware": it must take the same plain
+    # construction path as passing nothing (adds no user middleware).
+    plain = mk_mcp_server([add]).middleware
+    empty = mk_mcp_server([add], middleware=[]).middleware
+    assert len(empty) == len(plain)
+
+
+def test_mk_mcp_from_store_forwards_middleware():
+    rec = _Recorder()
+    server = mk_mcp_from_store({}, name="item", middleware=rec)
+    assert rec in server.middleware
+
+
+def test_serve_stdio_forwards_middleware(monkeypatch):
+    # serve_stdio is blocking; capture the forwarded kwarg without running a server.
+    from py2mcp import serve as serve_mod
+
+    captured = {}
+
+    class _DummyServer:
+        def run(self, **kwargs):
+            captured["ran"] = True
+
+    def _fake_mk(refs, **kwargs):
+        captured.update(kwargs)
+        return _DummyServer()
+
+    monkeypatch.setattr(serve_mod, "mk_mcp_from_refs", _fake_mk)
+    rec = _Recorder()
+    serve_mod.serve_stdio(["os.path:basename"], middleware=rec)
     assert captured["middleware"] is rec
     assert captured["ran"] is True

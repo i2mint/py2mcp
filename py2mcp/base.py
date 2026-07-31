@@ -52,8 +52,11 @@ def _normalize_to_iterable(funcs: Any) -> Iterable[Callable]:
 def _normalize_middleware(middleware: Any) -> Optional[list]:
     """Normalize ``middleware`` to a list for FastMCP (or ``None``).
 
-    Accepts ``None`` (no middleware), a single FastMCP ``Middleware``, or a
-    list/tuple of them — mirroring how ``auth`` is a single optional object.
+    Accepts ``None`` (no middleware), a single FastMCP ``Middleware``, or any
+    iterable of them (list, tuple, set, generator) — mirroring how
+    :func:`_normalize_to_iterable` handles ``funcs``. A single ``Middleware`` is
+    matched first, so one that happens to be iterable is not mistaken for a
+    collection; a generator is materialized so it survives being forwarded on.
 
     >>> _normalize_middleware(None) is None
     True
@@ -63,9 +66,17 @@ def _normalize_middleware(middleware: Any) -> Optional[list]:
     True
     >>> _normalize_middleware([m, m]) == [m, m]
     True
+    >>> _normalize_middleware((m, m)) == [m, m]        # tuple -> list
+    True
+    >>> _normalize_middleware(iter([m, m])) == [m, m]  # any iterable is materialized
+    True
     """
     if middleware is None:
         return None
-    if isinstance(middleware, (list, tuple)):
+    from fastmcp.server.middleware import Middleware
+
+    if isinstance(middleware, Middleware):
+        return [middleware]
+    if isinstance(middleware, Iterable) and not isinstance(middleware, (str, bytes)):
         return list(middleware)
     return [middleware]

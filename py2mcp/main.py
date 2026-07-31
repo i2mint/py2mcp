@@ -57,11 +57,12 @@ def mk_mcp_server(
         >>> mcp.name
         'Math & Greetings'
     """
-    # Pass ``middleware`` only when given, so the common no-middleware path stays
-    # the old ``FastMCP(name, auth=auth)`` call (no new fastmcp-version floor).
+    # Pass ``middleware`` only when there is some, so the no-middleware (and
+    # empty-list) path stays the old ``FastMCP(name, auth=auth)`` call (no new
+    # fastmcp-version floor).
     server_kwargs: dict[str, Any] = {"auth": auth}
     middleware_list = _normalize_middleware(middleware)
-    if middleware_list is not None:
+    if middleware_list:
         server_kwargs["middleware"] = middleware_list
     mcp = FastMCP(name, **server_kwargs)
 
@@ -93,8 +94,8 @@ def mk_mcp_from_refs(
     Resolves each reference to a callable via :func:`py2mcp.util.import_object`
     and delegates to :func:`mk_mcp_server`. One call from config strings to a
     runnable server — what tools that read tool references from a file (e.g.
-    ``coact``'s ``mcp`` backend) need. ``auth`` is forwarded to
-    :func:`mk_mcp_server` (the remote/HTTP path attaches an OAuth provider here).
+    ``coact``'s ``mcp`` backend) need. ``auth`` and ``middleware`` are forwarded
+    to :func:`mk_mcp_server` (the remote/HTTP path attaches an OAuth provider here).
 
     Examples:
         >>> mcp = mk_mcp_from_refs(['os.path:basename', 'os.path:dirname'], name='Paths')
@@ -124,6 +125,9 @@ def mk_mcp_from_store(
         name: Singular name for items (e.g., 'project', 'user')
         plural: Plural form (defaults to name + 's')
         server_name: Name of the MCP server (defaults to "{name} Store")
+        middleware: Optional FastMCP middleware (a single middleware or an
+            iterable), forwarded to :func:`mk_mcp_server` — wraps every generated
+            CRUD tool call, e.g. to meter or audit store reads and mutations.
 
     Returns:
         A FastMCP server with CRUD operations
