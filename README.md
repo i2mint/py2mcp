@@ -105,6 +105,29 @@ app = mk_http_app(["mypkg.tools:summarize"], name="My Connector", auth=AUTH)
 `serve_http(...)` builds and runs it in-process (FastMCP/uvicorn). Both wrap
 FastMCP's native transports/OAuth — py2mcp does not reinvent them.
 
+## Middleware (metering, logging, rate-limiting)
+
+Every builder accepts `middleware=` — a single [FastMCP middleware](https://gofastmcp.com/servers/middleware) or an iterable of them — attached at construction, exactly as `auth=` is. It's the one clean seam for cross-cutting concerns that must wrap *every* tool call (usage metering, cost logging, audit trails, rate limiting), so you don't decorate each function individually — and can't forget one (a missed decorator on a paid tool means untracked cost):
+
+```python
+from fastmcp.server.middleware import Middleware
+
+class UsageMeter(Middleware):
+    async def on_call_tool(self, context, call_next):
+        result = await call_next(context)      # the tool runs here
+        record(context.message.name)           # ... then meter it
+        return result
+
+mcp = mk_mcp_server([render, estimate], middleware=[UsageMeter()])
+# same on mk_mcp_from_refs(...), mk_mcp_from_store(...), mk_http_app(...),
+#         serve_http(...), serve_stdio(...)
+```
+
+On the remote path `auth=` (transport-level) runs first, so a middleware can read
+the authenticated caller via `fastmcp.server.dependencies.get_access_token()`.
+Middleware is a *programmatic* hook — it takes Python objects, so it isn't wired
+through the `python -m py2mcp` CLI / JSON-config path (unlike `refs`/`name`/`auth`).
+
 ## License
 
 MIT

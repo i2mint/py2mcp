@@ -142,6 +142,7 @@ def mk_http_app(
     transport: str = DFLT_TRANSPORT,
     path: Optional[str] = None,
     stateless_http: Optional[bool] = None,
+    middleware: Optional[Any] = None,
 ) -> Any:
     """Build a Streamable-HTTP **ASGI app** from ``refs`` (+ optional OAuth).
 
@@ -153,13 +154,18 @@ def mk_http_app(
         # then:  uvicorn server.app:app --host 0.0.0.0 --port 8000
 
     ``auth`` is resolved by :func:`mk_auth_provider` (``None`` → no auth; a remote
-    connector should always set it). ``stateless_http=True`` is recommended behind
-    a load balancer (MCP sessions are stateful, so default in-memory sessions break
-    across replicas — go stateless or externalize session state). Builds the app
-    with **no network I/O**.
+    connector should always set it). ``middleware`` (a single FastMCP middleware or
+    a list) is attached for cross-cutting concerns — metering, logging, rate
+    limiting — and, because ``auth`` runs first, can read the authenticated caller
+    via ``fastmcp.server.dependencies.get_access_token()``. ``stateless_http=True``
+    is recommended behind a load balancer (MCP sessions are stateful, so default
+    in-memory sessions break across replicas — go stateless or externalize session
+    state). Builds the app with **no network I/O**.
     """
     provider = mk_auth_provider(auth)
-    server = mk_mcp_from_refs(refs, name=name, input_trans=input_trans, auth=provider)
+    server = mk_mcp_from_refs(
+        refs, name=name, input_trans=input_trans, auth=provider, middleware=middleware
+    )
     http_kwargs: dict[str, Any] = {"transport": transport}
     if path is not None:
         http_kwargs["path"] = path
@@ -178,16 +184,21 @@ def serve_http(
     input_trans: Optional[Callable[[dict], dict]] = None,
     transport: str = DFLT_TRANSPORT,
     stateless_http: Optional[bool] = None,
+    middleware: Optional[Any] = None,
 ) -> None:
     """Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
     For a self-hosted process. Binds ``127.0.0.1`` by default — expose a public
     interface only behind a TLS-terminating reverse proxy (a remote connector must
     be reachable over public **HTTPS**, and binding locally is the spec's
-    DNS-rebinding-safe default). ``auth`` is resolved by :func:`mk_auth_provider`.
+    DNS-rebinding-safe default). ``auth`` is resolved by :func:`mk_auth_provider`;
+    ``middleware`` (a single FastMCP middleware or a list) is attached as in
+    :func:`mk_http_app`.
     """
     provider = mk_auth_provider(auth)
-    server = mk_mcp_from_refs(refs, name=name, input_trans=input_trans, auth=provider)
+    server = mk_mcp_from_refs(
+        refs, name=name, input_trans=input_trans, auth=provider, middleware=middleware
+    )
     run_kwargs: dict[str, Any] = {"transport": transport, "host": host, "port": port}
     if stateless_http is not None:
         run_kwargs["stateless_http"] = stateless_http
