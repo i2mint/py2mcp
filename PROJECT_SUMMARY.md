@@ -32,27 +32,26 @@ That's it. Functions → MCP tools.
 from py2mcp import mk_mcp_server, mk_input_trans
 import numpy as np
 
+
 # Regular functions
 def add(a: int, b: int) -> int:
     """Add two numbers"""
     return a + b
 
+
 def add_arrays(a, b):
     """Add numpy arrays"""
     return (a + b).tolist()
 
+
 # Transform inputs
-input_trans = mk_input_trans({'a': np.array, 'b': np.array})
+input_trans = mk_input_trans({"a": np.array, "b": np.array})
 
 # Create server
-mcp = mk_mcp_server(
-    [add, add_arrays],
-    name="Math Tools",
-    input_trans=input_trans
-)
+mcp = mk_mcp_server([add, add_arrays], name="Math Tools", input_trans=input_trans)
 
 # Run
-if __name__ == '__main__':
+if __name__ == "__main__":
     mcp.run()
 ```
 
@@ -123,7 +122,7 @@ mk_mcp_server(funcs)
 mk_input_trans({param: converter})
 
 # 3. Stores: mapping → CRUD
-mk_mcp_from_store(store, name='item')
+mk_mcp_from_store(store, name="item")
 ```
 
 That's all you need to remember.
@@ -136,6 +135,7 @@ def search_docs(query: str) -> list:
     """Search documentation"""
     return find_docs(query)
 
+
 mcp = mk_mcp_server([search_docs])
 ```
 
@@ -143,19 +143,17 @@ mcp = mk_mcp_server([search_docs])
 ```python
 def analyze_data(data: list[float]) -> dict:
     """Analyze numerical data"""
-    return {
-        'mean': np.mean(data),
-        'std': np.std(data)
-    }
+    return {"mean": np.mean(data), "std": np.std(data)}
 
-input_trans = mk_input_trans({'data': np.array})
+
+input_trans = mk_input_trans({"data": np.array})
 mcp = mk_mcp_server([analyze_data], input_trans=input_trans)
 ```
 
 ### 3. Storage Operations
 ```python
 projects = load_projects()  # Returns dict
-mcp = mk_mcp_from_store(projects, name='project')
+mcp = mk_mcp_from_store(projects, name="project")
 # Auto-creates list/get/set/delete tools
 ```
 
@@ -275,13 +273,16 @@ from fastmcp import FastMCP
 
 mcp = FastMCP("My Server")
 
+
 @mcp.tool
 def add(a: int, b: int) -> int:
     return a + b
 
-@mcp.tool  
+
+@mcp.tool
 def multiply(a: int, b: int) -> int:
     return a * b
+
 
 mcp.run()
 ```
@@ -290,11 +291,14 @@ mcp.run()
 ```python
 from py2mcp import mk_mcp_server
 
+
 def add(a: int, b: int) -> int:
     return a + b
 
+
 def multiply(a: int, b: int) -> int:
     return a * b
+
 
 mk_mcp_server([add, multiply]).run()
 ```

@@ -97,7 +97,7 @@ mk_mcp_server(functions)
 mk_input_trans({param: converter})
 
 # 3. Store to CRUD
-mk_mcp_from_store(mapping, name='item')
+mk_mcp_from_store(mapping, name="item")
 ```
 
 ### The Pattern
@@ -118,8 +118,10 @@ Functions → mk_mcp_server → FastMCP server → run()
 ```python
 from py2mcp import mk_mcp_server
 
+
 def add(a: int, b: int) -> int:
     return a + b
+
 
 mk_mcp_server([add]).run()
 ```
@@ -129,10 +131,12 @@ mk_mcp_server([add]).run()
 from py2mcp import mk_mcp_server, mk_input_trans
 import numpy as np
 
+
 def process(data):
     return data.mean()
 
-trans = mk_input_trans({'data': np.array})
+
+trans = mk_input_trans({"data": np.array})
 mk_mcp_server([process], input_trans=trans).run()
 ```
 
@@ -140,8 +144,8 @@ mk_mcp_server([process], input_trans=trans).run()
 ```python
 from py2mcp import mk_mcp_from_store
 
-items = {'a': 1, 'b': 2}
-mk_mcp_from_store(items, name='item').run()
+items = {"a": 1, "b": 2}
+mk_mcp_from_store(items, name="item").run()
 ```
 
 ## Common Tasks

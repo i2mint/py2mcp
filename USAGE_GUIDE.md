@@ -23,18 +23,21 @@ pip install py2mcp
 ```python
 from py2mcp import mk_mcp_server
 
+
 def add(a: int, b: int) -> int:
     """Add two numbers"""
     return a + b
+
 
 def greet(name: str = "world") -> str:
     """Greet someone"""
     return f"Hello, {name}!"
 
+
 # Create MCP server
 mcp = mk_mcp_server([add, greet], name="My Server")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     mcp.run()
 ```
 
@@ -67,15 +70,14 @@ Transform inputs before they reach your functions (just like qh):
 from py2mcp import mk_mcp_server, mk_input_trans
 import numpy as np
 
+
 def add_arrays(a, b):
     """Add two arrays element-wise"""
     return (a + b).tolist()
 
+
 # Convert list inputs to numpy arrays
-input_trans = mk_input_trans({
-    'a': np.array,
-    'b': np.array
-})
+input_trans = mk_input_trans({"a": np.array, "b": np.array})
 
 mcp = mk_mcp_server([add_arrays], input_trans=input_trans)
 ```
@@ -90,12 +92,12 @@ Automatically expose any dict-like object as CRUD operations:
 from py2mcp import mk_mcp_from_store
 
 projects = {
-    'proj1': {'name': 'Website', 'status': 'active'},
-    'proj2': {'name': 'Mobile App', 'status': 'planning'}
+    "proj1": {"name": "Website", "status": "active"},
+    "proj2": {"name": "Mobile App", "status": "planning"},
 }
 
 # Automatically creates: list_projects, get_project, set_project, delete_project
-mcp = mk_mcp_from_store(projects, name='project')
+mcp = mk_mcp_from_store(projects, name="project")
 ```
 
 This generates four tools:
@@ -117,8 +119,8 @@ This runs in stdio mode, which is what Claude Desktop and other MCP clients use.
 ### HTTP Mode
 
 ```python
-if __name__ == '__main__':
-    mcp.run(transport='http', port=8000)
+if __name__ == "__main__":
+    mcp.run(transport="http", port=8000)
 ```
 
 Then access at `http://localhost:8000/mcp`
@@ -126,8 +128,8 @@ Then access at `http://localhost:8000/mcp`
 ### SSE Mode
 
 ```python
-if __name__ == '__main__':
-    mcp.run(transport='sse', port=8000)
+if __name__ == "__main__":
+    mcp.run(transport="sse", port=8000)
 ```
 
 ### Testing with MCP Inspector
@@ -195,21 +197,25 @@ Since `mk_mcp_server()` returns a FastMCP instance, you can use all FastMCP feat
 ```python
 mcp = mk_mcp_server([add, multiply])
 
+
 # Add resources
 @mcp.resource("config://settings")
 def get_settings():
     return {"version": "1.0"}
+
 
 # Add prompts
 @mcp.prompt()
 def code_review_prompt(code: str):
     return f"Please review this code: {code}"
 
+
 # Add middleware
 @mcp.middleware()
 async def logging_middleware(request, call_next):
     print(f"Request: {request}")
     return await call_next(request)
+
 
 # Run with authentication
 mcp.run(auth="your-api-key")
@@ -233,12 +239,14 @@ math_mcp.mount(text_mcp, prefix="/text")
 import asyncio
 from fastmcp import Client
 
+
 async def test():
     mcp = mk_mcp_server([add])
-    
+
     async with Client(mcp) as client:
         result = await client.call_tool("add", {"a": 5, "b": 3})
         print(result)  # 8
+
 
 asyncio.run(test())
 ```

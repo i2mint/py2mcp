@@ -13,18 +13,21 @@ pip install py2mcp
 ```python
 from py2mcp import mk_mcp_server
 
+
 def add(a: int, b: int) -> int:
     """Add two numbers"""
     return a + b
+
 
 def greet(name: str = "world") -> str:
     """Greet someone"""
     return f"Hello, {name}!"
 
+
 # Create and run MCP server
 mcp = mk_mcp_server([add, greet])
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     mcp.run()
 ```
 
@@ -45,12 +48,14 @@ Transform inputs before they reach your functions:
 from py2mcp import mk_mcp_server, mk_input_trans
 import numpy as np
 
+
 def add_arrays(a, b):
     """Add two numpy arrays"""
     return (a + b).tolist()
 
+
 # Convert list inputs to numpy arrays
-input_trans = mk_input_trans({'a': np.array, 'b': np.array})
+input_trans = mk_input_trans({"a": np.array, "b": np.array})
 mcp = mk_mcp_server([add_arrays], input_trans=input_trans)
 ```
 
@@ -61,7 +66,7 @@ Automatically expose CRUD operations from any mapping:
 ```python
 from py2mcp import mk_mcp_from_store
 
-projects = {'proj1': {'name': 'Project 1'}, 'proj2': {'name': 'Project 2'}}
+projects = {"proj1": {"name": "Project 1"}, "proj2": {"name": "Project 2"}}
 mcp = mk_mcp_from_store(projects, name="project")
 
 # Automatically creates: list_projects, get_project, set_project, delete_project
@@ -75,6 +80,7 @@ mcp = mk_mcp_from_store(projects, name="project")
 
 ```python
 from py2mcp import serve_stdio
+
 serve_stdio(["mypkg.tools:summarize", "mypkg.tools:translate"], name="My Tools")
 # or:  python -m py2mcp --config py2mcp_config.json
 ```
@@ -88,10 +94,10 @@ RFC 8707) and never issues tokens itself.
 from py2mcp.http import mk_http_app
 
 AUTH = {
-    "type": "jwt",                      # resource-server: validate the IdP's JWTs
+    "type": "jwt",  # resource-server: validate the IdP's JWTs
     "jwks_uri": "https://idp.example.com/.well-known/jwks.json",
     "issuer": "https://idp.example.com",
-    "audience": "https://my-connector.example.com/mcp",   # THIS server (RFC 8707)
+    "audience": "https://my-connector.example.com/mcp",  # THIS server (RFC 8707)
     "authorization_servers": ["https://idp.example.com"],
     "base_url": "https://my-connector.example.com",
     "required_scopes": ["mcp:read"],
@@ -112,11 +118,13 @@ Every builder accepts `middleware=` — a single [FastMCP middleware](https://go
 ```python
 from fastmcp.server.middleware import Middleware
 
+
 class UsageMeter(Middleware):
     async def on_call_tool(self, context, call_next):
-        result = await call_next(context)      # the tool runs here
-        record(context.message.name)           # ... then meter it
+        result = await call_next(context)  # the tool runs here
+        record(context.message.name)  # ... then meter it
         return result
+
 
 mcp = mk_mcp_server([render, estimate], middleware=[UsageMeter()])
 # same on mk_mcp_from_refs(...), mk_mcp_from_store(...), mk_http_app(...),

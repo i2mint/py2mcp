@@ -8,8 +8,10 @@ This document shows how `py2mcp` follows the same design patterns as `qh` (the H
 ```python
 from qh import mk_http_service_app
 
+
 def add(a: int, b: int) -> int:
     return a + b
+
 
 app = mk_http_service_app([add])
 app.run()
@@ -19,8 +21,10 @@ app.run()
 ```python
 from py2mcp import mk_mcp_server
 
+
 def add(a: int, b: int) -> int:
     return a + b
+
 
 mcp = mk_mcp_server([add])
 mcp.run()
@@ -36,13 +40,12 @@ from qh import mk_http_service_app
 from qh.trans import mk_json_handler_from_name_mapping
 import numpy as np
 
+
 def add_arrays(a, b):
     return (a + b).tolist()
 
-input_trans = mk_json_handler_from_name_mapping({
-    'a': np.array,
-    'b': np.array
-})
+
+input_trans = mk_json_handler_from_name_mapping({"a": np.array, "b": np.array})
 
 app = mk_http_service_app([add_arrays], input_trans=input_trans)
 ```
@@ -52,13 +55,12 @@ app = mk_http_service_app([add_arrays], input_trans=input_trans)
 from py2mcp import mk_mcp_server, mk_input_trans
 import numpy as np
 
+
 def add_arrays(a, b):
     return (a + b).tolist()
 
-input_trans = mk_input_trans({
-    'a': np.array,
-    'b': np.array
-})
+
+input_trans = mk_input_trans({"a": np.array, "b": np.array})
 
 mcp = mk_mcp_server([add_arrays], input_trans=input_trans)
 ```
@@ -74,7 +76,7 @@ mcp = mk_mcp_server([add_arrays], input_trans=input_trans)
 
 from qh.scrap.store_dispatch_1 import StoreAccess
 
-store = StoreAccess.from_uri('test_uri')
+store = StoreAccess.from_uri("test_uri")
 # Exposes: list(), read(), write(), delete()
 ```
 
@@ -82,9 +84,9 @@ store = StoreAccess.from_uri('test_uri')
 ```python
 from py2mcp import mk_mcp_from_store
 
-projects = {'proj1': {...}, 'proj2': {...}}
+projects = {"proj1": {...}, "proj2": {...}}
 
-mcp = mk_mcp_from_store(projects, name='project')
+mcp = mk_mcp_from_store(projects, name="project")
 # Automatically creates:
 # - list_projects()
 # - get_project(key)
@@ -204,7 +206,7 @@ While the patterns are the same, there are protocol differences:
 #### qh
 ```python
 # HTTP server on port 8080
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(port=8080)
 ```
 
@@ -218,7 +220,7 @@ curl -X POST http://localhost:8080/add \
 #### py2mcp
 ```python
 # Stdio server (default) or HTTP
-if __name__ == '__main__':
+if __name__ == "__main__":
     mcp.run()  # stdio
     # mcp.run(transport='http', port=8000)  # http
 ```
@@ -237,18 +239,14 @@ Both require:
 
 ```python
 # Works in both qh and py2mcp
-def process_data(
-    text: str,
-    count: int = 10,
-    uppercase: bool = False
-) -> dict:
+def process_data(text: str, count: int = 10, uppercase: bool = False) -> dict:
     """Process text data.
-    
+
     Args:
         text: Input text
         count: Max length
         uppercase: Convert to uppercase
-    
+
     Returns:
         Processed result
     """

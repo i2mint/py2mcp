@@ -19,17 +19,20 @@ python -c "from py2mcp import mk_mcp_server; print('✓ Installation successful'
 ```python
 from py2mcp import mk_mcp_server
 
+
 def add(a: int, b: int) -> int:
     """Add two numbers together"""
     return a + b
+
 
 def greet(name: str = "world") -> str:
     """Generate a friendly greeting"""
     return f"Hello, {name}!"
 
+
 mcp = mk_mcp_server([add, greet], name="My First Server")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     mcp.run()
 ```
 
@@ -68,14 +71,13 @@ Restart Claude Desktop and ask it to use your tools!
 from py2mcp import mk_mcp_server, mk_input_trans
 import numpy as np
 
+
 def stats(numbers):
     """Calculate mean and std of numbers"""
-    return {
-        'mean': float(numbers.mean()),
-        'std': float(numbers.std())
-    }
+    return {"mean": float(numbers.mean()), "std": float(numbers.std())}
 
-input_trans = mk_input_trans({'numbers': np.array})
+
+input_trans = mk_input_trans({"numbers": np.array})
 mcp = mk_mcp_server([stats], input_trans=input_trans)
 ```
 
@@ -85,11 +87,11 @@ mcp = mk_mcp_server([stats], input_trans=input_trans)
 from py2mcp import mk_mcp_from_store
 
 todos = {
-    '1': {'task': 'Learn py2mcp', 'done': True},
-    '2': {'task': 'Build something cool', 'done': False}
+    "1": {"task": "Learn py2mcp", "done": True},
+    "2": {"task": "Build something cool", "done": False},
 }
 
-mcp = mk_mcp_from_store(todos, name='todo')
+mcp = mk_mcp_from_store(todos, name="todo")
 # Automatically creates: list_todos, get_todo, set_todo, delete_todo
 ```
 
@@ -158,6 +160,7 @@ pip install fastmcp --break-system-packages
 def process(data):
     return data
 
+
 # Good - with type hints
 def process(data: list[int]) -> dict:
     return {"count": len(data)}
@@ -168,27 +171,30 @@ def process(data: list[int]) -> dict:
 ### Create Server
 ```python
 from py2mcp import mk_mcp_server
+
 mcp = mk_mcp_server(functions, name="Server Name")
 ```
 
 ### Add Transformations
 ```python
 from py2mcp import mk_input_trans
-trans = mk_input_trans({'param': converter_func})
+
+trans = mk_input_trans({"param": converter_func})
 mcp = mk_mcp_server(functions, input_trans=trans)
 ```
 
 ### From Store
 ```python
 from py2mcp import mk_mcp_from_store
-mcp = mk_mcp_from_store(mapping, name='item')
+
+mcp = mk_mcp_from_store(mapping, name="item")
 ```
 
 ### Run Server
 ```python
 mcp.run()  # stdio (default)
-mcp.run(transport='http', port=8000)  # HTTP
-mcp.run(transport='sse', port=8000)   # SSE
+mcp.run(transport="http", port=8000)  # HTTP
+mcp.run(transport="sse", port=8000)  # SSE
 ```
 
 ### Test Server
@@ -218,26 +224,19 @@ For each function you want to expose:
 
 **Example of a good function:**
 ```python
-def calculate_discount(
-    price: float,
-    discount_percent: float = 10.0
-) -> dict:
+def calculate_discount(price: float, discount_percent: float = 10.0) -> dict:
     """Calculate final price after discount.
-    
+
     Args:
         price: Original price
         discount_percent: Discount percentage (default 10%)
-    
+
     Returns:
         Dict with original price, discount, and final price
     """
     discount = price * (discount_percent / 100)
     final = price - discount
-    return {
-        'original': price,
-        'discount': discount,
-        'final': final
-    }
+    return {"original": price, "discount": discount, "final": final}
 ```
 
 ## Advanced Checklist
