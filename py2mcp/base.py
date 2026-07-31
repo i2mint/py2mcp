@@ -47,3 +47,25 @@ def _normalize_to_iterable(funcs: Any) -> Iterable[Callable]:
         raise TypeError(
             f"Expected callable or iterable of callables, got {type(funcs)}"
         )
+
+
+def _normalize_middleware(middleware: Any) -> Optional[list]:
+    """Normalize ``middleware`` to a list for FastMCP (or ``None``).
+
+    Accepts ``None`` (no middleware), a single FastMCP ``Middleware``, or a
+    list/tuple of them — mirroring how ``auth`` is a single optional object.
+
+    >>> _normalize_middleware(None) is None
+    True
+    >>> class M: pass
+    >>> m = M()
+    >>> _normalize_middleware(m) == [m]
+    True
+    >>> _normalize_middleware([m, m]) == [m, m]
+    True
+    """
+    if middleware is None:
+        return None
+    if isinstance(middleware, (list, tuple)):
+        return list(middleware)
+    return [middleware]

@@ -3,7 +3,11 @@
 from typing import Callable, Iterable, Optional, MutableMapping, Any
 from fastmcp import FastMCP
 
-from py2mcp.base import _normalize_to_iterable, _wrap_with_input_trans
+from py2mcp.base import (
+    _normalize_to_iterable,
+    _wrap_with_input_trans,
+    _normalize_middleware,
+)
 from py2mcp.util import import_object, store_to_funcs
 
 
@@ -13,6 +17,7 @@ def mk_mcp_server(
     name: str = "py2mcp Server",
     input_trans: Optional[Callable[[dict], dict]] = None,
     auth: Optional[Any] = None,
+    middleware: Optional[Any] = None,
 ) -> FastMCP:
     """Create an MCP server from Python functions.
 
@@ -27,6 +32,13 @@ def mk_mcp_server(
             used by the remote (HTTP) path for OAuth 2.1 (see :mod:`py2mcp.http`).
             ``None`` (the default) leaves the server unauthenticated, which is
             correct for the local stdio path.
+        middleware: Optional FastMCP middleware (a single middleware or a list),
+            attached at construction, for cross-cutting concerns that must wrap
+            *every* tool call — usage metering, cost logging, audit, rate limiting.
+            Preferred over decorating each tool: you can't forget to wrap one (a
+            missed paid tool means untracked cost). On the remote path ``auth``
+            runs first, so a middleware can read the authenticated caller via
+            ``fastmcp.server.dependencies.get_access_token()``.
 
     Returns:
         A FastMCP server instance ready to run
@@ -45,7 +57,13 @@ def mk_mcp_server(
         >>> mcp.name
         'Math & Greetings'
     """
-    mcp = FastMCP(name, auth=auth)
+    # Pass ``middleware`` only when given, so the common no-middleware path stays
+    # the old ``FastMCP(name, auth=auth)`` call (no new fastmcp-version floor).
+    server_kwargs: dict[str, Any] = {"auth": auth}
+    middleware_list = _normalize_middleware(middleware)
+    if middleware_list is not None:
+        server_kwargs["middleware"] = middleware_list
+    mcp = FastMCP(name, **server_kwargs)
 
     # Normalize to list of functions
     func_list = list(_normalize_to_iterable(funcs))
@@ -68,6 +86,7 @@ def mk_mcp_from_refs(
     name: str = "py2mcp Server",
     input_trans: Optional[Callable[[dict], dict]] = None,
     auth: Optional[Any] = None,
+    middleware: Optional[Any] = None,
 ) -> FastMCP:
     """Create an MCP server from ``'module:function'`` reference strings.
 
@@ -83,7 +102,9 @@ def mk_mcp_from_refs(
         'Paths'
     """
     funcs = [import_object(ref) for ref in refs]
-    return mk_mcp_server(funcs, name=name, input_trans=input_trans, auth=auth)
+    return mk_mcp_server(
+        funcs, name=name, input_trans=input_trans, auth=auth, middleware=middleware
+    )
 
 
 def mk_mcp_from_store(
@@ -92,6 +113,7 @@ def mk_mcp_from_store(
     name: str = "item",
     plural: str = "",
     server_name: Optional[str] = None,
+    middleware: Optional[Any] = None,
 ) -> FastMCP:
     """Create an MCP server from a MutableMapping with CRUD operations.
 
@@ -117,4 +139,4 @@ def mk_mcp_from_store(
 
     funcs = store_to_funcs(store, name=name, plural=plural)
 
-    return mk_mcp_server(funcs, name=server_name)
+    return mk_mcp_server(funcs, name=server_name, middleware=middleware)
