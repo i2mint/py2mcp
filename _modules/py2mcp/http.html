@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>py2mcp.http &mdash; py2mcp 0.1.6 documentation</title>
+  <title>py2mcp.http &mdash; py2mcp 0.1.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6e0256f3"></script>
+      <script src="../../_static/documentation_options.js?v=ca7ad2ea"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -230,6 +230,7 @@
     <span class="n">transport</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_TRANSPORT</span><span class="p">,</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">stateless_http</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a Streamable-HTTP **ASGI app** from ``refs`` (+ optional OAuth).</span>
 
@@ -241,13 +242,18 @@
 <span class="sd">        # then:  uvicorn server.app:app --host 0.0.0.0 --port 8000</span>
 
 <span class="sd">    ``auth`` is resolved by :func:`mk_auth_provider` (``None`` → no auth; a remote</span>
-<span class="sd">    connector should always set it). ``stateless_http=True`` is recommended behind</span>
-<span class="sd">    a load balancer (MCP sessions are stateful, so default in-memory sessions break</span>
-<span class="sd">    across replicas — go stateless or externalize session state). Builds the app</span>
-<span class="sd">    with **no network I/O**.</span>
+<span class="sd">    connector should always set it). ``middleware`` (a single FastMCP middleware or</span>
+<span class="sd">    a list) is attached for cross-cutting concerns — metering, logging, rate</span>
+<span class="sd">    limiting — and, because ``auth`` runs first, can read the authenticated caller</span>
+<span class="sd">    via ``fastmcp.server.dependencies.get_access_token()``. ``stateless_http=True``</span>
+<span class="sd">    is recommended behind a load balancer (MCP sessions are stateful, so default</span>
+<span class="sd">    in-memory sessions break across replicas — go stateless or externalize session</span>
+<span class="sd">    state). Builds the app with **no network I/O**.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">provider</span> <span class="o">=</span> <span class="n">mk_auth_provider</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
-    <span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_from_refs</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">provider</span><span class="p">)</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_from_refs</span><span class="p">(</span>
+        <span class="n">refs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">provider</span><span class="p">,</span> <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span>
+    <span class="p">)</span>
     <span class="n">http_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;transport&quot;</span><span class="p">:</span> <span class="n">transport</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">http_kwargs</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
@@ -269,16 +275,21 @@
     <span class="n">input_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">transport</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_TRANSPORT</span><span class="p">,</span>
     <span class="n">stateless_http</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.</span>
 
 <span class="sd">    For a self-hosted process. Binds ``127.0.0.1`` by default — expose a public</span>
 <span class="sd">    interface only behind a TLS-terminating reverse proxy (a remote connector must</span>
 <span class="sd">    be reachable over public **HTTPS**, and binding locally is the spec&#39;s</span>
-<span class="sd">    DNS-rebinding-safe default). ``auth`` is resolved by :func:`mk_auth_provider`.</span>
+<span class="sd">    DNS-rebinding-safe default). ``auth`` is resolved by :func:`mk_auth_provider`;</span>
+<span class="sd">    ``middleware`` (a single FastMCP middleware or a list) is attached as in</span>
+<span class="sd">    :func:`mk_http_app`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">provider</span> <span class="o">=</span> <span class="n">mk_auth_provider</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
-    <span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_from_refs</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">provider</span><span class="p">)</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_from_refs</span><span class="p">(</span>
+        <span class="n">refs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">provider</span><span class="p">,</span> <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span>
+    <span class="p">)</span>
     <span class="n">run_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;transport&quot;</span><span class="p">:</span> <span class="n">transport</span><span class="p">,</span> <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="n">port</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">stateless_http</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">run_kwargs</span><span class="p">[</span><span class="s2">&quot;stateless_http&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stateless_http</span>
