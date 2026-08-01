@@ -143,6 +143,7 @@ def mk_http_app(
     path: Optional[str] = None,
     stateless_http: Optional[bool] = None,
     middleware: Optional[Any] = None,
+    instructions: Optional[str] = None,
 ) -> Any:
     """Build a Streamable-HTTP **ASGI app** from ``refs`` (+ optional OAuth).
 
@@ -157,14 +158,21 @@ def mk_http_app(
     connector should always set it). ``middleware`` (a single FastMCP middleware or
     a list) is attached for cross-cutting concerns — metering, logging, rate
     limiting — and, because ``auth`` runs first, can read the authenticated caller
-    via ``fastmcp.server.dependencies.get_access_token()``. ``stateless_http=True``
+    via ``fastmcp.server.dependencies.get_access_token()``. ``instructions`` sets the
+    server's model-facing description (surfaced to the connecting client/model).
+    ``stateless_http=True``
     is recommended behind a load balancer (MCP sessions are stateful, so default
     in-memory sessions break across replicas — go stateless or externalize session
     state). Builds the app with **no network I/O**.
     """
     provider = mk_auth_provider(auth)
     server = mk_mcp_from_refs(
-        refs, name=name, input_trans=input_trans, auth=provider, middleware=middleware
+        refs,
+        name=name,
+        input_trans=input_trans,
+        auth=provider,
+        middleware=middleware,
+        instructions=instructions,
     )
     http_kwargs: dict[str, Any] = {"transport": transport}
     if path is not None:
@@ -185,6 +193,7 @@ def serve_http(
     transport: str = DFLT_TRANSPORT,
     stateless_http: Optional[bool] = None,
     middleware: Optional[Any] = None,
+    instructions: Optional[str] = None,
 ) -> None:
     """Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -193,11 +202,16 @@ def serve_http(
     be reachable over public **HTTPS**, and binding locally is the spec's
     DNS-rebinding-safe default). ``auth`` is resolved by :func:`mk_auth_provider`;
     ``middleware`` (a single FastMCP middleware or a list) is attached as in
-    :func:`mk_http_app`.
+    :func:`mk_http_app`; ``instructions`` sets the server's model-facing description.
     """
     provider = mk_auth_provider(auth)
     server = mk_mcp_from_refs(
-        refs, name=name, input_trans=input_trans, auth=provider, middleware=middleware
+        refs,
+        name=name,
+        input_trans=input_trans,
+        auth=provider,
+        middleware=middleware,
+        instructions=instructions,
     )
     run_kwargs: dict[str, Any] = {"transport": transport, "host": host, "port": port}
     if stateless_http is not None:
