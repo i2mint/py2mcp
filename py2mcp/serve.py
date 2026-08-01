@@ -82,6 +82,7 @@ def serve_stdio(
     name: str = DFLT_SERVER_NAME,
     input_trans: Optional[Callable[[dict], dict]] = None,
     middleware: Optional[Any] = None,
+    instructions: Optional[str] = None,
 ) -> None:
     """Build an MCP server from ``'module:function'`` refs and run it over stdio.
 
@@ -90,9 +91,14 @@ def serve_stdio(
     packaged integrations have one command to launch. ``middleware`` (a single
     FastMCP middleware or a list) is forwarded for cross-cutting concerns —
     logging/metering is as useful on the local stdio path as on the remote one.
+    ``instructions`` sets the server's model-facing description.
     """
     server = mk_mcp_from_refs(
-        refs, name=name, input_trans=input_trans, middleware=middleware
+        refs,
+        name=name,
+        input_trans=input_trans,
+        middleware=middleware,
+        instructions=instructions,
     )
     server.run(transport="stdio")
 

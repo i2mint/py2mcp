@@ -136,6 +136,26 @@ the authenticated caller via `fastmcp.server.dependencies.get_access_token()`.
 Middleware is a *programmatic* hook — it takes Python objects, so it isn't wired
 through the `python -m py2mcp` CLI / JSON-config path (unlike `refs`/`name`/`auth`).
 
+## Instructions (the server's model-facing description)
+
+Every builder also accepts `instructions=` — a natural-language string surfaced to
+the connecting client/model as the server's [`instructions`](https://gofastmcp.com/servers/server),
+attached at construction exactly like `auth=`/`middleware=`. It's the place to say
+what the tools are for and the intended workflow, so a model can orient itself
+without calling a tool:
+
+```python
+mcp = mk_mcp_server(
+    [render, estimate],
+    instructions="Turn source docs into narrated audio. Always estimate_cost before a render.",
+)
+# same keyword on mk_mcp_from_refs(...), mk_mcp_from_store(...), mk_http_app(...),
+#                 serve_http(...), serve_stdio(...)
+```
+
+Like `middleware=`, it's a programmatic argument (not yet wired through the
+`python -m py2mcp` CLI / JSON-config path).
+
 ## License
 
 MIT

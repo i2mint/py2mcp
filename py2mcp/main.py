@@ -18,6 +18,7 @@ def mk_mcp_server(
     input_trans: Optional[Callable[[dict], dict]] = None,
     auth: Optional[Any] = None,
     middleware: Optional[Any] = None,
+    instructions: Optional[str] = None,
 ) -> FastMCP:
     """Create an MCP server from Python functions.
 
@@ -39,6 +40,10 @@ def mk_mcp_server(
             missed paid tool means untracked cost). On the remote path ``auth``
             runs first, so a middleware can read the authenticated caller via
             ``fastmcp.server.dependencies.get_access_token()``.
+        instructions: Optional natural-language description of the server, surfaced
+            to the client/model as the server's ``instructions`` — a good place to
+            explain what the tools do and the intended workflow. ``None`` (default)
+            leaves it unset.
 
     Returns:
         A FastMCP server instance ready to run
@@ -64,6 +69,8 @@ def mk_mcp_server(
     middleware_list = _normalize_middleware(middleware)
     if middleware_list:
         server_kwargs["middleware"] = middleware_list
+    if instructions:
+        server_kwargs["instructions"] = instructions
     mcp = FastMCP(name, **server_kwargs)
 
     # Normalize to list of functions
@@ -88,14 +95,16 @@ def mk_mcp_from_refs(
     input_trans: Optional[Callable[[dict], dict]] = None,
     auth: Optional[Any] = None,
     middleware: Optional[Any] = None,
+    instructions: Optional[str] = None,
 ) -> FastMCP:
     """Create an MCP server from ``'module:function'`` reference strings.
 
     Resolves each reference to a callable via :func:`py2mcp.util.import_object`
     and delegates to :func:`mk_mcp_server`. One call from config strings to a
     runnable server — what tools that read tool references from a file (e.g.
-    ``coact``'s ``mcp`` backend) need. ``auth`` and ``middleware`` are forwarded
-    to :func:`mk_mcp_server` (the remote/HTTP path attaches an OAuth provider here).
+    ``coact``'s ``mcp`` backend) need. ``auth``, ``middleware`` and ``instructions``
+    are forwarded to :func:`mk_mcp_server` (the remote/HTTP path attaches an OAuth
+    provider here; ``instructions`` sets the server's model-facing description).
 
     Examples:
         >>> mcp = mk_mcp_from_refs(['os.path:basename', 'os.path:dirname'], name='Paths')
@@ -104,7 +113,12 @@ def mk_mcp_from_refs(
     """
     funcs = [import_object(ref) for ref in refs]
     return mk_mcp_server(
-        funcs, name=name, input_trans=input_trans, auth=auth, middleware=middleware
+        funcs,
+        name=name,
+        input_trans=input_trans,
+        auth=auth,
+        middleware=middleware,
+        instructions=instructions,
     )
 
 
@@ -115,6 +129,7 @@ def mk_mcp_from_store(
     plural: str = "",
     server_name: Optional[str] = None,
     middleware: Optional[Any] = None,
+    instructions: Optional[str] = None,
 ) -> FastMCP:
     """Create an MCP server from a MutableMapping with CRUD operations.
 
@@ -128,6 +143,8 @@ def mk_mcp_from_store(
         middleware: Optional FastMCP middleware (a single middleware or an
             iterable), forwarded to :func:`mk_mcp_server` — wraps every generated
             CRUD tool call, e.g. to meter or audit store reads and mutations.
+        instructions: Optional natural-language server description, forwarded to
+            :func:`mk_mcp_server` as the server's model-facing ``instructions``.
 
     Returns:
         A FastMCP server with CRUD operations
@@ -143,4 +160,6 @@ def mk_mcp_from_store(
 
     funcs = store_to_funcs(store, name=name, plural=plural)
 
-    return mk_mcp_server(funcs, name=server_name, middleware=middleware)
+    return mk_mcp_server(
+        funcs, name=server_name, middleware=middleware, instructions=instructions
+    )
