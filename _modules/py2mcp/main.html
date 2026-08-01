@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>py2mcp.main &mdash; py2mcp 0.1.7 documentation</title>
+  <title>py2mcp.main &mdash; py2mcp 0.1.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=ca7ad2ea"></script>
+      <script src="../../_static/documentation_options.js?v=22607128"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -103,6 +103,7 @@
     <span class="n">input_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an MCP server from Python functions.</span>
 
@@ -124,6 +125,10 @@
 <span class="sd">            missed paid tool means untracked cost). On the remote path ``auth``</span>
 <span class="sd">            runs first, so a middleware can read the authenticated caller via</span>
 <span class="sd">            ``fastmcp.server.dependencies.get_access_token()``.</span>
+<span class="sd">        instructions: Optional natural-language description of the server, surfaced</span>
+<span class="sd">            to the client/model as the server&#39;s ``instructions`` — a good place to</span>
+<span class="sd">            explain what the tools do and the intended workflow. ``None`` (default)</span>
+<span class="sd">            leaves it unset.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server instance ready to run</span>
@@ -149,6 +154,8 @@
     <span class="n">middleware_list</span> <span class="o">=</span> <span class="n">_normalize_middleware</span><span class="p">(</span><span class="n">middleware</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">middleware_list</span><span class="p">:</span>
         <span class="n">server_kwargs</span><span class="p">[</span><span class="s2">&quot;middleware&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">middleware_list</span>
+    <span class="k">if</span> <span class="n">instructions</span><span class="p">:</span>
+        <span class="n">server_kwargs</span><span class="p">[</span><span class="s2">&quot;instructions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">instructions</span>
     <span class="n">mcp</span> <span class="o">=</span> <span class="n">FastMCP</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">server_kwargs</span><span class="p">)</span>
 
     <span class="c1"># Normalize to list of functions</span>
@@ -176,14 +183,16 @@
     <span class="n">input_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an MCP server from ``&#39;module:function&#39;`` reference strings.</span>
 
 <span class="sd">    Resolves each reference to a callable via :func:`py2mcp.util.import_object`</span>
 <span class="sd">    and delegates to :func:`mk_mcp_server`. One call from config strings to a</span>
 <span class="sd">    runnable server — what tools that read tool references from a file (e.g.</span>
-<span class="sd">    ``coact``&#39;s ``mcp`` backend) need. ``auth`` and ``middleware`` are forwarded</span>
-<span class="sd">    to :func:`mk_mcp_server` (the remote/HTTP path attaches an OAuth provider here).</span>
+<span class="sd">    ``coact``&#39;s ``mcp`` backend) need. ``auth``, ``middleware`` and ``instructions``</span>
+<span class="sd">    are forwarded to :func:`mk_mcp_server` (the remote/HTTP path attaches an OAuth</span>
+<span class="sd">    provider here; ``instructions`` sets the server&#39;s model-facing description).</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; mcp = mk_mcp_from_refs([&#39;os.path:basename&#39;, &#39;os.path:dirname&#39;], name=&#39;Paths&#39;)</span>
@@ -192,7 +201,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">import_object</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">mk_mcp_server</span><span class="p">(</span>
-        <span class="n">funcs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span> <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span>
+        <span class="n">funcs</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">input_trans</span><span class="o">=</span><span class="n">input_trans</span><span class="p">,</span>
+        <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span>
+        <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span><span class="p">,</span>
+        <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -206,6 +220,7 @@
     <span class="n">plural</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">server_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an MCP server from a MutableMapping with CRUD operations.</span>
 
@@ -219,6 +234,8 @@
 <span class="sd">        middleware: Optional FastMCP middleware (a single middleware or an</span>
 <span class="sd">            iterable), forwarded to :func:`mk_mcp_server` — wraps every generated</span>
 <span class="sd">            CRUD tool call, e.g. to meter or audit store reads and mutations.</span>
+<span class="sd">        instructions: Optional natural-language server description, forwarded to</span>
+<span class="sd">            :func:`mk_mcp_server` as the server&#39;s model-facing ``instructions``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server with CRUD operations</span>
@@ -234,7 +251,9 @@
 
     <span class="n">funcs</span> <span class="o">=</span> <span class="n">store_to_funcs</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">plural</span><span class="o">=</span><span class="n">plural</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">mk_mcp_server</span><span class="p">(</span><span class="n">funcs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">server_name</span><span class="p">,</span> <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">mk_mcp_server</span><span class="p">(</span>
+        <span class="n">funcs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">server_name</span><span class="p">,</span> <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span><span class="p">,</span> <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span>
+    <span class="p">)</span></div>
 
 </pre></div>
 
