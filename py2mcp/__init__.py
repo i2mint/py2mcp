@@ -19,7 +19,7 @@ from py2mcp.main import mk_mcp_server, mk_mcp_from_store, mk_mcp_from_refs
 from py2mcp.serve import serve_stdio, resolve_server_config, load_server_config
 from py2mcp.http import mk_http_app, serve_http, mk_auth_provider
 from py2mcp.trans import mk_input_trans
-from py2mcp.util import import_object
+from py2mcp.util import import_object, claude_install_link, markdown_install_badge
 
 
 def _resolve_version() -> str:
@@ -45,6 +45,9 @@ __all__ = [
     "mk_mcp_from_refs",
     "mk_input_trans",
     "import_object",
+    # "Add to Claude" connector links (pure strings, no server needed)
+    "claude_install_link",
+    "markdown_install_badge",
     "serve_stdio",
     "resolve_server_config",
     "load_server_config",

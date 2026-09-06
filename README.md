@@ -156,6 +156,37 @@ mcp = mk_mcp_server(
 Like `middleware=`, it's a programmatic argument (not yet wired through the
 `python -m py2mcp` CLI / JSON-config path).
 
+## "Add to Claude" install links
+
+Once a server is hosted, the last mile is getting a human to add it. There's no
+true one-click install for an unlisted connector (listing requires Anthropic
+review), but a prefilled link opens the add-connector modal with the name and
+URL already filled in, so the user only has to confirm:
+
+```python
+from py2mcp import claude_install_link, markdown_install_badge
+
+claude_install_link("snout", "https://example.com/api/snout_mcp/mcp")
+# 'https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&...'
+
+markdown_install_badge("snout", "https://example.com/api/snout_mcp/mcp")
+# '[Add snout to Claude](https://claude.ai/customize/connectors?...)'  <- paste into a README
+
+claude_install_link("snout", "...", admin=True)  # org-wide page, not per-user
+```
+
+Both are pure string functions (stdlib only, no server needed). Three caveats
+the link itself can't express:
+
+- Custom connectors are a **paid-plan** feature, so the link goes nowhere for a
+  Free-plan user.
+- `admin=True` targets the org-wide install page — the right one when an admin
+  is rolling a connector out to a workspace, the wrong one for a personal install.
+- **A link is not an access grant.** If the server is an OAuth resource server
+  with an allowlist (see above), someone not on it can follow the link, complete
+  the flow, and still be refused. Hand out the link together with whatever adds
+  them to the allowlist.
+
 ## License
 
 MIT

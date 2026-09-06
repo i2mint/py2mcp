@@ -3,6 +3,7 @@
 from importlib import import_module
 from typing import Any, MutableMapping, Callable, TypeVar
 from collections.abc import Iterator
+from urllib.parse import quote, urlencode
 
 KT = TypeVar("KT")
 VT = TypeVar("VT")
@@ -33,6 +34,63 @@ def import_object(ref: str) -> Any:
     for part in attr.split("."):
         obj = getattr(obj, part)
     return obj
+
+
+def claude_install_link(name: str, mcp_url: str, *, admin: bool = False) -> str:
+    """Prefilled "Add custom connector" link for claude.ai.
+
+    There is no true one-click install for an unlisted MCP server (listing
+    requires Anthropic review), but this link opens the add-connector modal with
+    the name and URL already filled in, so the user only has to confirm — which
+    beats "go to Settings, find Connectors, paste this long URL".
+
+    Args:
+        name: Connector name to prefill (what the user will see in their list).
+        mcp_url: Full URL of the MCP endpoint, e.g. ``https://host/api/x/mcp``.
+        admin: Target the org-wide install page instead of the per-user one.
+            Use it when an admin is rolling the connector out to a whole
+            workspace; the default (``False``) is the personal install.
+
+    Returns:
+        The claude.ai URL, safe to paste into a README or a chat message.
+
+    >>> claude_install_link('snout', 'https://example.com/api/snout_mcp/mcp')
+    'https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&connectorUrl=https%3A%2F%2Fexample.com%2Fapi%2Fsnout_mcp%2Fmcp'
+
+    Names and URLs are percent-encoded, so spaces (and ``&``) can't break the
+    query string:
+
+    >>> claude_install_link('my server', 'https://x.io/mcp', admin=True)
+    'https://claude.ai/admin-settings/connectors?modal=add-custom-connector&connectorName=my%20server&connectorUrl=https%3A%2F%2Fx.io%2Fmcp'
+
+    Note that the link is a convenience, not an access grant: if the server is an
+    OAuth resource server with an allowlist, a user who isn't on it can follow
+    the link, complete the flow, and still be refused. Custom connectors are also
+    a paid-plan feature, so the link goes nowhere for a Free-plan user.
+    """
+    path = "admin-settings" if admin else "customize"
+    params = urlencode(
+        {
+            "modal": "add-custom-connector",
+            "connectorName": name,
+            "connectorUrl": mcp_url,
+        },
+        quote_via=quote,
+    )
+    return f"https://claude.ai/{path}/connectors?{params}"
+
+
+def markdown_install_badge(name: str, mcp_url: str, *, admin: bool = False) -> str:
+    """Markdown link that installs an MCP server as a claude.ai connector.
+
+    The dominant use of :func:`claude_install_link` is pasting one into a README,
+    so this saves writing the same link syntax around it. Arguments are those of
+    :func:`claude_install_link`.
+
+    >>> markdown_install_badge('snout', 'https://x.io/mcp')
+    '[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'
+    """
+    return f"[Add {name} to Claude]({claude_install_link(name, mcp_url, admin=admin)})"
 
 
 def _store_to_funcs(
