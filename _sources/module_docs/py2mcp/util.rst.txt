@@ -1,4 +1,0 @@
-py2mcp.util
-===========
-.. automodule:: py2mcp.util
-   :members:

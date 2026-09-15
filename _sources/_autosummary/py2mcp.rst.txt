@@ -1,0 +1,34 @@
+﻿py2mcp
+======
+
+.. automodule:: py2mcp
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      mk_mcp_server
+      mk_mcp_from_store
+      mk_mcp_from_refs
+      mk_input_trans
+      import_object
+      serve_stdio
+      resolve_server_config
+      load_server_config
+      mk_http_app
+      serve_http
+      mk_auth_provider
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   base
+   http
+   main
+   serve
+   trans
+   util

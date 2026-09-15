@@ -1,0 +1,21 @@
+py2mcp.http
+===========
+
+.. automodule:: py2mcp.http
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      SUPPORTED_AUTH_TYPES
+      DFLT_TRANSPORT
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      mk_auth_provider
+      mk_http_app
+      serve_http
+   

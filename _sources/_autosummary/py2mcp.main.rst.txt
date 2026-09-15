@@ -1,0 +1,14 @@
+py2mcp.main
+===========
+
+.. automodule:: py2mcp.main
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      mk_mcp_from_refs
+      mk_mcp_from_store
+      mk_mcp_server
+   

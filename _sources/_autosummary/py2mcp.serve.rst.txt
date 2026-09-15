@@ -1,0 +1,21 @@
+py2mcp.serve
+============
+
+.. automodule:: py2mcp.serve
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      DFLT_SERVER_NAME
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      load_server_config
+      main
+      resolve_server_config
+      serve_stdio
+   

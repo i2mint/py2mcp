@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "built_at": "2026-09-15T12:27:27Z",
+  "package": {
+    "name": "py2mcp",
+    "version": "0.1.10",
+    "display_name": "py2mcp",
+    "source": "pyproject.toml"
+  },
+  "git": {
+    "available": true,
+    "commit": "9ba00578d7a356a9c6543a44ea2f7e605567be99",
+    "short_commit": "9ba0057",
+    "branch": "main",
+    "tags": [
+      "0.1.10"
+    ],
+    "dirty": false,
+    "remote_url": "https://github.com/i2mint/py2mcp",
+    "commit_url": "https://github.com/i2mint/py2mcp/commit/9ba00578d7a356a9c6543a44ea2f7e605567be99",
+    "error": null
+  },
+  "ci": {
+    "provider": "github",
+    "repository": "i2mint/py2mcp",
+    "sha": "67d3a4635c6f927442e459f0508e073f8d1f5604",
+    "sha_in_history": true,
+    "ref": "refs/heads/main",
+    "ref_name": "main",
+    "run_id": "34968766305",
+    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/34968766305",
+    "server_url": "https://github.com"
+  },
+  "tools": {
+    "epythet": "0.2.11",
+    "sphinx": "9.1.0",
+    "docutils": "0.22.4",
+    "python": "3.12.14"
+  },
+  "config": {
+    "theme": "auto",
+    "html_theme": "pydata_sphinx_theme",
+    "accent": "#6e3f8d",
+    "mode": "auto",
+    "api_generator": "autosummary",
+    "ignore": [
+      "tests/",
+      "scrap/",
+      "examples/"
+    ],
+    "agent_outputs": true,
+    "aggregates": [
+      "md"
+    ],
+    "ai_artifacts": true,
+    "provenance": true,
+    "docs_dir": "docsrc"
+  },
+  "site": {
+    "modules_documented": 7,
+    "objects_documented": 27
+  },
+  "pypi": {
+    "checked": true,
+    "latest": "0.1.10",
+    "relation": "same",
+    "error": null
+  },
+  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 9ba00578d7a356a9c6543a44ea2f7e605567be99\npip install \"epythet==0.2.11\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "warnings": [],
+  "alignment": {
+    "aligned": true,
+    "notes": []
+  }
+}

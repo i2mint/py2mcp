@@ -1,0 +1,12 @@
+py2mcp.trans
+============
+
+.. automodule:: py2mcp.trans
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      mk_input_trans
+   

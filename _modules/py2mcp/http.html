@@ -1,118 +1,740 @@
 
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>py2mcp.http &mdash; py2mcp 0.1.8 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="alternate" type="text/markdown" href="http.html.md">
+<link rel="describedby" href="../../llms.txt" type="text/markdown">
+    <title>py2mcp.http &#8212; py2mcp</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/epythet.css?v=80bbab5e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../../_static/documentation_options.js?v=bafade30"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/py2mcp/http';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.10" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
 
   
-      <script src="../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=22607128"></script>
-      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
-      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
-</head>
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="../../index.html" class="icon icon-home">
-            py2mcp
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp.html">py2mcp</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/__main__.html">py2mcp.__main__</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/base.html">py2mcp.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/http.html">py2mcp.http</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/main.html">py2mcp.main</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/serve.html">py2mcp.serve</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/trans.html">py2mcp.trans</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/py2mcp/util.html">py2mcp.util</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">py2mcp</a>
-      </nav>
+  
+    
+  
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">py2mcp.http</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">py2mcp</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API reference
+  </a>
+</li>
+
   </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <h1>Source code for py2mcp.http</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Serve a py2mcp ``FastMCP`` server over **Streamable HTTP** with optional</span>
-<span class="sd">OAuth 2.1 — the *remote* counterpart to :mod:`py2mcp.serve` (stdio).</span>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
 
-<span class="sd">A *remote* MCP server (e.g. a claude.ai custom connector) is reached over public</span>
-<span class="sd">HTTPS from the vendor&#39;s cloud and authenticates with **OAuth 2.1**. Per the MCP</span>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/py2mcp" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/py2mcp" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">py2mcp.http</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for py2mcp.http</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Serve a py2mcp ``FastMCP`` server over Streamable HTTP with optional OAuth 2.1.</span>
+
+<span class="sd">The *remote* counterpart to :mod:`py2mcp.serve` (stdio). A *remote* MCP server (e.g. a claude.ai custom connector) is reached over public</span>
+<span class="sd">HTTPS from the vendor's cloud and authenticates with **OAuth 2.1**. Per the MCP</span>
 <span class="sd">authorization spec the MCP server is an OAuth 2.1 **resource server** — it</span>
 <span class="sd">*validates* bearer tokens minted by a **managed identity provider** (the</span>
 <span class="sd">authorization server) and **never issues tokens itself**. Two hard rules fall out</span>
 <span class="sd">of that and are enforced here by construction:</span>
 
-<span class="sd">- **Audience binding (RFC 8707).** The verifier checks the token&#39;s ``aud`` equals</span>
-<span class="sd">  *this* server&#39;s resource id, so a token minted for another service cannot be</span>
+<span class="sd">- **Audience binding (RFC 8707).** The verifier checks the token's ``aud`` equals</span>
+<span class="sd">  *this* server's resource id, so a token minted for another service cannot be</span>
 <span class="sd">  replayed here (the confused-deputy defense).</span>
 <span class="sd">- **No token passthrough.** This layer only *verifies* the inbound token; it never</span>
 <span class="sd">  forwards it upstream. Any upstream call your tools make must use their own</span>
 <span class="sd">  credentials.</span>
 
-<span class="sd">It wraps FastMCP&#39;s native machinery (no transport/OAuth code is reinvented):</span>
+<span class="sd">It wraps FastMCP's native machinery (no transport/OAuth code is reinvented):</span>
 
 <span class="sd">- :func:`mk_auth_provider` — an auth-config dict → a</span>
 <span class="sd">  ``fastmcp.server.auth.RemoteAuthProvider`` (a ``JWTVerifier`` resource server</span>
-<span class="sd">  that validates the IdP&#39;s JWTs and publishes the RFC 9728</span>
+<span class="sd">  that validates the IdP's JWTs and publishes the RFC 9728</span>
 <span class="sd">  ``/.well-known/oauth-protected-resource`` document pointing at the IdP).</span>
 <span class="sd">- :func:`mk_http_app` — build the server (via :func:`py2mcp.mk_mcp_from_refs`),</span>
 <span class="sd">  attach the auth provider, and return a Streamable-HTTP **ASGI app** to run under</span>
 <span class="sd">  any ASGI server (uvicorn, gunicorn, a serverless adapter).</span>
 <span class="sd">- :func:`serve_http` — build and *run* it (blocking), for a self-hosted process.</span>
 
-<span class="sd">``coact``&#39;s ``claude-remote-connector`` publish target scaffolds a deployable</span>
+<span class="sd">``coact``'s ``claude-remote-connector`` publish target scaffolds a deployable</span>
 <span class="sd">service around these — coact writes packaging, py2mcp builds and serves the MCP</span>
 <span class="sd">server (the same division of labour as the stdio ``.mcpb`` path).</span>
-<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Building the app performs no network I/O, so it is safe to do at import time:</span>
+
+<span class="sd">&gt;&gt;&gt; from py2mcp.http import mk_http_app</span>
+<span class="sd">&gt;&gt;&gt; app = mk_http_app(['os.path:basename'], name='Paths')</span>
+<span class="sd">&gt;&gt;&gt; [route.path for route in app.routes]</span>
+<span class="sd">['/mcp']</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -121,91 +743,129 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_mcp_from_refs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.serve</span><span class="w"> </span><span class="kn">import</span> <span class="n">DFLT_SERVER_NAME</span>
 
-<span class="c1">#: Auth ``type`` values :func:`mk_auth_provider` understands. ``&#39;jwt&#39;`` is the</span>
-<span class="c1">#: vendor-neutral resource-server pattern (validate a managed IdP&#39;s JWTs);</span>
+<span class="c1">#: Auth ``type`` values :func:`mk_auth_provider` understands. ``'jwt'`` is the</span>
+<span class="c1">#: vendor-neutral resource-server pattern (validate a managed IdP's JWTs);</span>
 <span class="c1">#: managed-provider shortcuts (auth0/workos/...) can be added as new types.</span>
-<span class="n">SUPPORTED_AUTH_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;jwt&quot;</span><span class="p">,)</span>
+<span class="n">SUPPORTED_AUTH_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"jwt"</span><span class="p">,)</span>
 
 <span class="c1">#: Default Streamable-HTTP transport (the current remote MCP transport).</span>
-<span class="n">DFLT_TRANSPORT</span> <span class="o">=</span> <span class="s2">&quot;streamable-http&quot;</span>
+<span class="n">DFLT_TRANSPORT</span> <span class="o">=</span> <span class="s2">"streamable-http"</span>
 
 
 <div class="viewcode-block" id="mk_auth_provider">
-<a class="viewcode-back" href="../../module_docs/py2mcp/http.html#py2mcp.mk_auth_provider">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/py2mcp.http.html#py2mcp.mk_auth_provider">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mk_auth_provider</span><span class="p">(</span><span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a FastMCP **resource-server** auth provider from an auth-config dict.</span>
+<span class="w">    </span><span class="sd">"""Build a FastMCP **resource-server** auth provider from an auth-config dict.</span>
 
 <span class="sd">    ``auth`` is ``None``/falsy (no auth) or a dict with a ``type`` key:</span>
 
-<span class="sd">    ``type=&#39;jwt&#39;`` (default) — validate JWTs issued by a managed IdP. Keys:</span>
+<span class="sd">    ``type='jwt'`` (default) — validate JWTs issued by a managed IdP. Keys:</span>
 
-<span class="sd">    - ``jwks_uri`` *or* ``public_key`` — where to get the IdP&#39;s signing key(s).</span>
-<span class="sd">    - ``issuer`` — the IdP issuer URL (the token&#39;s ``iss``).</span>
-<span class="sd">    - ``audience`` (**required**) — **this** server&#39;s resource id (the token&#39;s</span>
+<span class="sd">    - ``jwks_uri`` *or* ``public_key`` — where to get the IdP's signing key(s).</span>
+<span class="sd">    - ``issuer`` — the IdP issuer URL (the token's ``iss``).</span>
+<span class="sd">    - ``audience`` (**required**) — **this** server's resource id (the token's</span>
 <span class="sd">      ``aud``). RFC 8707 audience binding is mandatory: it stops a token minted for</span>
 <span class="sd">      another service being replayed here (the confused-deputy defense), so this</span>
 <span class="sd">      helper refuses to build a verifier that would skip it.</span>
 <span class="sd">    - ``authorization_servers`` (or a single ``issuer``) — IdP issuer URL(s)</span>
 <span class="sd">      advertised in the RFC 9728 protected-resource metadata.</span>
-<span class="sd">    - ``base_url`` — this server&#39;s public base URL.</span>
+<span class="sd">    - ``base_url`` — this server's public base URL.</span>
 <span class="sd">    - ``required_scopes`` (optional) — scopes every request must carry.</span>
 
-<span class="sd">    Returns a ``RemoteAuthProvider`` (a resource server), or ``None`` when ``auth``</span>
-<span class="sd">    is falsy. Raises ``ValueError`` on an unknown ``type`` or a missing required key.</span>
 <span class="sd">    Building the provider performs **no network I/O** (key fetching is lazy, on the</span>
 <span class="sd">    first request), so this is safe to call at scaffold/import time.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        auth: The auth-config dict described above, or ``None``/``{}`` for no</span>
+<span class="sd">            authentication.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A ``RemoteAuthProvider`` (a resource server), or ``None`` when ``auth``</span>
+<span class="sd">        is falsy.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: ``auth`` is not a dict, its ``type`` is not supported, or a</span>
+<span class="sd">            required key (``jwks_uri``/``public_key``, ``base_url``,</span>
+<span class="sd">            ``audience``, ``authorization_servers``/``issuer``) is missing.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        &gt;&gt;&gt; mk_auth_provider(None) is None</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; provider = mk_auth_provider({</span>
+<span class="sd">        ...     'type': 'jwt',</span>
+<span class="sd">        ...     'jwks_uri': 'https://idp.example.com/.well-known/jwks.json',</span>
+<span class="sd">        ...     'issuer': 'https://idp.example.com',</span>
+<span class="sd">        ...     'audience': 'https://conn.example.com/mcp',</span>
+<span class="sd">        ...     'base_url': 'https://conn.example.com',</span>
+<span class="sd">        ... })</span>
+<span class="sd">        &gt;&gt;&gt; type(provider).__name__</span>
+<span class="sd">        'RemoteAuthProvider'</span>
+<span class="sd">        &gt;&gt;&gt; provider.authorization_servers</span>
+<span class="sd">        ['https://idp.example.com']</span>
+
+<span class="sd">        Leaving out the audience is refused rather than silently unchecked:</span>
+
+<span class="sd">        &gt;&gt;&gt; mk_auth_provider({'type': 'jwt', 'jwks_uri': 'https://idp.example.com/jwks',</span>
+<span class="sd">        ...                   'base_url': 'https://conn.example.com'})  # doctest: +ELLIPSIS</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">        ValueError: jwt auth needs 'audience' (this server's resource id). ...</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        :func:`mk_http_app`: where the provider is attached to a server.</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">auth</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;auth must be a dict (or None), e.g. {&#39;type&#39;: &#39;jwt&#39;, ...}&quot;</span><span class="p">)</span>
-    <span class="n">auth_type</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;jwt&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">auth_type</span> <span class="o">!=</span> <span class="s2">&quot;jwt&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"auth must be a dict (or None), e.g. {'type': 'jwt', ...}"</span><span class="p">)</span>
+    <span class="n">auth_type</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"jwt"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">auth_type</span> <span class="o">!=</span> <span class="s2">"jwt"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Unsupported auth type </span><span class="si">{</span><span class="n">auth_type</span><span class="si">!r}</span><span class="s2">. Supported: &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SUPPORTED_AUTH_TYPES</span><span class="p">)</span><span class="si">}</span><span class="s2">. Use &#39;jwt&#39; for the resource-server &quot;</span>
-            <span class="s2">&quot;pattern (validate a managed IdP&#39;s JWTs); managed-provider shortcuts &quot;</span>
-            <span class="s2">&quot;can be added as new types.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Unsupported auth type </span><span class="si">{</span><span class="n">auth_type</span><span class="si">!r}</span><span class="s2">. Supported: "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SUPPORTED_AUTH_TYPES</span><span class="p">)</span><span class="si">}</span><span class="s2">. Use 'jwt' for the resource-server "</span>
+            <span class="s2">"pattern (validate a managed IdP's JWTs); managed-provider shortcuts "</span>
+            <span class="s2">"can be added as new types."</span>
         <span class="p">)</span>
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp.server.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteAuthProvider</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp.server.auth.providers.jwt</span><span class="w"> </span><span class="kn">import</span> <span class="n">JWTVerifier</span>
 
-    <span class="n">jwks_uri</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jwks_uri&quot;</span><span class="p">)</span>
-    <span class="n">public_key</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;public_key&quot;</span><span class="p">)</span>
+    <span class="n">jwks_uri</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jwks_uri"</span><span class="p">)</span>
+    <span class="n">public_key</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"public_key"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">jwks_uri</span> <span class="ow">or</span> <span class="n">public_key</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;jwt auth needs &#39;jwks_uri&#39; (or &#39;public_key&#39;) to validate token signatures.&quot;</span>
+            <span class="s2">"jwt auth needs 'jwks_uri' (or 'public_key') to validate token signatures."</span>
         <span class="p">)</span>
-    <span class="n">base_url</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base_url&quot;</span><span class="p">)</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"base_url"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">base_url</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;jwt auth needs &#39;base_url&#39; (this server&#39;s public base URL, for the &quot;</span>
-            <span class="s2">&quot;RFC 9728 protected-resource metadata).&quot;</span>
+            <span class="s2">"jwt auth needs 'base_url' (this server's public base URL, for the "</span>
+            <span class="s2">"RFC 9728 protected-resource metadata)."</span>
         <span class="p">)</span>
-    <span class="n">audience</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audience&quot;</span><span class="p">)</span>
+    <span class="n">audience</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"audience"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">audience</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;jwt auth needs &#39;audience&#39; (this server&#39;s resource id). Without it the &quot;</span>
-            <span class="s2">&quot;token&#39;s audience is NOT validated, which re-opens the confused-deputy &quot;</span>
-            <span class="s2">&quot;vulnerability (a token minted for another service could be replayed &quot;</span>
-            <span class="s2">&quot;here) — RFC 8707 audience binding is mandatory for an MCP resource &quot;</span>
-            <span class="s2">&quot;server. Set it to this connector&#39;s public resource URL.&quot;</span>
+            <span class="s2">"jwt auth needs 'audience' (this server's resource id). Without it the "</span>
+            <span class="s2">"token's audience is NOT validated, which re-opens the confused-deputy "</span>
+            <span class="s2">"vulnerability (a token minted for another service could be replayed "</span>
+            <span class="s2">"here) — RFC 8707 audience binding is mandatory for an MCP resource "</span>
+            <span class="s2">"server. Set it to this connector's public resource URL."</span>
         <span class="p">)</span>
-    <span class="n">authorization_servers</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authorization_servers&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">authorization_servers</span> <span class="ow">and</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issuer&quot;</span><span class="p">):</span>
-        <span class="n">authorization_servers</span> <span class="o">=</span> <span class="p">[</span><span class="n">auth</span><span class="p">[</span><span class="s2">&quot;issuer&quot;</span><span class="p">]]</span>
+    <span class="n">authorization_servers</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"authorization_servers"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">authorization_servers</span> <span class="ow">and</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"issuer"</span><span class="p">):</span>
+        <span class="n">authorization_servers</span> <span class="o">=</span> <span class="p">[</span><span class="n">auth</span><span class="p">[</span><span class="s2">"issuer"</span><span class="p">]]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">authorization_servers</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;jwt auth needs &#39;authorization_servers&#39; (or &#39;issuer&#39;) — the managed IdP &quot;</span>
-            <span class="s2">&quot;that issues tokens, advertised via RFC 9728 discovery.&quot;</span>
+            <span class="s2">"jwt auth needs 'authorization_servers' (or 'issuer') — the managed IdP "</span>
+            <span class="s2">"that issues tokens, advertised via RFC 9728 discovery."</span>
         <span class="p">)</span>
-    <span class="n">required_scopes</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required_scopes&quot;</span><span class="p">)</span>
+    <span class="n">required_scopes</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"required_scopes"</span><span class="p">)</span>
 
     <span class="n">verifier</span> <span class="o">=</span> <span class="n">JWTVerifier</span><span class="p">(</span>
         <span class="n">jwks_uri</span><span class="o">=</span><span class="n">jwks_uri</span><span class="p">,</span>
         <span class="n">public_key</span><span class="o">=</span><span class="n">public_key</span><span class="p">,</span>
-        <span class="n">issuer</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issuer&quot;</span><span class="p">),</span>
+        <span class="n">issuer</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"issuer"</span><span class="p">),</span>
         <span class="n">audience</span><span class="o">=</span><span class="n">audience</span><span class="p">,</span>
         <span class="n">required_scopes</span><span class="o">=</span><span class="n">required_scopes</span><span class="p">,</span>
         <span class="n">base_url</span><span class="o">=</span><span class="n">base_url</span><span class="p">,</span>
@@ -220,7 +880,7 @@
 
 
 <div class="viewcode-block" id="mk_http_app">
-<a class="viewcode-back" href="../../module_docs/py2mcp/http.html#py2mcp.mk_http_app">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/py2mcp.http.html#py2mcp.mk_http_app">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mk_http_app</span><span class="p">(</span>
     <span class="n">refs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
@@ -233,26 +893,71 @@
     <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a Streamable-HTTP **ASGI app** from ``refs`` (+ optional OAuth).</span>
+<span class="w">    </span><span class="sd">"""Build a Streamable-HTTP **ASGI app** from ``refs`` (+ optional OAuth).</span>
 
 <span class="sd">    Returns the ASGI application (a Starlette app), so any ASGI server can run it::</span>
 
 <span class="sd">        # server/app.py</span>
 <span class="sd">        from py2mcp.http import mk_http_app</span>
-<span class="sd">        app = mk_http_app([&#39;mypkg.tools:summarize&#39;], name=&#39;My Connector&#39;, auth=AUTH)</span>
+<span class="sd">        app = mk_http_app(['mypkg.tools:summarize'], name='My Connector', auth=AUTH)</span>
 <span class="sd">        # then:  uvicorn server.app:app --host 0.0.0.0 --port 8000</span>
 
-<span class="sd">    ``auth`` is resolved by :func:`mk_auth_provider` (``None`` → no auth; a remote</span>
-<span class="sd">    connector should always set it). ``middleware`` (a single FastMCP middleware or</span>
-<span class="sd">    a list) is attached for cross-cutting concerns — metering, logging, rate</span>
-<span class="sd">    limiting — and, because ``auth`` runs first, can read the authenticated caller</span>
-<span class="sd">    via ``fastmcp.server.dependencies.get_access_token()``. ``instructions`` sets the</span>
-<span class="sd">    server&#39;s model-facing description (surfaced to the connecting client/model).</span>
-<span class="sd">    ``stateless_http=True``</span>
-<span class="sd">    is recommended behind a load balancer (MCP sessions are stateful, so default</span>
-<span class="sd">    in-memory sessions break across replicas — go stateless or externalize session</span>
-<span class="sd">    state). Builds the app with **no network I/O**.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Builds the app with **no network I/O**.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        refs: ``'module:function'`` references, one per tool.</span>
+<span class="sd">        name: Server name.</span>
+<span class="sd">        auth: Resolved by :func:`mk_auth_provider` (``None`` → no auth; a remote</span>
+<span class="sd">            connector should always set it).</span>
+<span class="sd">        input_trans: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.</span>
+<span class="sd">        transport: The FastMCP HTTP transport; ``DFLT_TRANSPORT`` is</span>
+<span class="sd">            Streamable HTTP.</span>
+<span class="sd">        path: URL path the MCP endpoint is mounted at; ``None`` keeps</span>
+<span class="sd">            FastMCP's default (``/mcp``).</span>
+<span class="sd">        stateless_http: ``True`` is recommended behind a load balancer (MCP</span>
+<span class="sd">            sessions are stateful, so default in-memory sessions break across</span>
+<span class="sd">            replicas — go stateless or externalize session state). ``None``</span>
+<span class="sd">            keeps FastMCP's default.</span>
+<span class="sd">        middleware: A single FastMCP middleware or a list, attached for</span>
+<span class="sd">            cross-cutting concerns — metering, logging, rate limiting. Because</span>
+<span class="sd">            ``auth`` runs first, it can read the authenticated caller via</span>
+<span class="sd">            ``fastmcp.server.dependencies.get_access_token()``.</span>
+<span class="sd">        instructions: The server's model-facing description (surfaced to the</span>
+<span class="sd">            connecting client/model).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The Starlette ASGI application.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: ``auth`` is malformed (see :func:`mk_auth_provider`) or a</span>
+<span class="sd">            reference cannot be parsed (see :func:`py2mcp.mk_mcp_from_refs`).</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        &gt;&gt;&gt; app = mk_http_app(['os.path:basename'], name='Paths')</span>
+<span class="sd">        &gt;&gt;&gt; callable(app)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; [route.path for route in app.routes]</span>
+<span class="sd">        ['/mcp']</span>
+
+<span class="sd">        With OAuth and a custom mount path, the RFC 9728 protected-resource</span>
+<span class="sd">        metadata route is added next to the endpoint:</span>
+
+<span class="sd">        &gt;&gt;&gt; AUTH = {</span>
+<span class="sd">        ...     'type': 'jwt',</span>
+<span class="sd">        ...     'jwks_uri': 'https://idp.example.com/.well-known/jwks.json',</span>
+<span class="sd">        ...     'issuer': 'https://idp.example.com',</span>
+<span class="sd">        ...     'audience': 'https://conn.example.com/mcp',</span>
+<span class="sd">        ...     'base_url': 'https://conn.example.com',</span>
+<span class="sd">        ... }</span>
+<span class="sd">        &gt;&gt;&gt; app = mk_http_app(['os.path:basename'], name='Paths', auth=AUTH, path='/api/mcp')</span>
+<span class="sd">        &gt;&gt;&gt; [route.path for route in app.routes]</span>
+<span class="sd">        ['/.well-known/oauth-protected-resource/api/mcp', '/api/mcp']</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        :func:`serve_http`: build and run in-process instead of returning the app.</span>
+<span class="sd">        :func:`py2mcp.serve.serve_stdio`: the local stdio counterpart.</span>
+<span class="sd">    """</span>
     <span class="n">provider</span> <span class="o">=</span> <span class="n">mk_auth_provider</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_from_refs</span><span class="p">(</span>
         <span class="n">refs</span><span class="p">,</span>
@@ -262,22 +967,22 @@
         <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span><span class="p">,</span>
         <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">http_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;transport&quot;</span><span class="p">:</span> <span class="n">transport</span><span class="p">}</span>
+    <span class="n">http_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"transport"</span><span class="p">:</span> <span class="n">transport</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">http_kwargs</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="n">http_kwargs</span><span class="p">[</span><span class="s2">"path"</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
     <span class="k">if</span> <span class="n">stateless_http</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">http_kwargs</span><span class="p">[</span><span class="s2">&quot;stateless_http&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stateless_http</span>
+        <span class="n">http_kwargs</span><span class="p">[</span><span class="s2">"stateless_http"</span><span class="p">]</span> <span class="o">=</span> <span class="n">stateless_http</span>
     <span class="k">return</span> <span class="n">server</span><span class="o">.</span><span class="n">http_app</span><span class="p">(</span><span class="o">**</span><span class="n">http_kwargs</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="serve_http">
-<a class="viewcode-back" href="../../module_docs/py2mcp/http.html#py2mcp.serve_http">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/py2mcp.http.html#py2mcp.serve_http">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">serve_http</span><span class="p">(</span>
     <span class="n">refs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_SERVER_NAME</span><span class="p">,</span>
-    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"127.0.0.1"</span><span class="p">,</span>
     <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">,</span>
     <span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">input_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -286,15 +991,15 @@
     <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.</span>
+<span class="w">    </span><span class="sd">"""Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.</span>
 
 <span class="sd">    For a self-hosted process. Binds ``127.0.0.1`` by default — expose a public</span>
 <span class="sd">    interface only behind a TLS-terminating reverse proxy (a remote connector must</span>
-<span class="sd">    be reachable over public **HTTPS**, and binding locally is the spec&#39;s</span>
+<span class="sd">    be reachable over public **HTTPS**, and binding locally is the spec's</span>
 <span class="sd">    DNS-rebinding-safe default). ``auth`` is resolved by :func:`mk_auth_provider`;</span>
 <span class="sd">    ``middleware`` (a single FastMCP middleware or a list) is attached as in</span>
-<span class="sd">    :func:`mk_http_app`; ``instructions`` sets the server&#39;s model-facing description.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    :func:`mk_http_app`; ``instructions`` sets the server's model-facing description.</span>
+<span class="sd">    """</span>
     <span class="n">provider</span> <span class="o">=</span> <span class="n">mk_auth_provider</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_from_refs</span><span class="p">(</span>
         <span class="n">refs</span><span class="p">,</span>
@@ -304,38 +1009,60 @@
         <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span><span class="p">,</span>
         <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">run_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;transport&quot;</span><span class="p">:</span> <span class="n">transport</span><span class="p">,</span> <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="n">port</span><span class="p">}</span>
+    <span class="n">run_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"transport"</span><span class="p">:</span> <span class="n">transport</span><span class="p">,</span> <span class="s2">"host"</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span> <span class="s2">"port"</span><span class="p">:</span> <span class="n">port</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">stateless_http</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">run_kwargs</span><span class="p">[</span><span class="s2">&quot;stateless_http&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stateless_http</span>
+        <span class="n">run_kwargs</span><span class="p">[</span><span class="s2">"stateless_http"</span><span class="p">]</span> <span class="o">=</span> <span class="n">stateless_http</span>
     <span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">run_kwargs</span><span class="p">)</span></div>
 
 </pre></div>
 
-           </div>
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
           </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
   </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
+</p></div>
+      
+    </div>
+  
+</div>
 
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+  </footer>
+  </body>
 </html>

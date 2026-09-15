@@ -1,0 +1,13 @@
+py2mcp.util
+===========
+
+.. automodule:: py2mcp.util
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      import_object
+      store_to_funcs
+   
