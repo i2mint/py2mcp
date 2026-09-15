@@ -1,4 +1,22 @@
-"""Input and output transformation utilities for py2mcp."""
+"""Input transformation for py2mcp tools: convert arguments before a function runs.
+
+MCP clients send JSON, so a tool that wants a ``numpy`` array, a ``Path`` or a
+parsed date needs its inputs converted first. ``mk_input_trans`` builds the
+``input_trans`` callable that :func:`py2mcp.mk_mcp_server`,
+:func:`py2mcp.mk_mcp_from_refs`, and the HTTP/stdio builders that wrap them
+apply to every tool call, from a mapping of argument names to converter
+functions. (``mk_mcp_from_store``'s generated CRUD tools take no
+``input_trans``.)
+
+Main entry points:
+
+- ``mk_input_trans``: name-to-converter mapping in, ``input_trans`` callable out
+
+>>> from py2mcp.trans import mk_input_trans
+>>> trans = mk_input_trans({'n': int})
+>>> trans({'n': '3', 'label': 'x'})
+{'n': 3, 'label': 'x'}
+"""
 
 from typing import Callable, Mapping, Iterable, Optional, Iterator
 
@@ -9,6 +27,7 @@ def _name_func_pairs_from_mapping(
     """Generate (name, func) pairs from various mapping formats.
 
     Supports:
+
     - {name: func} - standard mapping
     - {name: [func1, func2]} - one name, multiple functions
     - {func: name} - reversed mapping
@@ -88,10 +107,43 @@ def mk_input_trans(
 ) -> Callable[[dict], dict]:
     """Create an input transformation function from name->func mappings.
 
-    >>> def to_int(x): return int(x)
-    >>> trans = mk_input_trans({'x': to_int})
-    >>> trans({'x': '42', 'y': 'hello'})
-    {'x': 42, 'y': 'hello'}
+    The returned callable takes a tool call's keyword arguments as a dict and
+    returns a new dict in which each named argument has been passed through its
+    converter; arguments with no converter are copied through unchanged. Pass it
+    as ``input_trans`` to :func:`py2mcp.mk_mcp_server` and friends.
+
+    Args:
+        name_func_relationships: Which converter applies to which argument, as
+            ``{name: func}``, or reversed as ``{func: name}`` or
+            ``{func: [name, ...]}`` when one converter serves several arguments.
+            ``None`` gives a transformation that only copies the dict.
+
+    Returns:
+        A function from a kwargs dict to a new kwargs dict.
+
+    Raises:
+        ValueError: The same argument name is mapped more than once.
+
+    Examples:
+
+        >>> def to_int(x): return int(x)
+        >>> trans = mk_input_trans({'x': to_int})
+        >>> trans({'x': '42', 'y': 'hello'})
+        {'x': 42, 'y': 'hello'}
+
+        One converter for several arguments, written the reversed way:
+
+        >>> trans = mk_input_trans({to_int: ['x', 'y']})
+        >>> trans({'x': '1', 'y': '2', 'z': '3'})
+        {'x': 1, 'y': 2, 'z': '3'}
+
+        No mapping means no conversion:
+
+        >>> mk_input_trans()({'x': '1'})
+        {'x': '1'}
+
+    See Also:
+        :func:`py2mcp.mk_mcp_server`: where the returned callable is applied.
     """
     if name_func_relationships is None:
         return lambda kwargs: dict(kwargs)

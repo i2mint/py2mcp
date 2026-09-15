@@ -1,5 +1,4 @@
-"""Serve a py2mcp ``FastMCP`` server over **stdio** — the runner a packaged
-integration launches.
+"""Serve a py2mcp ``FastMCP`` server over stdio, as a packaged integration launches it.
 
 :func:`py2mcp.mk_mcp_server` / :func:`py2mcp.mk_mcp_from_refs` build a server
 *object* but deliberately leave *running* it to the caller (the only run hint in
@@ -16,6 +15,17 @@ where each ref is a ``'module:function'`` string resolved by
 stdio note: an MCP stdio server speaks newline-delimited JSON-RPC on
 stdout, so nothing else may be written there. ``FastMCP``'s ``run`` handles this;
 keep application logging on stderr.
+
+Main entry points:
+
+- ``serve_stdio``: build from refs and run over stdio (blocking)
+- ``resolve_server_config``: merge a config file with explicit refs and name
+- ``load_server_config``: read and check the JSON config
+- ``main``: the ``python -m py2mcp`` command line
+
+>>> from py2mcp.serve import resolve_server_config
+>>> resolve_server_config(refs=['os.path:basename'])
+(['os.path:basename'], 'py2mcp Server')
 """
 
 from __future__ import annotations
@@ -34,8 +44,37 @@ DFLT_SERVER_NAME = "py2mcp Server"
 def load_server_config(path: str | Path) -> dict:
     """Load a server config JSON of the form ``{"name": str, "refs": [str, ...]}``.
 
-    Raises ``ValueError`` if the file is not a JSON object carrying a ``refs``
-    list — an actionable error beats a server that starts with no tools.
+    Only the shape is checked here; the refs are resolved later, when the
+    server is built. An actionable error beats a server that starts with no
+    tools.
+
+    Args:
+        path: The JSON file to read.
+
+    Returns:
+        The parsed JSON object, untouched, with at least a ``refs`` list.
+
+    Raises:
+        ValueError: The file is not valid JSON, or is not a JSON object carrying
+            a ``refs`` list.
+        OSError: The file cannot be read.
+
+    Examples:
+
+        >>> import json, tempfile
+        >>> from pathlib import Path
+        >>> path = Path(tempfile.mkdtemp()) / 'py2mcp_config.json'
+        >>> _ = path.write_text(json.dumps({'name': 'My Tools', 'refs': ['os.path:basename']}))
+        >>> load_server_config(path)
+        {'name': 'My Tools', 'refs': ['os.path:basename']}
+        >>> _ = path.write_text(json.dumps({'name': 'no refs here'}))
+        >>> load_server_config(path)  # doctest: +ELLIPSIS
+        Traceback (most recent call last):
+            ...
+        ValueError: py2mcp server config '...py2mcp_config.json' must be a JSON object with a "refs" list, ...
+
+    See Also:
+        :func:`resolve_server_config`: merge the config with command-line refs.
     """
     data = json.loads(Path(path).read_text())
     if not isinstance(data, dict) or not isinstance(data.get("refs"), list):
@@ -58,8 +97,36 @@ def resolve_server_config(
     ``name`` wins over the config's. Pure (no I/O beyond reading ``config``), so
     it is unit-testable without standing up a server.
 
-    >>> resolve_server_config(refs=['os.path:basename'], name='Paths')
-    (['os.path:basename'], 'Paths')
+    Args:
+        config: Path of a JSON config as read by :func:`load_server_config`,
+            or ``None`` for no config file.
+        refs: Extra ``'module:function'`` references, appended after the
+            config's.
+        name: Server name; overrides the config's ``name``. When neither is
+            given, ``DFLT_SERVER_NAME``.
+
+    Returns:
+        The merged list of references and the server name.
+
+    Raises:
+        ValueError: Neither the config nor ``refs`` supplies any reference, or
+            the config file is malformed (see :func:`load_server_config`).
+
+    Examples:
+
+        >>> resolve_server_config(refs=['os.path:basename'], name='Paths')
+        (['os.path:basename'], 'Paths')
+
+        With a config file, its refs come first and its name is the fallback:
+
+        >>> import json, tempfile
+        >>> from pathlib import Path
+        >>> path = Path(tempfile.mkdtemp()) / 'py2mcp_config.json'
+        >>> _ = path.write_text(json.dumps({'name': 'My Tools', 'refs': ['os.path:basename']}))
+        >>> resolve_server_config(config=path, refs=['os.path:dirname'])
+        (['os.path:basename', 'os.path:dirname'], 'My Tools')
+        >>> resolve_server_config(config=path, name='Override')
+        (['os.path:basename'], 'Override')
     """
     cfg_refs: list[str] = []
     cfg_name: Optional[str] = None
@@ -88,10 +155,21 @@ def serve_stdio(
 
     Blocks, serving the MCP protocol on stdin/stdout until the host disconnects.
     Thin wrapper over :func:`py2mcp.mk_mcp_from_refs` + ``FastMCP.run`` so that
-    packaged integrations have one command to launch. ``middleware`` (a single
-    FastMCP middleware or a list) is forwarded for cross-cutting concerns —
-    logging/metering is as useful on the local stdio path as on the remote one.
-    ``instructions`` sets the server's model-facing description.
+    packaged integrations have one command to launch. No example here: the call
+    does not return while the server runs.
+
+    Args:
+        refs: ``'module:function'`` references, one per tool.
+        name: Server name.
+        input_trans: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
+        middleware: A single FastMCP middleware or a list, forwarded for
+            cross-cutting concerns; logging/metering is as useful on the local
+            stdio path as on the remote one.
+        instructions: The server's model-facing description.
+
+    See Also:
+        :func:`py2mcp.http.serve_http`: the same over Streamable HTTP.
+        :func:`main`: the command line that calls this.
     """
     server = mk_mcp_from_refs(
         refs,
