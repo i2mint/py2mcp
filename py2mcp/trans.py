@@ -2,8 +2,11 @@
 
 MCP clients send JSON, so a tool that wants a ``numpy`` array, a ``Path`` or a
 parsed date needs its inputs converted first. ``mk_input_trans`` builds the
-``input_trans`` callable that the ``mk_mcp_*`` builders apply to every tool
-call, from a mapping of argument names to converter functions.
+``input_trans`` callable that :func:`py2mcp.mk_mcp_server`,
+:func:`py2mcp.mk_mcp_from_refs`, and the HTTP/stdio builders that wrap them
+apply to every tool call, from a mapping of argument names to converter
+functions. (``mk_mcp_from_store``'s generated CRUD tools take no
+``input_trans``.)
 
 Main entry points:
 

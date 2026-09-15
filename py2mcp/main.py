@@ -2,8 +2,11 @@
 
 Each builder returns a ``FastMCP`` server *object* with one tool per function
 and does not run it; :mod:`py2mcp.serve` (stdio) and :mod:`py2mcp.http`
-(Streamable HTTP) do the running. All three accept ``name``, ``middleware``
-and ``instructions`` and attach them at construction.
+(Streamable HTTP) do the running. All three accept ``middleware`` and
+``instructions`` and attach them at construction; ``mk_mcp_server`` and
+``mk_mcp_from_refs`` take the server ``name`` directly, while
+``mk_mcp_from_store`` takes the singular item noun instead and derives the
+server name from it (``server_name`` overrides).
 
 Main entry points:
 

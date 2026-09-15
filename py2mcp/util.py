@@ -41,7 +41,9 @@ def import_object(ref: str) -> Any:
 
     Raises:
         ValueError: The reference has no module part or no attribute part.
-        ModuleNotFoundError: The module part does not import.
+        ImportError: The module part does not import (``ModuleNotFoundError``
+            when the module does not exist; a plain ``ImportError`` if it
+            exists but fails while importing).
         AttributeError: The attribute path does not exist on the module.
 
     Examples:
