@@ -1,4 +1,9 @@
-"""Base objects and utilities for py2mcp."""
+"""Private helpers shared by the builders in :mod:`py2mcp.main`.
+
+Argument normalization (``funcs`` and ``middleware`` accept one object or an
+iterable) and the wrapper that applies an ``input_trans`` to a tool's keyword
+arguments before the function runs. Nothing here is part of the public API.
+"""
 
 from typing import Callable, Iterable, Any, Optional
 from functools import wraps

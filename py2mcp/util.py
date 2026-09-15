@@ -1,4 +1,19 @@
-"""General utilities for py2mcp."""
+"""Resolve object references and turn a mapping into CRUD functions.
+
+Two small tools the builders in :mod:`py2mcp.main` rest on, usable on their
+own: ``import_object`` is how ``'module:function'`` strings from a config file
+become callables, and ``store_to_funcs`` is the function-level half of
+:func:`py2mcp.mk_mcp_from_store`.
+
+Main entry points:
+
+- ``import_object``: ``'module.path:attr'`` string to the object it names
+- ``store_to_funcs``: list/get/set/delete functions over a ``MutableMapping``
+
+>>> from py2mcp.util import import_object
+>>> import_object('os.path:basename')('/a/b/c.txt')
+'c.txt'
+"""
 
 from importlib import import_module
 from typing import Any, MutableMapping, Callable, TypeVar
@@ -13,12 +28,35 @@ def import_object(ref: str) -> Any:
 
     Useful for building MCP servers from configuration strings (e.g. tool
     references declared in a file), so callers don't reimplement the
-    ``importlib`` dance.
+    ``importlib`` dance. With a colon, everything before it is the module and
+    everything after it an attribute path; without one, the last dot splits
+    module from attribute, so ``'pkg.mod.Class.method'`` cannot be reached in
+    the dotted form (use ``'pkg.mod:Class.method'``).
 
-    >>> import_object('json:dumps')  # doctest: +ELLIPSIS
-    <function dumps at ...>
-    >>> import_object('os.path.join')  # doctest: +ELLIPSIS
-    <function join at ...>
+    Args:
+        ref: The reference string; the ``module:attr`` form is preferred.
+
+    Returns:
+        The object the reference names, after importing its module.
+
+    Raises:
+        ValueError: The reference has no module part or no attribute part.
+        ModuleNotFoundError: The module part does not import.
+        AttributeError: The attribute path does not exist on the module.
+
+    Examples:
+
+        >>> import_object('json:dumps')  # doctest: +ELLIPSIS
+        <function dumps at ...>
+        >>> import_object('os.path.join')  # doctest: +ELLIPSIS
+        <function join at ...>
+        >>> import_object('no-separator')
+        Traceback (most recent call last):
+            ...
+        ValueError: Invalid object reference 'no-separator'; expected 'module:attr' or 'module.path.attr'.
+
+    See Also:
+        :func:`py2mcp.mk_mcp_from_refs`: build a server from such references.
     """
     if ":" in ref:
         module_name, _, attr = ref.partition(":")
@@ -88,11 +126,38 @@ def store_to_funcs(
 ) -> list[Callable]:
     """Convert a MutableMapping into CRUD functions.
 
-    >>> projects = {'p1': {'name': 'Project 1'}}
-    >>> funcs = store_to_funcs(projects, name='project')
-    >>> len(funcs)
-    4
-    >>> [f.__name__ for f in funcs]
-    ['list_projects', 'get_project', 'set_project', 'delete_project']
+    The functions close over ``store`` and operate on it live. The list
+    function takes no arguments; the others take ``key`` (and ``value`` for
+    set). Set and delete return a short confirmation string.
+
+    Args:
+        store: The mapping the functions read and write.
+        name: Singular noun used in the function names.
+        plural: Plural noun for the list function (defaults to name + 's').
+
+    Returns:
+        The four functions, in the order list, get, set, delete, named
+        ``list_<plural>``, ``get_<name>``, ``set_<name>``, ``delete_<name>``.
+
+    Examples:
+
+        >>> projects = {'p1': {'name': 'Project 1'}}
+        >>> funcs = store_to_funcs(projects, name='project')
+        >>> len(funcs)
+        4
+        >>> [f.__name__ for f in funcs]
+        ['list_projects', 'get_project', 'set_project', 'delete_project']
+        >>> list_projects, get_project, set_project, delete_project = funcs
+        >>> set_project('p2', {'name': 'Project 2'})
+        "Set project 'p2'"
+        >>> list_projects()
+        ['p1', 'p2']
+        >>> delete_project('p1')
+        "Deleted project 'p1'"
+        >>> projects
+        {'p2': {'name': 'Project 2'}}
+
+    See Also:
+        :func:`py2mcp.mk_mcp_from_store`: the same functions, served as MCP tools.
     """
     return [func for _, func in _store_to_funcs(store, singular=name, plural=plural)]

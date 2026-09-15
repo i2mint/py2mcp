@@ -1,7 +1,6 @@
-"""Serve a py2mcp ``FastMCP`` server over **Streamable HTTP** with optional
-OAuth 2.1 — the *remote* counterpart to :mod:`py2mcp.serve` (stdio).
+"""Serve a py2mcp ``FastMCP`` server over Streamable HTTP with optional OAuth 2.1.
 
-A *remote* MCP server (e.g. a claude.ai custom connector) is reached over public
+The *remote* counterpart to :mod:`py2mcp.serve` (stdio). A *remote* MCP server (e.g. a claude.ai custom connector) is reached over public
 HTTPS from the vendor's cloud and authenticates with **OAuth 2.1**. Per the MCP
 authorization spec the MCP server is an OAuth 2.1 **resource server** — it
 *validates* bearer tokens minted by a **managed identity provider** (the
@@ -29,6 +28,13 @@ It wraps FastMCP's native machinery (no transport/OAuth code is reinvented):
 ``coact``'s ``claude-remote-connector`` publish target scaffolds a deployable
 service around these — coact writes packaging, py2mcp builds and serves the MCP
 server (the same division of labour as the stdio ``.mcpb`` path).
+
+Building the app performs no network I/O, so it is safe to do at import time:
+
+>>> from py2mcp.http import mk_http_app
+>>> app = mk_http_app(['os.path:basename'], name='Paths')
+>>> [route.path for route in app.routes]
+['/mcp']
 """
 
 from __future__ import annotations
@@ -65,10 +71,48 @@ def mk_auth_provider(auth: Optional[dict]) -> Optional[Any]:
     - ``base_url`` — this server's public base URL.
     - ``required_scopes`` (optional) — scopes every request must carry.
 
-    Returns a ``RemoteAuthProvider`` (a resource server), or ``None`` when ``auth``
-    is falsy. Raises ``ValueError`` on an unknown ``type`` or a missing required key.
     Building the provider performs **no network I/O** (key fetching is lazy, on the
     first request), so this is safe to call at scaffold/import time.
+
+    Args:
+        auth: The auth-config dict described above, or ``None``/``{}`` for no
+            authentication.
+
+    Returns:
+        A ``RemoteAuthProvider`` (a resource server), or ``None`` when ``auth``
+        is falsy.
+
+    Raises:
+        ValueError: ``auth`` is not a dict, its ``type`` is not supported, or a
+            required key (``jwks_uri``/``public_key``, ``base_url``,
+            ``audience``, ``authorization_servers``/``issuer``) is missing.
+
+    Examples:
+
+        >>> mk_auth_provider(None) is None
+        True
+        >>> provider = mk_auth_provider({
+        ...     'type': 'jwt',
+        ...     'jwks_uri': 'https://idp.example.com/.well-known/jwks.json',
+        ...     'issuer': 'https://idp.example.com',
+        ...     'audience': 'https://conn.example.com/mcp',
+        ...     'base_url': 'https://conn.example.com',
+        ... })
+        >>> type(provider).__name__
+        'RemoteAuthProvider'
+        >>> provider.authorization_servers
+        ['https://idp.example.com']
+
+        Leaving out the audience is refused rather than silently unchecked:
+
+        >>> mk_auth_provider({'type': 'jwt', 'jwks_uri': 'https://idp.example.com/jwks',
+        ...                   'base_url': 'https://conn.example.com'})  # doctest: +ELLIPSIS
+        Traceback (most recent call last):
+            ...
+        ValueError: jwt auth needs 'audience' (this server's resource id). ...
+
+    See Also:
+        :func:`mk_http_app`: where the provider is attached to a server.
     """
     if not auth:
         return None
@@ -154,16 +198,61 @@ def mk_http_app(
         app = mk_http_app(['mypkg.tools:summarize'], name='My Connector', auth=AUTH)
         # then:  uvicorn server.app:app --host 0.0.0.0 --port 8000
 
-    ``auth`` is resolved by :func:`mk_auth_provider` (``None`` → no auth; a remote
-    connector should always set it). ``middleware`` (a single FastMCP middleware or
-    a list) is attached for cross-cutting concerns — metering, logging, rate
-    limiting — and, because ``auth`` runs first, can read the authenticated caller
-    via ``fastmcp.server.dependencies.get_access_token()``. ``instructions`` sets the
-    server's model-facing description (surfaced to the connecting client/model).
-    ``stateless_http=True``
-    is recommended behind a load balancer (MCP sessions are stateful, so default
-    in-memory sessions break across replicas — go stateless or externalize session
-    state). Builds the app with **no network I/O**.
+    Builds the app with **no network I/O**.
+
+    Args:
+        refs: ``'module:function'`` references, one per tool.
+        name: Server name.
+        auth: Resolved by :func:`mk_auth_provider` (``None`` → no auth; a remote
+            connector should always set it).
+        input_trans: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
+        transport: The FastMCP HTTP transport; ``DFLT_TRANSPORT`` is
+            Streamable HTTP.
+        path: URL path the MCP endpoint is mounted at; ``None`` keeps
+            FastMCP's default (``/mcp``).
+        stateless_http: ``True`` is recommended behind a load balancer (MCP
+            sessions are stateful, so default in-memory sessions break across
+            replicas — go stateless or externalize session state). ``None``
+            keeps FastMCP's default.
+        middleware: A single FastMCP middleware or a list, attached for
+            cross-cutting concerns — metering, logging, rate limiting. Because
+            ``auth`` runs first, it can read the authenticated caller via
+            ``fastmcp.server.dependencies.get_access_token()``.
+        instructions: The server's model-facing description (surfaced to the
+            connecting client/model).
+
+    Returns:
+        The Starlette ASGI application.
+
+    Raises:
+        ValueError: ``auth`` is malformed (see :func:`mk_auth_provider`) or a
+            reference cannot be parsed (see :func:`py2mcp.mk_mcp_from_refs`).
+
+    Examples:
+
+        >>> app = mk_http_app(['os.path:basename'], name='Paths')
+        >>> callable(app)
+        True
+        >>> [route.path for route in app.routes]
+        ['/mcp']
+
+        With OAuth and a custom mount path, the RFC 9728 protected-resource
+        metadata route is added next to the endpoint:
+
+        >>> AUTH = {
+        ...     'type': 'jwt',
+        ...     'jwks_uri': 'https://idp.example.com/.well-known/jwks.json',
+        ...     'issuer': 'https://idp.example.com',
+        ...     'audience': 'https://conn.example.com/mcp',
+        ...     'base_url': 'https://conn.example.com',
+        ... }
+        >>> app = mk_http_app(['os.path:basename'], name='Paths', auth=AUTH, path='/api/mcp')
+        >>> [route.path for route in app.routes]
+        ['/.well-known/oauth-protected-resource/api/mcp', '/api/mcp']
+
+    See Also:
+        :func:`serve_http`: build and run in-process instead of returning the app.
+        :func:`py2mcp.serve.serve_stdio`: the local stdio counterpart.
     """
     provider = mk_auth_provider(auth)
     server = mk_mcp_from_refs(

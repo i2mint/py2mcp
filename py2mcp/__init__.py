@@ -1,18 +1,27 @@
 """py2mcp: Quick MCP server creation from Python functions.
 
-This package provides a simple, Pythonic way to create Model Context Protocol (MCP)
-servers from ordinary Python functions. Built on FastMCP, it handles all the protocol
-complexity while letting you focus on your business logic.
+Pass ordinary Python functions and get back a Model Context Protocol (MCP)
+server, built on FastMCP, with each function registered as a tool. The
+``mk_mcp_*`` builders return a server *object* and leave running it to you:
+``mcp.run()`` for stdio, or :mod:`py2mcp.serve` and :mod:`py2mcp.http` for a
+packaged stdio launcher and a Streamable-HTTP (optionally OAuth 2.1) server.
 
-Basic usage:
-    >>> from py2mcp import mk_mcp_server
-    >>>
-    >>> def add(a: int, b: int) -> int:
-    ...     '''Add two numbers'''
-    ...     return a + b
-    >>>
-    >>> mcp = mk_mcp_server([add])
-    >>> # mcp.run()  # Start the server
+Main entry points:
+
+- ``mk_mcp_server``: functions in, ``FastMCP`` server out
+- ``mk_mcp_from_refs``: the same from ``'module:function'`` strings
+- ``mk_mcp_from_store``: list/get/set/delete tools over any ``MutableMapping``
+- ``mk_input_trans``: per-argument conversion of tool inputs
+- ``serve_stdio`` and ``serve_http``: build from refs and run
+
+>>> from py2mcp import mk_mcp_server
+>>> def add(a: int, b: int) -> int:
+...     '''Add two numbers'''
+...     return a + b
+>>> mcp = mk_mcp_server([add])
+>>> mcp.name
+'py2mcp Server'
+>>> # mcp.run()  # Start the server over stdio
 """
 
 from py2mcp.main import mk_mcp_server, mk_mcp_from_store, mk_mcp_from_refs
