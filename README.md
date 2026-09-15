@@ -2,6 +2,16 @@
 
 Quick MCP (Model Context Protocol) server creation from Python functions.
 
+<!-- epythet:agentic-readme:start -->
+## For AI agents
+
+`py2mcp` publishes its documentation in forms made for coding agents. If you are one, start here.
+
+**The documentation, machine-readable**: [`llms.txt`](https://i2mint.github.io/py2mcp/llms.txt) indexes every page; [`py2mcp.md`](https://i2mint.github.io/py2mcp/py2mcp.md) is the whole documentation in one file; every page has a `.md` twin; [`objects.inv`](https://i2mint.github.io/py2mcp/objects.inv) maps symbols to URLs.
+
+If you identify as a dinosaur, the rest of this README is written for you, starting at [Installation](#installation).
+<!-- epythet:agentic-readme:end -->
+
 ## Installation
 
 ```bash

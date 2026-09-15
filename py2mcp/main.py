@@ -172,8 +172,8 @@ def mk_mcp_from_refs(
         >>> import asyncio
         >>> sorted(tool.name for tool in asyncio.run(mcp.list_tools()))
         ['basename', 'dirname']
-        >>> asyncio.run(mcp.call_tool('basename', {'p': '/a/b/c.txt'})).structured_content
-        {'result': 'c.txt'}
+        >>> asyncio.run(mcp.call_tool('basename', {'p': '/a/b/c.txt'})).content[0].text
+        'c.txt'
 
     See Also:
         :func:`py2mcp.serve.serve_stdio`: build from refs and run over stdio.
