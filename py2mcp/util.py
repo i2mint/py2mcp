@@ -15,6 +15,7 @@ Main entry points:
 'c.txt'
 """
 
+import re
 from importlib import import_module
 from typing import Any, MutableMapping, Callable, TypeVar
 from collections.abc import Iterator
@@ -121,7 +122,7 @@ def claude_install_link(name: str, mcp_url: str, *, admin: bool = False) -> str:
 
 
 def markdown_install_badge(name: str, mcp_url: str, *, admin: bool = False) -> str:
-    """Markdown link that installs an MCP server as a claude.ai connector.
+    r"""Markdown link that installs an MCP server as a claude.ai connector.
 
     The dominant use of :func:`claude_install_link` is pasting one into a README,
     so this saves writing the same link syntax around it. Arguments are those of
@@ -129,8 +130,25 @@ def markdown_install_badge(name: str, mcp_url: str, *, admin: bool = False) -> s
 
     >>> markdown_install_badge('snout', 'https://x.io/mcp')
     '[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'
+
+    Brackets and backslashes in the name are escaped in the link text, so a name
+    like ``tools [beta]`` can't end the link text early and break the link (the
+    URL itself is percent-encoded already):
+
+    >>> print(markdown_install_badge('tools [beta]', 'https://x.io/mcp').split('](')[0])
+    [Add tools \[beta\] to Claude
     """
-    return f"[Add {name} to Claude]({claude_install_link(name, mcp_url, admin=admin)})"
+    link_text = _escape_markdown_link_text(f"Add {name} to Claude")
+    return f"[{link_text}]({claude_install_link(name, mcp_url, admin=admin)})"
+
+
+def _escape_markdown_link_text(text: str) -> str:
+    r"""Backslash-escape the characters that end or nest Markdown link text.
+
+    >>> print(_escape_markdown_link_text(r'a [b] \ c'))
+    a \[b\] \\ c
+    """
+    return re.sub(r"([\\\[\]])", r"\\\1", text)
 
 
 def _store_to_funcs(

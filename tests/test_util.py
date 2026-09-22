@@ -75,3 +75,13 @@ def test_markdown_badge_forwards_admin():
 
 def test_both_names_are_exported():
     assert {"claude_install_link", "markdown_install_badge"} <= set(py2mcp.__all__)
+
+
+def test_markdown_install_badge_escapes_brackets_in_the_name():
+    """A ``]`` in the name used to end the link text early and break the link."""
+    from py2mcp import markdown_install_badge
+
+    badge = markdown_install_badge("tools [beta]", "https://x.io/mcp")
+    text, url = badge[1:].split("](", 1)
+    assert text == r"Add tools \[beta\] to Claude"
+    assert url.endswith(")") and "connectorName=tools%20%5Bbeta%5D" in url
