@@ -1,4 +1,4 @@
-> built 2026-09-15 12:27 UTC from 9ba0057 (main) · py2mcp 0.1.10. Details: build_info.json
+> built 2026-09-22 13:01 UTC from 4aa2ce0 (main) · py2mcp 0.1.11. Details: build_info.json
 
 # index.html.md
 
@@ -174,6 +174,37 @@ mcp = mk_mcp_server(
 Like `middleware=`, it’s a programmatic argument (not yet wired through the
 `python -m py2mcp` CLI / JSON-config path).
 
+## “Add to Claude” install links
+
+Once a server is hosted, the last mile is getting a human to add it. There’s no
+true one-click install for an unlisted connector (listing requires Anthropic
+review), but a prefilled link opens the add-connector modal with the name and
+URL already filled in, so the user only has to confirm:
+
+```python
+from py2mcp import claude_install_link, markdown_install_badge
+
+claude_install_link("snout", "https://example.com/api/snout_mcp/mcp")
+# 'https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&...'
+
+markdown_install_badge("snout", "https://example.com/api/snout_mcp/mcp")
+# '[Add snout to Claude](https://claude.ai/customize/connectors?...)'  <- paste into a README
+
+claude_install_link("snout", "...", admin=True)  # org-wide page, not per-user
+```
+
+Both are pure string functions (stdlib only, no server needed). Three caveats
+the link itself can’t express:
+
+- Custom connectors are a **paid-plan** feature, so the link goes nowhere for a
+  Free-plan user.
+- `admin=True` targets the org-wide install page — the right one when an admin
+  is rolling a connector out to a workspace, the wrong one for a personal install.
+- **A link is not an access grant.** If the server is an OAuth resource server
+  with an allowlist (see above), someone not on it can follow the link, complete
+  the flow, and still be refused. Hand out the link together with whatever adds
+  them to the allowlist.
+
 ## License
 
 MIT
@@ -231,12 +262,52 @@ Main entry points:
 | [`mk_mcp_from_refs`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs)(refs, \*[, name, ...])              | Create an MCP server from `'module:function'` reference strings.               |
 | [`mk_input_trans`](_autosummary/py2mcp.html.md#py2mcp.mk_input_trans)([name_func_relationships])            | Create an input transformation function from name->func mappings.              |
 | [`import_object`](_autosummary/py2mcp.html.md#py2mcp.import_object)(ref)                                   | Resolve a `'module.path:attr'` (preferred) or `'module.path.attr'` reference.  |
+| [`claude_install_link`](_autosummary/py2mcp.html.md#py2mcp.claude_install_link)(name, mcp_url, \*[, admin])      | Prefilled "Add custom connector" link for claude.ai.                           |
+| [`markdown_install_badge`](_autosummary/py2mcp.html.md#py2mcp.markdown_install_badge)(name, mcp_url, \*[, admin])   | Markdown link that installs an MCP server as a claude.ai connector.            |
 | [`serve_stdio`](_autosummary/py2mcp.html.md#py2mcp.serve_stdio)(refs, \*[, name, input_trans, ...])      | Build an MCP server from `'module:function'` refs and run it over stdio.       |
 | [`resolve_server_config`](_autosummary/py2mcp.html.md#py2mcp.resolve_server_config)(\*[, config, refs, name])      | Merge a config file and explicit `refs`/`name` into `(refs, name)`.            |
 | [`load_server_config`](_autosummary/py2mcp.html.md#py2mcp.load_server_config)(path)                             | Load a server config JSON of the form `{"name": str, "refs": [str, ...]}`.     |
 | [`mk_http_app`](_autosummary/py2mcp.html.md#py2mcp.mk_http_app)(refs, \*[, name, auth, ...])             | Build a Streamable-HTTP **ASGI app** from `refs` (+ optional OAuth).           |
 | [`serve_http`](_autosummary/py2mcp.html.md#py2mcp.serve_http)(refs, \*[, name, host, port, ...])        | Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn. |
 | [`mk_auth_provider`](_autosummary/py2mcp.html.md#py2mcp.mk_auth_provider)(auth)                               | Build a FastMCP **resource-server** auth provider from an auth-config dict.    |
+
+### py2mcp.claude_install_link(name, mcp_url, , admin=False)
+
+Prefilled “Add custom connector” link for claude.ai.
+
+There is no true one-click install for an unlisted MCP server (listing
+requires Anthropic review), but this link opens the add-connector modal with
+the name and URL already filled in, so the user only has to confirm — which
+beats “go to Settings, find Connectors, paste this long URL”.
+
+* **Parameters:**
+  * **name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Connector name to prefill (what the user will see in their list).
+  * **mcp_url** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Full URL of the MCP endpoint, e.g. `https://host/api/x/mcp`.
+  * **admin** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Target the org-wide install page instead of the per-user one.
+    Use it when an admin is rolling the connector out to a whole
+    workspace; the default (`False`) is the personal install.
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+* **Returns:**
+  The claude.ai URL, safe to paste into a README or a chat message.
+
+```pycon
+>>> claude_install_link('snout', 'https://example.com/api/snout_mcp/mcp')
+'https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&connectorUrl=https%3A%2F%2Fexample.com%2Fapi%2Fsnout_mcp%2Fmcp'
+```
+
+Names and URLs are percent-encoded, so spaces (and `&`) can’t break the
+query string:
+
+```pycon
+>>> claude_install_link('my server', 'https://x.io/mcp', admin=True)
+'https://claude.ai/admin-settings/connectors?modal=add-custom-connector&connectorName=my%20server&connectorUrl=https%3A%2F%2Fx.io%2Fmcp'
+```
+
+Note that the link is a convenience, not an access grant: if the server is an
+OAuth resource server with an allowlist, a user who isn’t on it can follow
+the link, complete the flow, and still be refused. Custom connectors are also
+a paid-plan feature, so the link goes nowhere for a Free-plan user.
 
 ### py2mcp.import_object(ref)
 
@@ -315,6 +386,22 @@ ValueError: py2mcp server config '...py2mcp_config.json' must be a JSON object w
 
 #### SEE ALSO
 [`resolve_server_config()`](_autosummary/py2mcp.html.md#py2mcp.resolve_server_config): merge the config with command-line refs.
+
+### py2mcp.markdown_install_badge(name, mcp_url, , admin=False)
+
+Markdown link that installs an MCP server as a claude.ai connector.
+
+The dominant use of [`claude_install_link()`](_autosummary/py2mcp.html.md#py2mcp.claude_install_link) is pasting one into a README,
+so this saves writing the same link syntax around it. Arguments are those of
+[`claude_install_link()`](_autosummary/py2mcp.html.md#py2mcp.claude_install_link).
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+```pycon
+>>> markdown_install_badge('snout', 'https://x.io/mcp')
+'[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'
+```
 
 ### py2mcp.mk_auth_provider(auth)
 
@@ -1474,9 +1561,49 @@ Main entry points:
 
 ### Functions
 
-| [`import_object`](_autosummary/py2mcp.util.html.md#py2mcp.util.import_object)(ref)                        | Resolve a `'module.path:attr'` (preferred) or `'module.path.attr'` reference.   |
-|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
-| [`store_to_funcs`](_autosummary/py2mcp.util.html.md#py2mcp.util.store_to_funcs)(store, \*[, name, plural]) | Convert a MutableMapping into CRUD functions.                                   |
+| [`claude_install_link`](_autosummary/py2mcp.util.html.md#py2mcp.util.claude_install_link)(name, mcp_url, \*[, admin])    | Prefilled "Add custom connector" link for claude.ai.                          |
+|-----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`import_object`](_autosummary/py2mcp.util.html.md#py2mcp.util.import_object)(ref)                                 | Resolve a `'module.path:attr'` (preferred) or `'module.path.attr'` reference. |
+| [`markdown_install_badge`](_autosummary/py2mcp.util.html.md#py2mcp.util.markdown_install_badge)(name, mcp_url, \*[, admin]) | Markdown link that installs an MCP server as a claude.ai connector.           |
+| [`store_to_funcs`](_autosummary/py2mcp.util.html.md#py2mcp.util.store_to_funcs)(store, \*[, name, plural])          | Convert a MutableMapping into CRUD functions.                                 |
+
+### py2mcp.util.claude_install_link(name, mcp_url, , admin=False)
+
+Prefilled “Add custom connector” link for claude.ai.
+
+There is no true one-click install for an unlisted MCP server (listing
+requires Anthropic review), but this link opens the add-connector modal with
+the name and URL already filled in, so the user only has to confirm — which
+beats “go to Settings, find Connectors, paste this long URL”.
+
+* **Parameters:**
+  * **name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Connector name to prefill (what the user will see in their list).
+  * **mcp_url** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Full URL of the MCP endpoint, e.g. `https://host/api/x/mcp`.
+  * **admin** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Target the org-wide install page instead of the per-user one.
+    Use it when an admin is rolling the connector out to a whole
+    workspace; the default (`False`) is the personal install.
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+* **Returns:**
+  The claude.ai URL, safe to paste into a README or a chat message.
+
+```pycon
+>>> claude_install_link('snout', 'https://example.com/api/snout_mcp/mcp')
+'https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&connectorUrl=https%3A%2F%2Fexample.com%2Fapi%2Fsnout_mcp%2Fmcp'
+```
+
+Names and URLs are percent-encoded, so spaces (and `&`) can’t break the
+query string:
+
+```pycon
+>>> claude_install_link('my server', 'https://x.io/mcp', admin=True)
+'https://claude.ai/admin-settings/connectors?modal=add-custom-connector&connectorName=my%20server&connectorUrl=https%3A%2F%2Fx.io%2Fmcp'
+```
+
+Note that the link is a convenience, not an access grant: if the server is an
+OAuth resource server with an allowlist, a user who isn’t on it can follow
+the link, complete the flow, and still be refused. Custom connectors are also
+a paid-plan feature, so the link goes nowhere for a Free-plan user.
 
 ### py2mcp.util.import_object(ref)
 
@@ -1517,6 +1644,22 @@ ValueError: Invalid object reference 'no-separator'; expected 'module:attr' or '
 
 #### SEE ALSO
 [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs): build a server from such references.
+
+### py2mcp.util.markdown_install_badge(name, mcp_url, , admin=False)
+
+Markdown link that installs an MCP server as a claude.ai connector.
+
+The dominant use of [`claude_install_link()`](_autosummary/py2mcp.util.html.md#py2mcp.util.claude_install_link) is pasting one into a README,
+so this saves writing the same link syntax around it. Arguments are those of
+[`claude_install_link()`](_autosummary/py2mcp.util.html.md#py2mcp.util.claude_install_link).
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+```pycon
+>>> markdown_install_badge('snout', 'https://x.io/mcp')
+'[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'
+```
 
 ### py2mcp.util.store_to_funcs(store, , name='item', plural='')
 
@@ -1566,7 +1709,7 @@ set). Set and delete return a short confirmation string.
 
 # About this build
 
-This documentation was built on **2026-09-15 12:27 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/9ba00578d7a356a9c6543a44ea2f7e605567be99"><code>9ba0057</code></a> on branch <code>main</code>, for **py2mcp 0.1.10** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-09-22 13:01 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/4aa2ce0278d6ee2ec2fa682b9788d89b76dafa22"><code>4aa2ce0</code></a> on branch <code>main</code>, for **py2mcp 0.1.11** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -1575,9 +1718,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/9ba00578d7a356a9c6543a44ea2f7e605567be99"><code>9ba00578d7a356a9c6543a44ea2f7e605567be99</code></a> |
+| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/4aa2ce0278d6ee2ec2fa682b9788d89b76dafa22"><code>4aa2ce0278d6ee2ec2fa682b9788d89b76dafa22</code></a> |
 | Branch              | <code>main</code>                                                                                                                                    |
-| Tags at this commit | <code>0.1.10</code>                                                                                                                                  |
+| Tags at this commit | <code>0.1.11</code>                                                                                                                                  |
 | Working tree        | clean                                                                                                                                                |
 | Remote              | <code>https://github.com/i2mint/py2mcp</code>                                                                                                        |
 
@@ -1586,15 +1729,15 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/py2mcp</code>                                                                 |
-| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/34968766305">34968766305</a>        |
+| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/35730524840">35730524840</a>        |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>67d3a4635c6f927442e459f0508e073f8d1f5604</code> (in the history of the built commit) |
+| Event commit | <code>df73703e90073660950052a93306e25d0ed95e77</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.11  |
+| epythet  | 0.2.12  |
 | Sphinx   | 9.1.0   |
 | docutils | 0.22.4  |
 | Python   | 3.12.14 |
@@ -1613,14 +1756,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/py2mcp/0.1.10/">0.1.10</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/py2mcp/0.1.11/">0.1.11</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/py2mcp && cd py2mcp
-git checkout 9ba00578d7a356a9c6543a44ea2f7e605567be99
-pip install "epythet==0.2.11"
+git checkout 4aa2ce0278d6ee2ec2fa682b9788d89b76dafa22
+pip install "epythet==0.2.12"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

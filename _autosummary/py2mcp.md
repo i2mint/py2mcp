@@ -5,7 +5,7 @@ py2mcp: Quick MCP server creation from Python functions.
 Pass ordinary Python functions and get back a Model Context Protocol (MCP)
 server, built on FastMCP, with each function registered as a tool. The
 `mk_mcp_*` builders return a server *object* and leave running it to you:
-`mcp.run()` for stdio, or [`py2mcp.serve`](py2mcp.serve.html.md#module-py2mcp.serve) and [`py2mcp.http`](py2mcp.http.html.md#module-py2mcp.http) for a
+`mcp.run()` for stdio, or [`py2mcp.serve`](py2mcp.serve.md#module-py2mcp.serve) and [`py2mcp.http`](py2mcp.http.md#module-py2mcp.http) for a
 packaged stdio launcher and a Streamable-HTTP (optionally OAuth 2.1) server.
 
 Main entry points:
@@ -313,7 +313,7 @@ metadata route is added next to the endpoint:
 
 #### SEE ALSO
 [`serve_http()`](#py2mcp.serve_http): build and run in-process instead of returning the app.
-[`py2mcp.serve.serve_stdio()`](py2mcp.serve.html.md#py2mcp.serve.serve_stdio): the local stdio counterpart.
+[`py2mcp.serve.serve_stdio()`](py2mcp.serve.md#py2mcp.serve.serve_stdio): the local stdio counterpart.
 
 ### py2mcp.mk_input_trans(name_func_relationships=None)
 
@@ -367,7 +367,7 @@ No mapping means no conversion:
 
 Create an MCP server from `'module:function'` reference strings.
 
-Resolves each reference to a callable via [`py2mcp.util.import_object()`](py2mcp.util.html.md#py2mcp.util.import_object)
+Resolves each reference to a callable via [`py2mcp.util.import_object()`](py2mcp.util.md#py2mcp.util.import_object)
 and delegates to [`mk_mcp_server()`](#py2mcp.mk_mcp_server). One call from config strings to a
 runnable server — what tools that read tool references from a file (e.g.
 `coact`’s `mcp` backend) need.
@@ -389,7 +389,7 @@ runnable server — what tools that read tool references from a file (e.g.
   resolved function.
 * **Raises:**
   [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – A reference has no `module` or `attr` part (see
-      [`py2mcp.util.import_object()`](py2mcp.util.html.md#py2mcp.util.import_object), whose import errors propagate too).
+      [`py2mcp.util.import_object()`](py2mcp.util.md#py2mcp.util.import_object), whose import errors propagate too).
 
 ### Examples
 
@@ -410,8 +410,8 @@ The tools are the resolved functions:
 ```
 
 #### SEE ALSO
-[`py2mcp.serve.serve_stdio()`](py2mcp.serve.html.md#py2mcp.serve.serve_stdio): build from refs and run over stdio.
-[`py2mcp.http.mk_http_app()`](py2mcp.http.html.md#py2mcp.http.mk_http_app): build from refs as an ASGI app.
+[`py2mcp.serve.serve_stdio()`](py2mcp.serve.md#py2mcp.serve.serve_stdio): build from refs and run over stdio.
+[`py2mcp.http.mk_http_app()`](py2mcp.http.md#py2mcp.http.mk_http_app): build from refs as an ASGI app.
 
 ### py2mcp.mk_mcp_from_store(store, , name='item', plural='', server_name=None, middleware=None, instructions=None)
 
@@ -463,7 +463,7 @@ An irregular plural and an explicit server name:
 ```
 
 #### SEE ALSO
-[`py2mcp.util.store_to_funcs()`](py2mcp.util.html.md#py2mcp.util.store_to_funcs): the CRUD functions without a server.
+[`py2mcp.util.store_to_funcs()`](py2mcp.util.md#py2mcp.util.store_to_funcs): the CRUD functions without a server.
 [`mk_mcp_server()`](#py2mcp.mk_mcp_server): expose your own functions instead.
 
 ### py2mcp.mk_mcp_server(funcs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None)
@@ -483,7 +483,7 @@ tool’s schema and description.
     with [`py2mcp.mk_input_trans()`](#py2mcp.mk_input_trans). `None` passes arguments
     through untouched.
   * **auth** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Optional `fastmcp.server.auth` provider attached at construction —
-    used by the remote (HTTP) path for OAuth 2.1 (see [`py2mcp.http`](py2mcp.http.html.md#module-py2mcp.http)).
+    used by the remote (HTTP) path for OAuth 2.1 (see [`py2mcp.http`](py2mcp.http.md#module-py2mcp.http)).
     `None` (the default) leaves the server unauthenticated, which is
     correct for the local stdio path.
   * **middleware** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Optional FastMCP middleware (a single middleware or a list),
@@ -615,18 +615,18 @@ does not return while the server runs.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description.
 
 #### SEE ALSO
-[`py2mcp.http.serve_http()`](py2mcp.http.html.md#py2mcp.http.serve_http): the same over Streamable HTTP.
-[`main()`](py2mcp.main.html.md#module-py2mcp.main): the command line that calls this.
+[`py2mcp.http.serve_http()`](py2mcp.http.md#py2mcp.http.serve_http): the same over Streamable HTTP.
+[`main()`](py2mcp.main.md#module-py2mcp.main): the command line that calls this.
 
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### Modules
 
-| [`base`](py2mcp.base.html.md#module-py2mcp.base)   | Private helpers shared by the builders in [`py2mcp.main`](py2mcp.main.html.md#module-py2mcp.main).   |
+| [`base`](py2mcp.base.md#module-py2mcp.base)   | Private helpers shared by the builders in [`py2mcp.main`](py2mcp.main.md#module-py2mcp.main).   |
 |----------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
-| [`http`](py2mcp.http.html.md#module-py2mcp.http)   | Serve a py2mcp `FastMCP` server over Streamable HTTP with optional OAuth 2.1.                                                |
-| [`main`](py2mcp.main.html.md#module-py2mcp.main)   | Build a `FastMCP` server from Python functions, reference strings, or a store.                                               |
-| [`serve`](py2mcp.serve.html.md#module-py2mcp.serve) | Serve a py2mcp `FastMCP` server over stdio, as a packaged integration launches it.                                           |
-| [`trans`](py2mcp.trans.html.md#module-py2mcp.trans) | Input transformation for py2mcp tools: convert arguments before a function runs.                                             |
-| [`util`](py2mcp.util.html.md#module-py2mcp.util)   | Resolve object references and turn a mapping into CRUD functions.                                                            |
+| [`http`](py2mcp.http.md#module-py2mcp.http)   | Serve a py2mcp `FastMCP` server over Streamable HTTP with optional OAuth 2.1.                                                |
+| [`main`](py2mcp.main.md#module-py2mcp.main)   | Build a `FastMCP` server from Python functions, reference strings, or a store.                                               |
+| [`serve`](py2mcp.serve.md#module-py2mcp.serve) | Serve a py2mcp `FastMCP` server over stdio, as a packaged integration launches it.                                           |
+| [`trans`](py2mcp.trans.md#module-py2mcp.trans) | Input transformation for py2mcp tools: convert arguments before a function runs.                                             |
+| [`util`](py2mcp.util.md#module-py2mcp.util)   | Resolve object references and turn a mapping into CRUD functions.                                                            |

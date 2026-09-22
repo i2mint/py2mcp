@@ -1,0 +1,18 @@
+# py2mcp
+
+> Quick MCP server creation from Python functions
+
+
+## Pages in this subsection
+
+- [py2mcp](py2mcp.html.md): py2mcp: Quick MCP server creation from Python functions.
+- [py2mcp.base](py2mcp.base.html.md): Private helpers shared by the builders in &#96;py2mcp.main&#96;.
+- [py2mcp.http](py2mcp.http.html.md): Serve a py2mcp &#96;FastMCP&#96; server over Streamable HTTP with optional OAuth 2.1.
+- [py2mcp.main](py2mcp.main.html.md): Build a &#96;FastMCP&#96; server from Python functions, reference strings, or a store.
+- [py2mcp.serve](py2mcp.serve.html.md): Serve a py2mcp &#96;FastMCP&#96; server over stdio, as a packaged integration launches it.
+- [py2mcp.trans](py2mcp.trans.html.md): Input transformation for py2mcp tools: convert arguments before a function runs.
+- [py2mcp.util](py2mcp.util.html.md): Resolve object references and turn a mapping into CRUD functions.
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.

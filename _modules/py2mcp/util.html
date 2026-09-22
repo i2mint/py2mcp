@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=bafade30"></script>
+    <script src="../../_static/documentation_options.js?v=1e825a29"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.10" />
+  <meta name="docsearch:version" content="0.1.11" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -717,6 +717,7 @@ window.runMermaid = runMermaid;</script>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_module</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">quote</span><span class="p">,</span> <span class="n">urlencode</span>
 
 <span class="n">KT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"KT"</span><span class="p">)</span>
 <span class="n">VT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"VT"</span><span class="p">)</span>
@@ -774,6 +775,69 @@ window.runMermaid = runMermaid;</script>
     <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">obj</span></div>
+
+
+
+<div class="viewcode-block" id="claude_install_link">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.util.html#py2mcp.claude_install_link">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">claude_install_link</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mcp_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">admin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Prefilled "Add custom connector" link for claude.ai.</span>
+
+<span class="sd">    There is no true one-click install for an unlisted MCP server (listing</span>
+<span class="sd">    requires Anthropic review), but this link opens the add-connector modal with</span>
+<span class="sd">    the name and URL already filled in, so the user only has to confirm — which</span>
+<span class="sd">    beats "go to Settings, find Connectors, paste this long URL".</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name: Connector name to prefill (what the user will see in their list).</span>
+<span class="sd">        mcp_url: Full URL of the MCP endpoint, e.g. ``https://host/api/x/mcp``.</span>
+<span class="sd">        admin: Target the org-wide install page instead of the per-user one.</span>
+<span class="sd">            Use it when an admin is rolling the connector out to a whole</span>
+<span class="sd">            workspace; the default (``False``) is the personal install.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The claude.ai URL, safe to paste into a README or a chat message.</span>
+
+<span class="sd">    &gt;&gt;&gt; claude_install_link('snout', 'https://example.com/api/snout_mcp/mcp')</span>
+<span class="sd">    'https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=snout&amp;connectorUrl=https%3A%2F%2Fexample.com%2Fapi%2Fsnout_mcp%2Fmcp'</span>
+
+<span class="sd">    Names and URLs are percent-encoded, so spaces (and ``&amp;``) can't break the</span>
+<span class="sd">    query string:</span>
+
+<span class="sd">    &gt;&gt;&gt; claude_install_link('my server', 'https://x.io/mcp', admin=True)</span>
+<span class="sd">    'https://claude.ai/admin-settings/connectors?modal=add-custom-connector&amp;connectorName=my%20server&amp;connectorUrl=https%3A%2F%2Fx.io%2Fmcp'</span>
+
+<span class="sd">    Note that the link is a convenience, not an access grant: if the server is an</span>
+<span class="sd">    OAuth resource server with an allowlist, a user who isn't on it can follow</span>
+<span class="sd">    the link, complete the flow, and still be refused. Custom connectors are also</span>
+<span class="sd">    a paid-plan feature, so the link goes nowhere for a Free-plan user.</span>
+<span class="sd">    """</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s2">"admin-settings"</span> <span class="k">if</span> <span class="n">admin</span> <span class="k">else</span> <span class="s2">"customize"</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">urlencode</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">"modal"</span><span class="p">:</span> <span class="s2">"add-custom-connector"</span><span class="p">,</span>
+            <span class="s2">"connectorName"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">"connectorUrl"</span><span class="p">:</span> <span class="n">mcp_url</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">quote_via</span><span class="o">=</span><span class="n">quote</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"https://claude.ai/</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/connectors?</span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">"</span></div>
+
+
+
+<div class="viewcode-block" id="markdown_install_badge">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.util.html#py2mcp.markdown_install_badge">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">markdown_install_badge</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mcp_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">admin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Markdown link that installs an MCP server as a claude.ai connector.</span>
+
+<span class="sd">    The dominant use of :func:`claude_install_link` is pasting one into a README,</span>
+<span class="sd">    so this saves writing the same link syntax around it. Arguments are those of</span>
+<span class="sd">    :func:`claude_install_link`.</span>
+
+<span class="sd">    &gt;&gt;&gt; markdown_install_badge('snout', 'https://x.io/mcp')</span>
+<span class="sd">    '[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=snout&amp;connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"[Add </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> to Claude](</span><span class="si">{</span><span class="n">claude_install_link</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">mcp_url</span><span class="p">,</span><span class="w"> </span><span class="n">admin</span><span class="o">=</span><span class="n">admin</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span></div>
 
 
 

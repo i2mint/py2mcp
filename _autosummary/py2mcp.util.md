@@ -2,10 +2,10 @@
 
 Resolve object references and turn a mapping into CRUD functions.
 
-Two small tools the builders in [`py2mcp.main`](py2mcp.main.html.md#module-py2mcp.main) rest on, usable on their
+Two small tools the builders in [`py2mcp.main`](py2mcp.main.md#module-py2mcp.main) rest on, usable on their
 own: `import_object` is how `'module:function'` strings from a config file
 become callables, and `store_to_funcs` is the function-level half of
-[`py2mcp.mk_mcp_from_store()`](py2mcp.html.md#py2mcp.mk_mcp_from_store).
+[`py2mcp.mk_mcp_from_store()`](py2mcp.md#py2mcp.mk_mcp_from_store).
 
 Main entry points:
 
@@ -102,7 +102,7 @@ ValueError: Invalid object reference 'no-separator'; expected 'module:attr' or '
 ```
 
 #### SEE ALSO
-[`py2mcp.mk_mcp_from_refs()`](py2mcp.html.md#py2mcp.mk_mcp_from_refs): build a server from such references.
+[`py2mcp.mk_mcp_from_refs()`](py2mcp.md#py2mcp.mk_mcp_from_refs): build a server from such references.
 
 ### py2mcp.util.markdown_install_badge(name, mcp_url, , admin=False)
 
@@ -159,4 +159,4 @@ set). Set and delete return a short confirmation string.
 ```
 
 #### SEE ALSO
-[`py2mcp.mk_mcp_from_store()`](py2mcp.html.md#py2mcp.mk_mcp_from_store): the same functions, served as MCP tools.
+[`py2mcp.mk_mcp_from_store()`](py2mcp.md#py2mcp.mk_mcp_from_store): the same functions, served as MCP tools.

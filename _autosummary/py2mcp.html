@@ -10,6 +10,8 @@
 
 <link rel="alternate" type="text/markdown" href="py2mcp.html.md">
 <link rel="describedby" href="../llms.txt" type="text/markdown">
+<link rel="alternate" type="text/markdown" href="py2mcp.html.md">
+<link rel="describedby" href="llms.txt">
     <title>py2mcp &#8212; py2mcp</title>
   
   
@@ -42,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../_static/documentation_options.js?v=bafade30"></script>
+    <script src="../_static/documentation_options.js?v=1e825a29"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,7 +57,7 @@
     <link rel="prev" title="API reference" href="../api.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.10" />
+  <meta name="docsearch:version" content="0.1.11" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -415,6 +417,12 @@ packaged stdio launcher and a Streamable-HTTP (optionally OAuth 2.1) server.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#py2mcp.import_object" title="py2mcp.import_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">import_object</span></code></a>(ref)</p></td>
 <td><p>Resolve a <code class="docutils literal notranslate"><span class="pre">'module.path:attr'</span></code> (preferred) or <code class="docutils literal notranslate"><span class="pre">'module.path.attr'</span></code> reference.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#py2mcp.claude_install_link" title="py2mcp.claude_install_link"><code class="xref py py-obj docutils literal notranslate"><span class="pre">claude_install_link</span></code></a>(name, mcp_url, *[, admin])</p></td>
+<td><p>Prefilled &quot;Add custom connector&quot; link for claude.ai.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#py2mcp.markdown_install_badge" title="py2mcp.markdown_install_badge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">markdown_install_badge</span></code></a>(name, mcp_url, *[, admin])</p></td>
+<td><p>Markdown link that installs an MCP server as a claude.ai connector.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#py2mcp.serve_stdio" title="py2mcp.serve_stdio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serve_stdio</span></code></a>(refs, *[, name, input_trans, ...])</p></td>
 <td><p>Build an MCP server from <code class="docutils literal notranslate"><span class="pre">'module:function'</span></code> refs and run it over stdio.</p></td>
 </tr>
@@ -436,6 +444,47 @@ packaged stdio launcher and a Streamable-HTTP (optionally OAuth 2.1) server.</p>
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="py2mcp.claude_install_link">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.</span></span><span class="sig-name descname"><span class="pre">claude_install_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcp_url</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/py2mcp/util.html#claude_install_link"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.claude_install_link" title="Link to this definition">#</a></dt>
+<dd><p>Prefilled “Add custom connector” link for claude.ai.</p>
+<p>There is no true one-click install for an unlisted MCP server (listing
+requires Anthropic review), but this link opens the add-connector modal with
+the name and URL already filled in, so the user only has to confirm — which
+beats “go to Settings, find Connectors, paste this long URL”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Connector name to prefill (what the user will see in their list).</p></li>
+<li><p><strong>mcp_url</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Full URL of the MCP endpoint, e.g. <code class="docutils literal notranslate"><span class="pre">https://host/api/x/mcp</span></code>.</p></li>
+<li><p><strong>admin</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Target the org-wide install page instead of the per-user one.
+Use it when an admin is rolling the connector out to a whole
+workspace; the default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) is the personal install.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The claude.ai URL, safe to paste into a README or a chat message.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">claude_install_link</span><span class="p">(</span><span class="s1">'snout'</span><span class="p">,</span> <span class="s1">'https://example.com/api/snout_mcp/mcp'</span><span class="p">)</span>
+<span class="go">'https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=snout&amp;connectorUrl=https%3A%2F%2Fexample.com%2Fapi%2Fsnout_mcp%2Fmcp'</span>
+</pre></div>
+</div>
+<p>Names and URLs are percent-encoded, so spaces (and <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>) can’t break the
+query string:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">claude_install_link</span><span class="p">(</span><span class="s1">'my server'</span><span class="p">,</span> <span class="s1">'https://x.io/mcp'</span><span class="p">,</span> <span class="n">admin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'https://claude.ai/admin-settings/connectors?modal=add-custom-connector&amp;connectorName=my%20server&amp;connectorUrl=https%3A%2F%2Fx.io%2Fmcp'</span>
+</pre></div>
+</div>
+<p>Note that the link is a convenience, not an access grant: if the server is an
+OAuth resource server with an allowlist, a user who isn’t on it can follow
+the link, complete the flow, and still be refused. Custom connectors are also
+a paid-plan feature, so the link goes nowhere for a Free-plan user.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="py2mcp.import_object">
 <span class="sig-prename descclassname"><span class="pre">py2mcp.</span></span><span class="sig-name descname"><span class="pre">import_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/py2mcp/util.html#import_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.import_object" title="Link to this definition">#</a></dt>
@@ -525,6 +574,24 @@ tools.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="#py2mcp.resolve_server_config" title="py2mcp.resolve_server_config"><code class="xref py py-func docutils literal notranslate"><span class="pre">resolve_server_config()</span></code></a>: merge the config with command-line refs.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="py2mcp.markdown_install_badge">
+<span class="sig-prename descclassname"><span class="pre">py2mcp.</span></span><span class="sig-name descname"><span class="pre">markdown_install_badge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcp_url</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/py2mcp/util.html#markdown_install_badge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.markdown_install_badge" title="Link to this definition">#</a></dt>
+<dd><p>Markdown link that installs an MCP server as a claude.ai connector.</p>
+<p>The dominant use of <a class="reference internal" href="#py2mcp.claude_install_link" title="py2mcp.claude_install_link"><code class="xref py py-func docutils literal notranslate"><span class="pre">claude_install_link()</span></code></a> is pasting one into a README,
+so this saves writing the same link syntax around it. Arguments are those of
+<a class="reference internal" href="#py2mcp.claude_install_link" title="py2mcp.claude_install_link"><code class="xref py py-func docutils literal notranslate"><span class="pre">claude_install_link()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">markdown_install_badge</span><span class="p">(</span><span class="s1">'snout'</span><span class="p">,</span> <span class="s1">'https://x.io/mcp'</span><span class="p">)</span>
+<span class="go">'[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=snout&amp;connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'</span>
+</pre></div>
 </div>
 </dd></dl>
 
@@ -1078,8 +1145,10 @@ stdio path as on the remote one.</p></li>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#py2mcp.claude_install_link"><code class="docutils literal notranslate"><span class="pre">claude_install_link()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#py2mcp.import_object"><code class="docutils literal notranslate"><span class="pre">import_object()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#py2mcp.load_server_config"><code class="docutils literal notranslate"><span class="pre">load_server_config()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#py2mcp.markdown_install_badge"><code class="docutils literal notranslate"><span class="pre">markdown_install_badge()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#py2mcp.mk_auth_provider"><code class="docutils literal notranslate"><span class="pre">mk_auth_provider()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#py2mcp.mk_http_app"><code class="docutils literal notranslate"><span class="pre">mk_http_app()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#py2mcp.mk_input_trans"><code class="docutils literal notranslate"><span class="pre">mk_input_trans()</span></code></a></li>

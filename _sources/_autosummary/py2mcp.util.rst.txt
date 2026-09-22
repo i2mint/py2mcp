@@ -8,6 +8,8 @@ py2mcp.util
 
    .. autosummary::
    
+      claude_install_link
       import_object
+      markdown_install_badge
       store_to_funcs
    

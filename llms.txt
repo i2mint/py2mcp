@@ -6,19 +6,19 @@
 ## Pages
 
 - [py2mcp](index.html.md): Quick MCP (Model Context Protocol) server creation from Python functions.
-- [API reference](api.html.md): | [`py2mcp`](_autosummary/py2mcp.html.md#module-py2mcp)   | py2mcp: Quick MCP server creation from P...
+- [API reference](api.html.md): | &#96;py2mcp&#96;   | py2mcp: Quick MCP server creation from Python functions.   |
 - [py2mcp](_autosummary/py2mcp.html.md): py2mcp: Quick MCP server creation from Python functions.
-- [py2mcp.base](_autosummary/py2mcp.base.html.md): Private helpers shared by the builders in [`py2mcp.main`](py2mcp.main.html.md#module-py2mcp.main).
-- [py2mcp.http](_autosummary/py2mcp.http.html.md): Serve a py2mcp `FastMCP` server over Streamable HTTP with optional OAuth 2.1.
-- [py2mcp.main](_autosummary/py2mcp.main.html.md): Build a `FastMCP` server from Python functions, reference strings, or a store.
-- [py2mcp.serve](_autosummary/py2mcp.serve.html.md): Serve a py2mcp `FastMCP` server over stdio, as a packaged integration launches it.
+- [py2mcp.base](_autosummary/py2mcp.base.html.md): Private helpers shared by the builders in &#96;py2mcp.main&#96;.
+- [py2mcp.http](_autosummary/py2mcp.http.html.md): Serve a py2mcp &#96;FastMCP&#96; server over Streamable HTTP with optional OAuth 2.1.
+- [py2mcp.main](_autosummary/py2mcp.main.html.md): Build a &#96;FastMCP&#96; server from Python functions, reference strings, or a store.
+- [py2mcp.serve](_autosummary/py2mcp.serve.html.md): Serve a py2mcp &#96;FastMCP&#96; server over stdio, as a packaged integration launches it.
 - [py2mcp.trans](_autosummary/py2mcp.trans.html.md): Input transformation for py2mcp tools: convert arguments before a function runs.
 - [py2mcp.util](_autosummary/py2mcp.util.html.md): Resolve object references and turn a mapping into CRUD functions.
-- [About this build](about-this-build.html.md): This documentation was built on **2026-09-15 12:27 UTC** from commit <a href="https://github.com/i2m...
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-09-22 13:01 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
 
----
+## Optional
 
-For more comprehensive documentation, see [py2mcp.md](py2mcp.md)
+- [py2mcp.md](py2mcp.md): Complete documentation in a single file.
 
 ## Build
 

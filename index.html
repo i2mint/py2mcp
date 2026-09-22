@@ -10,6 +10,8 @@
 
 <link rel="alternate" type="text/markdown" href="index.html.md">
 <link rel="describedby" href="llms.txt" type="text/markdown">
+<link rel="alternate" type="text/markdown" href="index.html.md">
+<link rel="describedby" href="llms.txt">
     <title>py2mcp &#8212; py2mcp</title>
   
   
@@ -42,7 +44,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="_static/documentation_options.js?v=bafade30"></script>
+    <script src="_static/documentation_options.js?v=1e825a29"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +56,7 @@
     <link rel="next" title="API reference" href="api.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.10" />
+  <meta name="docsearch:version" content="0.1.11" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -473,6 +475,36 @@ without calling a tool:</p>
 <p>Like <code class="docutils literal notranslate"><span class="pre">middleware=</span></code>, it’s a programmatic argument (not yet wired through the
 <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">py2mcp</span></code> CLI / JSON-config path).</p>
 </section>
+<section id="add-to-claude-install-links">
+<h2>“Add to Claude” install links<a class="headerlink" href="#add-to-claude-install-links" title="Link to this heading">#</a></h2>
+<p>Once a server is hosted, the last mile is getting a human to add it. There’s no
+true one-click install for an unlisted connector (listing requires Anthropic
+review), but a prefilled link opens the add-connector modal with the name and
+URL already filled in, so the user only has to confirm:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">claude_install_link</span><span class="p">,</span> <span class="n">markdown_install_badge</span>
+
+<span class="n">claude_install_link</span><span class="p">(</span><span class="s2">"snout"</span><span class="p">,</span> <span class="s2">"https://example.com/api/snout_mcp/mcp"</span><span class="p">)</span>
+<span class="c1"># 'https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=snout&amp;...'</span>
+
+<span class="n">markdown_install_badge</span><span class="p">(</span><span class="s2">"snout"</span><span class="p">,</span> <span class="s2">"https://example.com/api/snout_mcp/mcp"</span><span class="p">)</span>
+<span class="c1"># '[Add snout to Claude](https://claude.ai/customize/connectors?...)'  &lt;- paste into a README</span>
+
+<span class="n">claude_install_link</span><span class="p">(</span><span class="s2">"snout"</span><span class="p">,</span> <span class="s2">"..."</span><span class="p">,</span> <span class="n">admin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># org-wide page, not per-user</span>
+</pre></div>
+</div>
+<p>Both are pure string functions (stdlib only, no server needed). Three caveats
+the link itself can’t express:</p>
+<ul class="simple">
+<li><p>Custom connectors are a <strong>paid-plan</strong> feature, so the link goes nowhere for a
+Free-plan user.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">admin=True</span></code> targets the org-wide install page — the right one when an admin
+is rolling a connector out to a workspace, the wrong one for a personal install.</p></li>
+<li><p><strong>A link is not an access grant.</strong> If the server is an OAuth resource server
+with an allowlist (see above), someone not on it can follow the link, complete
+the flow, and still be refused. Hand out the link together with whatever adds
+them to the allowlist.</p></li>
+</ul>
+</section>
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h2>
 <p>MIT</p>
@@ -482,7 +514,7 @@ without calling a tool:</p>
 </section>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-09-15 12:27 UTC from <a href="https://github.com/i2mint/py2mcp/commit/9ba00578d7a356a9c6543a44ea2f7e605567be99">9ba0057</a> (main) · py2mcp 0.1.10 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-09-22 13:01 UTC from <a href="https://github.com/i2mint/py2mcp/commit/4aa2ce0278d6ee2ec2fa682b9788d89b76dafa22">4aa2ce0</a> (main) · py2mcp 0.1.11 · <a href="about-this-build.html">about this build</a></p>
 
                 </article>
               
@@ -530,6 +562,7 @@ without calling a tool:</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serving-local-stdio-and-remote-http-oauth">Serving: local (stdio) and remote (HTTP + OAuth)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#middleware-metering-logging-rate-limiting">Middleware (metering, logging, rate-limiting)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instructions-the-server-s-model-facing-description">Instructions (the server’s model-facing description)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-to-claude-install-links">“Add to Claude” install links</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
 </ul>
   </nav></div>

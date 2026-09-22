@@ -13,6 +13,8 @@
       mk_mcp_from_refs
       mk_input_trans
       import_object
+      claude_install_link
+      markdown_install_badge
       serve_stdio
       resolve_server_config
       load_server_config
