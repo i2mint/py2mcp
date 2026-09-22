@@ -4,11 +4,11 @@ Build a `FastMCP` server from Python functions, reference strings, or a store.
 
 Each builder returns a `FastMCP` server *object* with one tool per function
 and does not run it; [`py2mcp.serve`](py2mcp.serve.html.md#module-py2mcp.serve) (stdio) and [`py2mcp.http`](py2mcp.http.html.md#module-py2mcp.http)
-(Streamable HTTP) do the running. All three accept `middleware` and
-`instructions` and attach them at construction; `mk_mcp_server` and
-`mk_mcp_from_refs` take the server `name` directly, while
-`mk_mcp_from_store` takes the singular item noun instead and derives the
-server name from it (`server_name` overrides).
+(Streamable HTTP) do the running. All three accept `middleware`,
+`instructions`, `prompts` and `resources` and attach them at
+construction; `mk_mcp_server` and `mk_mcp_from_refs` take the server
+`name` directly, while `mk_mcp_from_store` takes the singular item noun
+instead and derives the server name from it (`server_name` overrides).
 
 Main entry points:
 
@@ -29,7 +29,7 @@ Main entry points:
 | [`mk_mcp_from_store`](#py2mcp.main.mk_mcp_from_store)(store, \*[, name, plural, ...])  | Create an MCP server from a MutableMapping with CRUD operations.   |
 | [`mk_mcp_server`](#py2mcp.main.mk_mcp_server)(funcs, \*[, name, input_trans, ...]) | Create an MCP server from Python functions.                        |
 
-### py2mcp.main.mk_mcp_from_refs(refs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None)
+### py2mcp.main.mk_mcp_from_refs(refs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None)
 
 Create an MCP server from `'module:function'` reference strings.
 
@@ -48,6 +48,8 @@ runnable server — what tools that read tool references from a file (e.g.
   * **middleware** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server) as the server’s
     model-facing description.
+  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
+  * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -79,7 +81,7 @@ The tools are the resolved functions:
 [`py2mcp.serve.serve_stdio()`](py2mcp.serve.html.md#py2mcp.serve.serve_stdio): build from refs and run over stdio.
 [`py2mcp.http.mk_http_app()`](py2mcp.http.html.md#py2mcp.http.mk_http_app): build from refs as an ASGI app.
 
-### py2mcp.main.mk_mcp_from_store(store, , name='item', plural='', server_name=None, middleware=None, instructions=None)
+### py2mcp.main.mk_mcp_from_store(store, , name='item', plural='', server_name=None, middleware=None, instructions=None, prompts=None, resources=None)
 
 Create an MCP server from a MutableMapping with CRUD operations.
 
@@ -99,6 +101,8 @@ The store is used live: a tool call reads or writes the mapping you passed.
     CRUD tool call, e.g. to meter or audit store reads and mutations.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Optional natural-language server description, forwarded to
     [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server) as the server’s model-facing `instructions`.
+  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
+  * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -132,7 +136,7 @@ An irregular plural and an explicit server name:
 [`py2mcp.util.store_to_funcs()`](py2mcp.util.html.md#py2mcp.util.store_to_funcs): the CRUD functions without a server.
 [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server): expose your own functions instead.
 
-### py2mcp.main.mk_mcp_server(funcs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None)
+### py2mcp.main.mk_mcp_server(funcs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None)
 
 Create an MCP server from Python functions.
 
@@ -163,6 +167,13 @@ tool’s schema and description.
     to the client/model as the server’s `instructions` — a good place to
     explain what the tools do and the intended workflow. `None` (default)
     leaves it unset.
+  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional callable or iterable of callables to register as MCP
+    prompts (via FastMCP’s `@mcp.prompt`), so a prompts-and-tools server
+    can be built declaratively in one call instead of reaching past the
+    builder to register prompts by hand on the returned server.
+  * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Optional `{uri: callable}` mapping to register as MCP
+    resources (via FastMCP’s `@mcp.resource(uri)`) — the callable is
+    invoked to produce the resource’s content when a client reads `uri`.
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -198,6 +209,24 @@ Calling a tool the way an MCP client would:
 >>> result = asyncio.run(mcp.call_tool('add', {'a': 2, 'b': 3}))
 >>> result.structured_content
 {'result': 5}
+```
+
+Prompts and resources, declared alongside the tools:
+
+```pycon
+>>> def summarize_request(topic: str) -> str:
+...     return f"Summarize the latest on {topic}."
+>>> def schema() -> dict:
+...     return {"type": "object"}
+>>> mcp = mk_mcp_server(
+...     add,
+...     prompts=summarize_request,
+...     resources={"schema://analysis": schema},
+... )
+>>> sorted(p.name for p in asyncio.run(mcp.list_prompts()))
+['summarize_request']
+>>> [str(r.uri) for r in asyncio.run(mcp.list_resources())]
+['schema://analysis']
 ```
 
 #### SEE ALSO

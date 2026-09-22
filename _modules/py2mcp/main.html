@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=297ad043"></script>
+    <script src="../../_static/documentation_options.js?v=8d02545a"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.12" />
+  <meta name="docsearch:version" content="0.1.13" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -701,11 +701,11 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">Each builder returns a ``FastMCP`` server *object* with one tool per function</span>
 <span class="sd">and does not run it; :mod:`py2mcp.serve` (stdio) and :mod:`py2mcp.http`</span>
-<span class="sd">(Streamable HTTP) do the running. All three accept ``middleware`` and</span>
-<span class="sd">``instructions`` and attach them at construction; ``mk_mcp_server`` and</span>
-<span class="sd">``mk_mcp_from_refs`` take the server ``name`` directly, while</span>
-<span class="sd">``mk_mcp_from_store`` takes the singular item noun instead and derives the</span>
-<span class="sd">server name from it (``server_name`` overrides).</span>
+<span class="sd">(Streamable HTTP) do the running. All three accept ``middleware``,</span>
+<span class="sd">``instructions``, ``prompts`` and ``resources`` and attach them at</span>
+<span class="sd">construction; ``mk_mcp_server`` and ``mk_mcp_from_refs`` take the server</span>
+<span class="sd">``name`` directly, while ``mk_mcp_from_store`` takes the singular item noun</span>
+<span class="sd">instead and derives the server name from it (``server_name`` overrides).</span>
 
 <span class="sd">Main entry points:</span>
 
@@ -718,7 +718,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">'Paths'</span>
 <span class="sd">"""</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastMCP</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -739,6 +739,8 @@ window.runMermaid = runMermaid;</script>
     <span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create an MCP server from Python functions.</span>
 
@@ -769,6 +771,13 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            to the client/model as the server's ``instructions`` — a good place to</span>
 <span class="sd">            explain what the tools do and the intended workflow. ``None`` (default)</span>
 <span class="sd">            leaves it unset.</span>
+<span class="sd">        prompts: Optional callable or iterable of callables to register as MCP</span>
+<span class="sd">            prompts (via FastMCP's ``@mcp.prompt``), so a prompts-and-tools server</span>
+<span class="sd">            can be built declaratively in one call instead of reaching past the</span>
+<span class="sd">            builder to register prompts by hand on the returned server.</span>
+<span class="sd">        resources: Optional ``{uri: callable}`` mapping to register as MCP</span>
+<span class="sd">            resources (via FastMCP's ``@mcp.resource(uri)``) — the callable is</span>
+<span class="sd">            invoked to produce the resource's content when a client reads ``uri``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server instance ready to run, with one tool per function.</span>
@@ -799,6 +808,22 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        &gt;&gt;&gt; result.structured_content</span>
 <span class="sd">        {'result': 5}</span>
 
+<span class="sd">        Prompts and resources, declared alongside the tools:</span>
+
+<span class="sd">        &gt;&gt;&gt; def summarize_request(topic: str) -&gt; str:</span>
+<span class="sd">        ...     return f"Summarize the latest on {topic}."</span>
+<span class="sd">        &gt;&gt;&gt; def schema() -&gt; dict:</span>
+<span class="sd">        ...     return {"type": "object"}</span>
+<span class="sd">        &gt;&gt;&gt; mcp = mk_mcp_server(</span>
+<span class="sd">        ...     add,</span>
+<span class="sd">        ...     prompts=summarize_request,</span>
+<span class="sd">        ...     resources={"schema://analysis": schema},</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; sorted(p.name for p in asyncio.run(mcp.list_prompts()))</span>
+<span class="sd">        ['summarize_request']</span>
+<span class="sd">        &gt;&gt;&gt; [str(r.uri) for r in asyncio.run(mcp.list_resources())]</span>
+<span class="sd">        ['schema://analysis']</span>
+
 <span class="sd">    See Also:</span>
 <span class="sd">        :func:`mk_mcp_from_refs`: the same from ``'module:function'`` strings.</span>
 <span class="sd">        :func:`mk_mcp_from_store`: CRUD tools generated from a mapping.</span>
@@ -827,6 +852,16 @@ window.runMermaid = runMermaid;</script>
         <span class="c1"># Register as MCP tool</span>
         <span class="n">mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
+    <span class="c1"># Register prompts, if any</span>
+    <span class="k">if</span> <span class="n">prompts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">prompt_func</span> <span class="ow">in</span> <span class="n">_normalize_to_iterable</span><span class="p">(</span><span class="n">prompts</span><span class="p">):</span>
+            <span class="n">mcp</span><span class="o">.</span><span class="n">prompt</span><span class="p">(</span><span class="n">prompt_func</span><span class="p">)</span>
+
+    <span class="c1"># Register resources, if any -- each is registered under its own URI</span>
+    <span class="k">if</span> <span class="n">resources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">uri</span><span class="p">,</span> <span class="n">resource_func</span> <span class="ow">in</span> <span class="n">resources</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">mcp</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="n">uri</span><span class="p">)(</span><span class="n">resource_func</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">mcp</span></div>
 
 
@@ -841,6 +876,8 @@ window.runMermaid = runMermaid;</script>
     <span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create an MCP server from ``'module:function'`` reference strings.</span>
 
@@ -859,6 +896,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        middleware: Forwarded to :func:`mk_mcp_server`.</span>
 <span class="sd">        instructions: Forwarded to :func:`mk_mcp_server` as the server's</span>
 <span class="sd">            model-facing description.</span>
+<span class="sd">        prompts: Forwarded to :func:`mk_mcp_server`.</span>
+<span class="sd">        resources: Forwarded to :func:`mk_mcp_server`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server with one tool per reference, each named after the</span>
@@ -894,6 +933,8 @@ window.runMermaid = runMermaid;</script>
         <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span>
         <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span><span class="p">,</span>
         <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">,</span>
+        <span class="n">prompts</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
+        <span class="n">resources</span><span class="o">=</span><span class="n">resources</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -908,6 +949,8 @@ window.runMermaid = runMermaid;</script>
     <span class="n">server_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create an MCP server from a MutableMapping with CRUD operations.</span>
 
@@ -927,6 +970,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            CRUD tool call, e.g. to meter or audit store reads and mutations.</span>
 <span class="sd">        instructions: Optional natural-language server description, forwarded to</span>
 <span class="sd">            :func:`mk_mcp_server` as the server's model-facing ``instructions``.</span>
+<span class="sd">        prompts: Forwarded to :func:`mk_mcp_server`.</span>
+<span class="sd">        resources: Forwarded to :func:`mk_mcp_server`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server with the four CRUD tools.</span>
@@ -961,7 +1006,12 @@ window.runMermaid = runMermaid;</script>
     <span class="n">funcs</span> <span class="o">=</span> <span class="n">store_to_funcs</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">plural</span><span class="o">=</span><span class="n">plural</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">mk_mcp_server</span><span class="p">(</span>
-        <span class="n">funcs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">server_name</span><span class="p">,</span> <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span><span class="p">,</span> <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span>
+        <span class="n">funcs</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">server_name</span><span class="p">,</span>
+        <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span><span class="p">,</span>
+        <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">,</span>
+        <span class="n">prompts</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
+        <span class="n">resources</span><span class="o">=</span><span class="n">resources</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 </pre></div>

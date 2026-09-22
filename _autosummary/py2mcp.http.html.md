@@ -129,7 +129,7 @@ ValueError: jwt auth needs 'audience' (this server's resource id). ...
 #### SEE ALSO
 [`mk_http_app()`](#py2mcp.http.mk_http_app): where the provider is attached to a server.
 
-### py2mcp.http.mk_http_app(refs, , name='py2mcp Server', auth=None, input_trans=None, transport='streamable-http', path=None, stateless_http=None, middleware=None, instructions=None)
+### py2mcp.http.mk_http_app(refs, , name='py2mcp Server', auth=None, input_trans=None, transport='streamable-http', path=None, stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None)
 
 Build a Streamable-HTTP **ASGI app** from `refs` (+ optional OAuth).
 
@@ -164,6 +164,8 @@ Builds the app with **no network I/O**.
     `fastmcp.server.dependencies.get_access_token()`.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description (surfaced to the
     connecting client/model).
+  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.html.md#py2mcp.mk_mcp_from_refs).
 * **Return type:**
   [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)
 * **Returns:**
@@ -202,7 +204,7 @@ metadata route is added next to the endpoint:
 [`serve_http()`](#py2mcp.http.serve_http): build and run in-process instead of returning the app.
 [`py2mcp.serve.serve_stdio()`](py2mcp.serve.html.md#py2mcp.serve.serve_stdio): the local stdio counterpart.
 
-### py2mcp.http.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None)
+### py2mcp.http.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None)
 
 Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -212,6 +214,7 @@ be reachable over public **HTTPS**, and binding locally is the spec’s
 DNS-rebinding-safe default). `auth` is resolved by [`mk_auth_provider()`](#py2mcp.http.mk_auth_provider);
 `middleware` (a single FastMCP middleware or a list) is attached as in
 [`mk_http_app()`](#py2mcp.http.mk_http_app); `instructions` sets the server’s model-facing description.
+`prompts`/`resources` are forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.html.md#py2mcp.mk_mcp_from_refs).
 
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)

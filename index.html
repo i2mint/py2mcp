@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="_static/documentation_options.js?v=297ad043"></script>
+    <script src="_static/documentation_options.js?v=8d02545a"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -56,7 +56,7 @@
     <link rel="next" title="API reference" href="api.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.12" />
+  <meta name="docsearch:version" content="0.1.13" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -475,6 +475,34 @@ without calling a tool:</p>
 <p>Like <code class="docutils literal notranslate"><span class="pre">middleware=</span></code>, it’s a programmatic argument (not yet wired through the
 <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">py2mcp</span></code> CLI / JSON-config path).</p>
 </section>
+<section id="prompts-and-resources">
+<h2>Prompts and resources<a class="headerlink" href="#prompts-and-resources" title="Link to this heading">#</a></h2>
+<p>Every builder also accepts <code class="docutils literal notranslate"><span class="pre">prompts=</span></code> and <code class="docutils literal notranslate"><span class="pre">resources=</span></code>, so a server that ships MCP
+<a class="reference external" href="https://gofastmcp.com/servers/prompts">prompts</a> and
+<a class="reference external" href="https://gofastmcp.com/servers/resources">resources</a> alongside its tools can be
+built declaratively in one call, instead of reaching past the builder to register
+them by hand on the returned <code class="docutils literal notranslate"><span class="pre">FastMCP</span></code> object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">summarize_request</span><span class="p">(</span><span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"Summarize the latest on </span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s2">."</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"object"</span><span class="p">}</span>
+
+
+<span class="n">mcp</span> <span class="o">=</span> <span class="n">mk_mcp_server</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">render</span><span class="p">,</span> <span class="n">estimate</span><span class="p">],</span>
+    <span class="n">prompts</span><span class="o">=</span><span class="n">summarize_request</span><span class="p">,</span>  <span class="c1"># a callable, or an iterable of them</span>
+    <span class="n">resources</span><span class="o">=</span><span class="p">{</span><span class="s2">"schema://analysis"</span><span class="p">:</span> <span class="n">schema</span><span class="p">},</span>  <span class="c1"># {uri: callable}</span>
+<span class="p">)</span>
+<span class="c1"># same keywords on mk_mcp_from_refs(...), mk_mcp_from_store(...), mk_http_app(...),</span>
+<span class="c1">#                  serve_http(...), serve_stdio(...)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">prompts</span></code> accepts a single callable or an iterable, normalized the same way <code class="docutils literal notranslate"><span class="pre">funcs</span></code>
+is for tools. <code class="docutils literal notranslate"><span class="pre">resources</span></code> is a <code class="docutils literal notranslate"><span class="pre">{uri:</span> <span class="pre">callable}</span></code> mapping — each callable is invoked
+to produce that resource’s content when a client reads its URI.</p>
+</section>
 <section id="add-to-claude-install-links">
 <h2>“Add to Claude” install links<a class="headerlink" href="#add-to-claude-install-links" title="Link to this heading">#</a></h2>
 <p>Once a server is hosted, the last mile is getting a human to add it. There’s no
@@ -514,7 +542,7 @@ them to the allowlist.</p></li>
 </section>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-09-22 13:08 UTC from <a href="https://github.com/i2mint/py2mcp/commit/aedfeac349d25e70a612106747464c9895aa96b4">aedfeac</a> (main) · py2mcp 0.1.12 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-09-22 14:13 UTC from <a href="https://github.com/i2mint/py2mcp/commit/5f77d27284be92b65ad367fdde1a431bc20fcd19">5f77d27</a> (main) · py2mcp 0.1.13 · <a href="about-this-build.html">about this build</a></p>
 
                 </article>
               
@@ -562,6 +590,7 @@ them to the allowlist.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serving-local-stdio-and-remote-http-oauth">Serving: local (stdio) and remote (HTTP + OAuth)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#middleware-metering-logging-rate-limiting">Middleware (metering, logging, rate-limiting)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instructions-the-server-s-model-facing-description">Instructions (the server’s model-facing description)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prompts-and-resources">Prompts and resources</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-to-claude-install-links">“Add to Claude” install links</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
 </ul>

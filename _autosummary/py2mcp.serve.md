@@ -138,7 +138,7 @@ With a config file, its refs come first and its name is the fallback:
 (['os.path:basename'], 'Override')
 ```
 
-### py2mcp.serve.serve_stdio(refs, , name='py2mcp Server', input_trans=None, middleware=None, instructions=None)
+### py2mcp.serve.serve_stdio(refs, , name='py2mcp Server', input_trans=None, middleware=None, instructions=None, prompts=None, resources=None)
 
 Build an MCP server from `'module:function'` refs and run it over stdio.
 
@@ -155,6 +155,8 @@ does not return while the server runs.
     cross-cutting concerns; logging/metering is as useful on the local
     stdio path as on the remote one.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description.
+  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.md#py2mcp.mk_mcp_from_refs).
+  * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.md#py2mcp.mk_mcp_from_refs).
 
 #### SEE ALSO
 [`py2mcp.http.serve_http()`](py2mcp.http.md#py2mcp.http.serve_http): the same over Streamable HTTP.

@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=297ad043"></script>
+    <script src="../../_static/documentation_options.js?v=8d02545a"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.12" />
+  <meta name="docsearch:version" content="0.1.13" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -738,7 +738,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_mcp_from_refs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.serve</span><span class="w"> </span><span class="kn">import</span> <span class="n">DFLT_SERVER_NAME</span>
@@ -892,6 +892,8 @@ window.runMermaid = runMermaid;</script>
     <span class="n">stateless_http</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Build a Streamable-HTTP **ASGI app** from ``refs`` (+ optional OAuth).</span>
 
@@ -924,6 +926,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            ``fastmcp.server.dependencies.get_access_token()``.</span>
 <span class="sd">        instructions: The server's model-facing description (surfaced to the</span>
 <span class="sd">            connecting client/model).</span>
+<span class="sd">        prompts: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.</span>
+<span class="sd">        resources: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The Starlette ASGI application.</span>
@@ -966,6 +970,8 @@ window.runMermaid = runMermaid;</script>
         <span class="n">auth</span><span class="o">=</span><span class="n">provider</span><span class="p">,</span>
         <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span><span class="p">,</span>
         <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">,</span>
+        <span class="n">prompts</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
+        <span class="n">resources</span><span class="o">=</span><span class="n">resources</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">http_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"transport"</span><span class="p">:</span> <span class="n">transport</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -990,6 +996,8 @@ window.runMermaid = runMermaid;</script>
     <span class="n">stateless_http</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">middleware</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.</span>
 
@@ -999,6 +1007,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    DNS-rebinding-safe default). ``auth`` is resolved by :func:`mk_auth_provider`;</span>
 <span class="sd">    ``middleware`` (a single FastMCP middleware or a list) is attached as in</span>
 <span class="sd">    :func:`mk_http_app`; ``instructions`` sets the server's model-facing description.</span>
+<span class="sd">    ``prompts``/``resources`` are forwarded to :func:`py2mcp.mk_mcp_from_refs`.</span>
 <span class="sd">    """</span>
     <span class="n">provider</span> <span class="o">=</span> <span class="n">mk_auth_provider</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_from_refs</span><span class="p">(</span>
@@ -1008,6 +1017,8 @@ window.runMermaid = runMermaid;</script>
         <span class="n">auth</span><span class="o">=</span><span class="n">provider</span><span class="p">,</span>
         <span class="n">middleware</span><span class="o">=</span><span class="n">middleware</span><span class="p">,</span>
         <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">,</span>
+        <span class="n">prompts</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
+        <span class="n">resources</span><span class="o">=</span><span class="n">resources</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">run_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"transport"</span><span class="p">:</span> <span class="n">transport</span><span class="p">,</span> <span class="s2">"host"</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span> <span class="s2">"port"</span><span class="p">:</span> <span class="n">port</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">stateless_http</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

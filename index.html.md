@@ -170,6 +170,36 @@ mcp = mk_mcp_server(
 Like `middleware=`, it’s a programmatic argument (not yet wired through the
 `python -m py2mcp` CLI / JSON-config path).
 
+## Prompts and resources
+
+Every builder also accepts `prompts=` and `resources=`, so a server that ships MCP
+[prompts](https://gofastmcp.com/servers/prompts) and
+[resources](https://gofastmcp.com/servers/resources) alongside its tools can be
+built declaratively in one call, instead of reaching past the builder to register
+them by hand on the returned `FastMCP` object:
+
+```python
+def summarize_request(topic: str) -> str:
+    return f"Summarize the latest on {topic}."
+
+
+def schema() -> dict:
+    return {"type": "object"}
+
+
+mcp = mk_mcp_server(
+    [render, estimate],
+    prompts=summarize_request,  # a callable, or an iterable of them
+    resources={"schema://analysis": schema},  # {uri: callable}
+)
+# same keywords on mk_mcp_from_refs(...), mk_mcp_from_store(...), mk_http_app(...),
+#                  serve_http(...), serve_stdio(...)
+```
+
+`prompts` accepts a single callable or an iterable, normalized the same way `funcs`
+is for tools. `resources` is a `{uri: callable}` mapping — each callable is invoked
+to produce that resource’s content when a client reads its URI.
+
 ## “Add to Claude” install links
 
 Once a server is hosted, the last mile is getting a human to add it. There’s no
