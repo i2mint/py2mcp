@@ -67,9 +67,7 @@ def test_missing_audience_raises():
 
 def test_missing_authorization_servers_raises():
     auth = {
-        k: v
-        for k, v in _AUTH.items()
-        if k not in ("authorization_servers", "issuer")
+        k: v for k, v in _AUTH.items() if k not in ("authorization_servers", "issuer")
     }
     with pytest.raises(ValueError, match="authorization_servers"):
         mk_auth_provider(auth)
@@ -114,7 +112,9 @@ def test_cli_http_passes_auth_host_port(tmp_path, monkeypatch):
 
     cfg = tmp_path / "c.json"
     cfg.write_text(
-        json.dumps({"name": "Conn", "refs": ["os.path:basename"], "auth": _AUTH, "port": 9001})
+        json.dumps(
+            {"name": "Conn", "refs": ["os.path:basename"], "auth": _AUTH, "port": 9001}
+        )
     )
     captured = {}
 

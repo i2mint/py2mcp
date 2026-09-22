@@ -39,7 +39,7 @@ Building the app performs no network I/O, so it is safe to do at import time:
 
 from __future__ import annotations
 
-from typing import Any, Callable, Iterable, Optional
+from typing import Any, Callable, Iterable, Mapping, Optional
 
 from py2mcp.main import mk_mcp_from_refs
 from py2mcp.serve import DFLT_SERVER_NAME
@@ -188,6 +188,8 @@ def mk_http_app(
     stateless_http: Optional[bool] = None,
     middleware: Optional[Any] = None,
     instructions: Optional[str] = None,
+    prompts: Optional[Callable | Iterable[Callable]] = None,
+    resources: Optional[Mapping[str, Callable]] = None,
 ) -> Any:
     """Build a Streamable-HTTP **ASGI app** from ``refs`` (+ optional OAuth).
 
@@ -220,6 +222,8 @@ def mk_http_app(
             ``fastmcp.server.dependencies.get_access_token()``.
         instructions: The server's model-facing description (surfaced to the
             connecting client/model).
+        prompts: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
+        resources: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
 
     Returns:
         The Starlette ASGI application.
@@ -262,6 +266,8 @@ def mk_http_app(
         auth=provider,
         middleware=middleware,
         instructions=instructions,
+        prompts=prompts,
+        resources=resources,
     )
     http_kwargs: dict[str, Any] = {"transport": transport}
     if path is not None:
@@ -283,6 +289,8 @@ def serve_http(
     stateless_http: Optional[bool] = None,
     middleware: Optional[Any] = None,
     instructions: Optional[str] = None,
+    prompts: Optional[Callable | Iterable[Callable]] = None,
+    resources: Optional[Mapping[str, Callable]] = None,
 ) -> None:
     """Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -292,6 +300,7 @@ def serve_http(
     DNS-rebinding-safe default). ``auth`` is resolved by :func:`mk_auth_provider`;
     ``middleware`` (a single FastMCP middleware or a list) is attached as in
     :func:`mk_http_app`; ``instructions`` sets the server's model-facing description.
+    ``prompts``/``resources`` are forwarded to :func:`py2mcp.mk_mcp_from_refs`.
     """
     provider = mk_auth_provider(auth)
     server = mk_mcp_from_refs(
@@ -301,6 +310,8 @@ def serve_http(
         auth=provider,
         middleware=middleware,
         instructions=instructions,
+        prompts=prompts,
+        resources=resources,
     )
     run_kwargs: dict[str, Any] = {"transport": transport, "host": host, "port": port}
     if stateless_http is not None:
