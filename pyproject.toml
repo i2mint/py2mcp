@@ -30,7 +30,17 @@ authors = [
 ]
 license = "MIT"
 dependencies = [
-    "fastmcp",
+    # >=3.2 is load-bearing, not hygiene. Under `from __future__ import annotations`
+    # fastmcp 3.1.x built its validator from the unresolved string annotations and
+    # dropped every KEYWORD_ONLY default, so a verb like `f(a, *, b="bee")` could not
+    # be called with `a` alone -- while `list_tools` and the JSON schema both looked
+    # perfectly correct. 3.2.0 resolves annotations itself. See issue #12 and
+    # tests/test_future_annotations.py, which fails against 3.1.1.
+    # The upper bound is empirical, not defensive: on fastmcp 4.0.5 every test module
+    # fails to import ("cannot import name 'FastMCP' from 'fastmcp'"), so 4.x has not
+    # been supported here yet. Lift it deliberately, with the suite green, not by
+    # assumption.
+    "fastmcp>=3.2,<4",
 ]
 
 [project.urls]
