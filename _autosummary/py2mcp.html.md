@@ -176,6 +176,15 @@ so this saves writing the same link syntax around it. Arguments are those of
 '[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'
 ```
 
+Brackets and backslashes in the name are escaped in the link text, so a name
+like `tools [beta]` can’t end the link text early and break the link (the
+URL itself is percent-encoded already):
+
+```pycon
+>>> print(markdown_install_badge('tools [beta]', 'https://x.io/mcp').split('](')[0])
+[Add tools \[beta\] to Claude
+```
+
 ### py2mcp.mk_auth_provider(auth)
 
 Build a FastMCP **resource-server** auth provider from an auth-config dict.

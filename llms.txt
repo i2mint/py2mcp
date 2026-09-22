@@ -14,7 +14,7 @@
 - [py2mcp.serve](_autosummary/py2mcp.serve.html.md): Serve a py2mcp &#96;FastMCP&#96; server over stdio, as a packaged integration launches it.
 - [py2mcp.trans](_autosummary/py2mcp.trans.html.md): Input transformation for py2mcp tools: convert arguments before a function runs.
 - [py2mcp.util](_autosummary/py2mcp.util.html.md): Resolve object references and turn a mapping into CRUD functions.
-- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-09-22 14:13 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-09-22 14:25 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
 
 ## Optional
 

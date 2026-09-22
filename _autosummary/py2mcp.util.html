@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../_static/documentation_options.js?v=8d02545a"></script>
+    <script src="../_static/documentation_options.js?v=468bc497"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -56,7 +56,7 @@
     <link rel="prev" title="py2mcp.trans" href="py2mcp.trans.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.13" />
+  <meta name="docsearch:version" content="0.1.14" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -512,6 +512,13 @@ so this saves writing the same link syntax around it. Arguments are those of
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">markdown_install_badge</span><span class="p">(</span><span class="s1">'snout'</span><span class="p">,</span> <span class="s1">'https://x.io/mcp'</span><span class="p">)</span>
 <span class="go">'[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=snout&amp;connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'</span>
+</pre></div>
+</div>
+<p>Brackets and backslashes in the name are escaped in the link text, so a name
+like <code class="docutils literal notranslate"><span class="pre">tools</span> <span class="pre">[beta]</span></code> can’t end the link text early and break the link (the
+URL itself is percent-encoded already):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">markdown_install_badge</span><span class="p">(</span><span class="s1">'tools [beta]'</span><span class="p">,</span> <span class="s1">'https://x.io/mcp'</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">']('</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">[Add tools \[beta\] to Claude</span>
 </pre></div>
 </div>
 </dd></dl>

@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=8d02545a"></script>
+    <script src="../../_static/documentation_options.js?v=468bc497"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.13" />
+  <meta name="docsearch:version" content="0.1.14" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -714,6 +714,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">'c.txt'</span>
 <span class="sd">"""</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_module</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
@@ -828,7 +829,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="markdown_install_badge">
 <a class="viewcode-back" href="../../_autosummary/py2mcp.util.html#py2mcp.markdown_install_badge">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">markdown_install_badge</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mcp_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">admin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Markdown link that installs an MCP server as a claude.ai connector.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Markdown link that installs an MCP server as a claude.ai connector.</span>
 
 <span class="sd">    The dominant use of :func:`claude_install_link` is pasting one into a README,</span>
 <span class="sd">    so this saves writing the same link syntax around it. Arguments are those of</span>
@@ -836,9 +837,26 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    &gt;&gt;&gt; markdown_install_badge('snout', 'https://x.io/mcp')</span>
 <span class="sd">    '[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=snout&amp;connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'</span>
-<span class="sd">    """</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">"[Add </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> to Claude](</span><span class="si">{</span><span class="n">claude_install_link</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">mcp_url</span><span class="p">,</span><span class="w"> </span><span class="n">admin</span><span class="o">=</span><span class="n">admin</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span></div>
 
+<span class="sd">    Brackets and backslashes in the name are escaped in the link text, so a name</span>
+<span class="sd">    like ``tools [beta]`` can't end the link text early and break the link (the</span>
+<span class="sd">    URL itself is percent-encoded already):</span>
+
+<span class="sd">    &gt;&gt;&gt; print(markdown_install_badge('tools [beta]', 'https://x.io/mcp').split('](')[0])</span>
+<span class="sd">    [Add tools \[beta\] to Claude</span>
+<span class="sd">    """</span>
+    <span class="n">link_text</span> <span class="o">=</span> <span class="n">_escape_markdown_link_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Add </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> to Claude"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">link_text</span><span class="si">}</span><span class="s2">](</span><span class="si">{</span><span class="n">claude_install_link</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">mcp_url</span><span class="p">,</span><span class="w"> </span><span class="n">admin</span><span class="o">=</span><span class="n">admin</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_escape_markdown_link_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Backslash-escape the characters that end or nest Markdown link text.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(_escape_markdown_link_text(r'a [b] \ c'))</span>
+<span class="sd">    a \[b\] \\ c</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"([</span><span class="se">\\</span><span class="s2">\[\]])"</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"</span><span class="se">\\</span><span class="s2">\1"</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_store_to_funcs</span><span class="p">(</span>
