@@ -1,34 +1,34 @@
 {
   "schema_version": 1,
-  "built_at": "2026-09-22T14:25:12Z",
+  "built_at": "2026-09-22T14:39:21Z",
   "package": {
     "name": "py2mcp",
-    "version": "0.1.14",
+    "version": "0.1.15",
     "display_name": "py2mcp",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "8607e671f13766fce51fa4e10ab45a66e1b2c5c5",
-    "short_commit": "8607e67",
+    "commit": "8c29353b7a5af119cdbac906a58d4b8b8aebe0ce",
+    "short_commit": "8c29353",
     "branch": "main",
     "tags": [
-      "0.1.14"
+      "0.1.15"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/py2mcp",
-    "commit_url": "https://github.com/i2mint/py2mcp/commit/8607e671f13766fce51fa4e10ab45a66e1b2c5c5",
+    "commit_url": "https://github.com/i2mint/py2mcp/commit/8c29353b7a5af119cdbac906a58d4b8b8aebe0ce",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/py2mcp",
-    "sha": "608aa5b9a2544785cfd835edc9efd6b5d55f77e1",
+    "sha": "f0944aa43037ff573b2d04ce77825339faa5212a",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "35739946993",
-    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/35739946993",
+    "run_id": "35741542434",
+    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/35741542434",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -62,11 +62,11 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.14",
+    "latest": "0.1.15",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 8607e671f13766fce51fa4e10ab45a66e1b2c5c5\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 8c29353b7a5af119cdbac906a58d4b8b8aebe0ce\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,
