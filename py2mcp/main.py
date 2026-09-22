@@ -2,11 +2,11 @@
 
 Each builder returns a ``FastMCP`` server *object* with one tool per function
 and does not run it; :mod:`py2mcp.serve` (stdio) and :mod:`py2mcp.http`
-(Streamable HTTP) do the running. All three accept ``middleware`` and
-``instructions`` and attach them at construction; ``mk_mcp_server`` and
-``mk_mcp_from_refs`` take the server ``name`` directly, while
-``mk_mcp_from_store`` takes the singular item noun instead and derives the
-server name from it (``server_name`` overrides).
+(Streamable HTTP) do the running. All three accept ``middleware``,
+``instructions``, ``prompts`` and ``resources`` and attach them at
+construction; ``mk_mcp_server`` and ``mk_mcp_from_refs`` take the server
+``name`` directly, while ``mk_mcp_from_store`` takes the singular item noun
+instead and derives the server name from it (``server_name`` overrides).
 
 Main entry points:
 
@@ -19,7 +19,7 @@ Main entry points:
 'Paths'
 """
 
-from typing import Callable, Iterable, Optional, MutableMapping, Any
+from typing import Callable, Iterable, Mapping, Optional, MutableMapping, Any
 from fastmcp import FastMCP
 
 from py2mcp.base import (
@@ -38,6 +38,8 @@ def mk_mcp_server(
     auth: Optional[Any] = None,
     middleware: Optional[Any] = None,
     instructions: Optional[str] = None,
+    prompts: Optional[Callable | Iterable[Callable]] = None,
+    resources: Optional[Mapping[str, Callable]] = None,
 ) -> FastMCP:
     """Create an MCP server from Python functions.
 
@@ -68,6 +70,13 @@ def mk_mcp_server(
             to the client/model as the server's ``instructions`` — a good place to
             explain what the tools do and the intended workflow. ``None`` (default)
             leaves it unset.
+        prompts: Optional callable or iterable of callables to register as MCP
+            prompts (via FastMCP's ``@mcp.prompt``), so a prompts-and-tools server
+            can be built declaratively in one call instead of reaching past the
+            builder to register prompts by hand on the returned server.
+        resources: Optional ``{uri: callable}`` mapping to register as MCP
+            resources (via FastMCP's ``@mcp.resource(uri)``) — the callable is
+            invoked to produce the resource's content when a client reads ``uri``.
 
     Returns:
         A FastMCP server instance ready to run, with one tool per function.
@@ -98,6 +107,22 @@ def mk_mcp_server(
         >>> result.structured_content
         {'result': 5}
 
+        Prompts and resources, declared alongside the tools:
+
+        >>> def summarize_request(topic: str) -> str:
+        ...     return f"Summarize the latest on {topic}."
+        >>> def schema() -> dict:
+        ...     return {"type": "object"}
+        >>> mcp = mk_mcp_server(
+        ...     add,
+        ...     prompts=summarize_request,
+        ...     resources={"schema://analysis": schema},
+        ... )
+        >>> sorted(p.name for p in asyncio.run(mcp.list_prompts()))
+        ['summarize_request']
+        >>> [str(r.uri) for r in asyncio.run(mcp.list_resources())]
+        ['schema://analysis']
+
     See Also:
         :func:`mk_mcp_from_refs`: the same from ``'module:function'`` strings.
         :func:`mk_mcp_from_store`: CRUD tools generated from a mapping.
@@ -126,6 +151,16 @@ def mk_mcp_server(
         # Register as MCP tool
         mcp.tool(func)
 
+    # Register prompts, if any
+    if prompts is not None:
+        for prompt_func in _normalize_to_iterable(prompts):
+            mcp.prompt(prompt_func)
+
+    # Register resources, if any -- each is registered under its own URI
+    if resources is not None:
+        for uri, resource_func in resources.items():
+            mcp.resource(uri)(resource_func)
+
     return mcp
 
 
@@ -137,6 +172,8 @@ def mk_mcp_from_refs(
     auth: Optional[Any] = None,
     middleware: Optional[Any] = None,
     instructions: Optional[str] = None,
+    prompts: Optional[Callable | Iterable[Callable]] = None,
+    resources: Optional[Mapping[str, Callable]] = None,
 ) -> FastMCP:
     """Create an MCP server from ``'module:function'`` reference strings.
 
@@ -155,6 +192,8 @@ def mk_mcp_from_refs(
         middleware: Forwarded to :func:`mk_mcp_server`.
         instructions: Forwarded to :func:`mk_mcp_server` as the server's
             model-facing description.
+        prompts: Forwarded to :func:`mk_mcp_server`.
+        resources: Forwarded to :func:`mk_mcp_server`.
 
     Returns:
         A FastMCP server with one tool per reference, each named after the
@@ -190,6 +229,8 @@ def mk_mcp_from_refs(
         auth=auth,
         middleware=middleware,
         instructions=instructions,
+        prompts=prompts,
+        resources=resources,
     )
 
 
@@ -201,6 +242,8 @@ def mk_mcp_from_store(
     server_name: Optional[str] = None,
     middleware: Optional[Any] = None,
     instructions: Optional[str] = None,
+    prompts: Optional[Callable | Iterable[Callable]] = None,
+    resources: Optional[Mapping[str, Callable]] = None,
 ) -> FastMCP:
     """Create an MCP server from a MutableMapping with CRUD operations.
 
@@ -220,6 +263,8 @@ def mk_mcp_from_store(
             CRUD tool call, e.g. to meter or audit store reads and mutations.
         instructions: Optional natural-language server description, forwarded to
             :func:`mk_mcp_server` as the server's model-facing ``instructions``.
+        prompts: Forwarded to :func:`mk_mcp_server`.
+        resources: Forwarded to :func:`mk_mcp_server`.
 
     Returns:
         A FastMCP server with the four CRUD tools.
@@ -254,5 +299,10 @@ def mk_mcp_from_store(
     funcs = store_to_funcs(store, name=name, plural=plural)
 
     return mk_mcp_server(
-        funcs, name=server_name, middleware=middleware, instructions=instructions
+        funcs,
+        name=server_name,
+        middleware=middleware,
+        instructions=instructions,
+        prompts=prompts,
+        resources=resources,
     )

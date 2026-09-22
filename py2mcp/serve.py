@@ -33,7 +33,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Any, Callable, Iterable, Optional
+from typing import Any, Callable, Iterable, Mapping, Optional
 
 from py2mcp.main import mk_mcp_from_refs
 
@@ -150,6 +150,8 @@ def serve_stdio(
     input_trans: Optional[Callable[[dict], dict]] = None,
     middleware: Optional[Any] = None,
     instructions: Optional[str] = None,
+    prompts: Optional[Callable | Iterable[Callable]] = None,
+    resources: Optional[Mapping[str, Callable]] = None,
 ) -> None:
     """Build an MCP server from ``'module:function'`` refs and run it over stdio.
 
@@ -166,6 +168,8 @@ def serve_stdio(
             cross-cutting concerns; logging/metering is as useful on the local
             stdio path as on the remote one.
         instructions: The server's model-facing description.
+        prompts: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
+        resources: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
 
     See Also:
         :func:`py2mcp.http.serve_http`: the same over Streamable HTTP.
@@ -177,6 +181,8 @@ def serve_stdio(
         input_trans=input_trans,
         middleware=middleware,
         instructions=instructions,
+        prompts=prompts,
+        resources=resources,
     )
     server.run(transport="stdio")
 
