@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping, Optional
 
@@ -188,7 +189,19 @@ def serve_stdio(
 
 
 def main(argv: Optional[list[str]] = None) -> None:
-    """CLI: ``python -m py2mcp --config cfg.json`` (or ``--ref mod:func ...``)."""
+    """CLI: ``python -m py2mcp --config cfg.json`` (or ``--ref mod:func ...``).
+
+    ``py2mcp usage <dir>`` is the one subcommand: it summarizes a usage log
+    written by :class:`py2mcp.usage.UsageLogger` (see :func:`py2mcp.usage.main`)
+    and is dispatched on the first word so the flag-only serving form above is
+    unchanged.
+    """
+    if argv is None:
+        argv = sys.argv[1:]
+    if argv and argv[0] == "usage":
+        from py2mcp.usage import main as usage_main
+
+        return usage_main(argv[1:])
     parser = argparse.ArgumentParser(
         prog="py2mcp",
         description="Serve an MCP server from 'module:function' refs — over stdio "

@@ -19,6 +19,13 @@ as a tool. Builders return a server *object* and leave running it to the caller.
 - `http.py` — `serve_http`, `mk_http_app`, `mk_auth_provider`: the *remote*
   counterpart to `serve.py` — Streamable HTTP with optional OAuth 2.1, for a
   server reached over public HTTPS (e.g. a claude.ai custom connector).
+- `usage.py` — `UsageLogger` (a FastMCP middleware: one record per tool call /
+  handshake to a callable sink), `JsonlSink` (day files + retention under
+  `$XDG_DATA_HOME/py2mcp/usage/<server>/`), `mapping_sink` (any `MutableMapping`),
+  `token_caller`, `default_outcome`, and the reader (`iter_records` → `summarize`
+  → `format_summary`, also `py2mcp usage <dir>`). Seams: `sink`, `caller`,
+  `outcome` — one kwarg each. Why: `misc/docs/decisions/0001-*.md`; prior art:
+  `misc/docs/research/2026-10-02-mcp-usage-logging-prior-art.md`.
 - `util.py` — `import_object` (resolve `'module:function'` strings) and
   turning a mapping into CRUD functions — usable standalone.
 - `__main__.py` — CLI entry point.

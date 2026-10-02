@@ -146,6 +146,21 @@ the authenticated caller via `fastmcp.server.dependencies.get_access_token()`.
 Middleware is a *programmatic* hook — it takes Python objects, so it isn't wired
 through the `python -m py2mcp` CLI / JSON-config path (unlike `refs`/`name`/`auth`).
 
+## Usage logging (who called which tool, with what, and what came back)
+
+A deployed connector's web-server log says only that something `POST`ed `/mcp`. `UsageLogger` is a middleware that writes **one record per tool call** — time, caller (from the OAuth token), tool, arguments, outcome (`ok` / `empty` / `error`), result size, latency, connector name and version — plus one flagged record per `initialize` handshake, so "a client has it enabled" and "a client actually used it" stop looking the same:
+
+```python
+from py2mcp import mk_http_app, UsageLogger
+
+app = mk_http_app(
+    refs, name="snout", auth=AUTH,
+    middleware=[UsageLogger(name="snout", version="1.4.0", redact=("api_key",))],
+)
+```
+
+With no `sink=`, records go to one JSON-lines file per day under `$XDG_DATA_HOME/py2mcp/usage/<name>/` (never the app directory), pruned to 90 days. Any callable is a sink — `records.append` in a test, `mapping_sink(dol_store)` to lay records out one-per-key in a `dol` store (and so S3) — and a failing sink never fails the tool call. The arguments are your users' own questions, so logging is off unless you attach the middleware, `include_args=False` drops them, `redact=` masks named fields, and `max_args_chars` caps the rest. Read it back with `py2mcp usage <dir> [--since YYYY-MM-DD] [--json | --records]`, or `iter_records` → `summarize` in Python. Design and prior art: `misc/docs/decisions/0001-usage-logging-is-a-py2mcp-middleware.md`.
+
 ## Instructions (the server's model-facing description)
 
 Every builder also accepts `instructions=` — a natural-language string surfaced to

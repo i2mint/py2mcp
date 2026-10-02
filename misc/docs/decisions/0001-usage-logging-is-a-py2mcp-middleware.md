@@ -1,0 +1,44 @@
+# ADR-0001: Per-call usage logging is a py2mcp middleware with a callable sink; hosts switch it on by configuration
+
+- **Status:** Accepted
+- **Date:** 2026-10-02
+- **Work item:** [i2mint/py2mcp#20](https://github.com/i2mint/py2mcp/issues/20)
+- **Prior art:** [`../research/2026-10-02-mcp-usage-logging-prior-art.md`](../research/2026-10-02-mcp-usage-logging-prior-art.md)
+
+## Context
+
+A hosted MCP connector built with py2mcp (FastMCP under it, OAuth in front of it) leaves one trace of its use: the web server's access log, a timestamp and a status code per `POST /mcp`. That log records no tool name, no arguments, no caller, no outcome. Worse, a claude.ai conversation with a connector enabled performs the `initialize` handshake whether or not it ever calls a tool, so the access log cannot even separate "enabled" from "used". Several connectors are deployed this way and more are coming, so the answer has to be a reusable mechanism that a host turns on, not code pasted into one server.
+
+The issue asked four questions. This record answers them, with the prior-art findings (cited in the research note above) that decided each.
+
+**What exists already.** FastMCP ships `LoggingMiddleware` / `StructuredLoggingMiddleware` (Apache-2.0, no new dependency): they write to Python `logging`, know nothing about the caller, measure only the request payload, and classify nothing. FastMCP also emits OpenTelemetry spans for every `tools/call` with no code change, following the OpenTelemetry MCP semantic conventions, which are at *Development* stability: `mcp.method.name`, `mcp.session.id`, `gen_ai.tool.name` are standard, `gen_ai.tool.call.arguments` / `.result` are opt-in, and there is **no caller or principal attribute at all**. Emitting those spans needs an OpenTelemetry SDK plus an exporter and a collector or vendor backend to receive them. The MCP-specific observability SDKs (MCPcat, Shinzo, Heimdall, Traceloop's `opentelemetry-instrumentation-mcp`) are MIT or Apache-2.0 but are built around a hosted backend or an OTLP pipeline, and the hosted ones ship the users' questions to a third party by default. In-house, `enlace_metering` already has a FastMCP `MeteringMiddleware` and a `UsageLedger` over any `MutableMapping`, but it is a *gate*: cost-oriented, write-ahead, fail-closed, deny-by-default, and it records neither arguments nor result size nor a "no match" outcome. Two 2026 CVEs (n8n-MCP, dbt-MCP) are exactly the failure to avoid: tool arguments logged in full, unredacted, to a file with no rotation.
+
+## Decision
+
+1. **The mechanism lives in py2mcp, as one module, `py2mcp.usage`.** It is a FastMCP `Middleware` (`UsageLogger`) attached through the `middleware=` seam every py2mcp builder already has. It imports only `fastmcp` and the standard library: no `dol`, no OpenTelemetry, no vendor. It is a module and not a package because its only consumer today is a py2mcp server; it is marked as an extraction candidate if a non-py2mcp FastMCP server ever wants it.
+
+2. **It observes, it never gates.** A sink failure, a caller lookup failure or an outcome-classifier failure is logged under the `py2mcp.usage` logger and the tool call proceeds. Gating (allowlists, caps, write-ahead ledgers) stays `enlace_metering`'s job; the two middlewares compose, and the usage logger is wired *after* any gate so a refused call is not logged as usage.
+
+3. **One record per tool call, as a flat JSON-ready dict**, plus one flagged record per `initialize` handshake: `id`, `ts` (UTC ISO), `event`, `server`, `version`, `session`, `request`, `caller`, `tool`, `args`, `outcome`, `error`, `result_chars`, `result_count`, `latency_ms`. Field names are snake_case keys, not dotted OpenTelemetry attributes, because the record is read by Python and by people; the mapping onto the OpenTelemetry MCP conventions is documented in the module and an OTLP exporter can be written as a sink without changing the record.
+
+4. **Three seams, each one keyword argument with a working default that needs no new dependency:**
+   - `sink`: any `record -> None` callable. Default `JsonlSink`: one JSON-lines file per UTC day under `$XDG_DATA_HOME/py2mcp/usage/<server>/`, pruned to `retention_days` (default 90). `mapping_sink(store)` adapts any `MutableMapping`, which is how a `dol` store (and therefore S3) takes over without py2mcp depending on `dol`.
+   - `caller`: `() -> str | None`. Default `token_caller`: the verified OAuth token's `email`, else `sub`, else `client_id`, lowercased; `None` on an unauthenticated path. Never guessed.
+   - `outcome`: `(tool, result) -> str`. Default `default_outcome`: `error` if the tool raised or set `is_error`, `empty` if it returned nothing (the generic "no match"), else `ok`. A connector with a richer refusal shape plugs its own classifier in.
+   NOT seams: the record schema, the day-file naming, the handshake format, the CLI output. They are values; change them in place.
+
+5. **Privacy is configuration, with safe-by-construction defaults.** Nothing is logged unless a server attaches the middleware. `include_args=False` drops arguments, `redact=(...)` replaces named argument values with `<redacted>` *before* the record exists, `max_args_chars` (default 4000) caps the rest, results are recorded as a size and a count, never as content (an `is_error` result keeps its first 500 characters of text as the error message), and the default sink has a retention period and writes outside any app directory or repository.
+
+6. **Enablement, location and retention belong to the host, not the connector code.** `enlace_connector` reads one settings mapping (`os.environ` by default) and attaches the logger only when `CONNECTOR_USAGE_LOG_DIR` is set; `CONNECTOR_USAGE_LOG_RETENTION_DAYS`, `CONNECTOR_USAGE_LOG_REDACT` and `CONNECTOR_USAGE_LOG_ARGS` tune it. A connector built through `make_connector_app` gets this with no code; a connector that builds `FastMCP` itself passes `middleware=usage_middleware(spec)`. On the platform the directory is the connector's own data root, off the deploy tree, and the unit file ships with the line commented out: turning it on is a deliberate act, after the people whose questions it records have been told.
+
+7. **A reader ships with the writer.** `iter_records` → `summarize` → `format_summary`, and `py2mcp usage <dir>`, answer "who used what, which tools fail, which questions return nothing" from the day files directly. The CLI is dispatched on the first word so the flag-only serving command line is unchanged.
+
+## Consequences
+
+- **What it buys.** A connector owner gets an honest adoption figure, the failing tools, the empty searches, and an eval set of real questions, from a file on the host, with zero new dependencies and no third party in the loop. Any py2mcp server gains the same with one keyword argument.
+- **What it costs.** One synchronous file append per tool call on the request path (microseconds against a tool that takes milliseconds). Day files on local disk are per host: a multi-replica deployment that wants one log uses `mapping_sink` with a shared store. There is no OTLP exporter yet; the research note says what one would need.
+- **Do not** make py2mcp depend on `dol` or on an OpenTelemetry SDK for this; the sink seam exists so that stays a host decision.
+- **Do not** enable usage logging on a client-facing connector before disclosing it to the client; the arguments are their questions.
+- **Do not** add fail-closed behaviour here. If a call must be refused when it cannot be recorded, that is metering, and `enlace_metering` already does it.
+- **Do not** log result content. If a specific connector needs it for debugging, that is a separate, consented decision and a separate field.
+- **Next change already known.** A connector-specific outcome classifier (e.g. snout's "no match" shape) is added at the `outcome=` seam, in the connector, with no change to py2mcp or to callers.

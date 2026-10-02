@@ -13,6 +13,7 @@ Main entry points:
 - ``mk_mcp_from_store``: list/get/set/delete tools over any ``MutableMapping``
 - ``mk_input_trans``: per-argument conversion of tool inputs
 - ``serve_stdio`` and ``serve_http``: build from refs and run
+- ``UsageLogger``: one record per tool call, to a sink (``py2mcp usage`` reads it)
 
 >>> from py2mcp import mk_mcp_server
 >>> def add(a: int, b: int) -> int:
@@ -28,6 +29,7 @@ from py2mcp.main import mk_mcp_server, mk_mcp_from_store, mk_mcp_from_refs
 from py2mcp.serve import serve_stdio, resolve_server_config, load_server_config
 from py2mcp.http import mk_http_app, serve_http, mk_auth_provider
 from py2mcp.trans import mk_input_trans
+from py2mcp.usage import UsageLogger, JsonlSink, mapping_sink
 from py2mcp.util import import_object, claude_install_link, markdown_install_badge
 
 
@@ -64,4 +66,8 @@ __all__ = [
     "mk_http_app",
     "serve_http",
     "mk_auth_provider",
+    # per-call usage logging (a middleware + sinks; see py2mcp.usage)
+    "UsageLogger",
+    "JsonlSink",
+    "mapping_sink",
 ]
