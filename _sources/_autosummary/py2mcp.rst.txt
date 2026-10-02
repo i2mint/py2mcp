@@ -21,6 +21,14 @@
       mk_http_app
       serve_http
       mk_auth_provider
+      mapping_sink
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      UsageLogger
+      JsonlSink
    
 .. rubric:: Modules
 
@@ -33,4 +41,5 @@
    main
    serve
    trans
+   usage
    util

@@ -4,3 +4,15 @@ py2mcp.base
 .. automodule:: py2mcp.base
 
    
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      normalize_middleware
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      normalize_middleware
+   

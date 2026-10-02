@@ -1,0 +1,35 @@
+py2mcp.usage
+============
+
+.. automodule:: py2mcp.usage
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      DFLT_RETENTION_DAYS
+      DFLT_MAX_ARGS_CHARS
+      DFLT_MAX_ERROR_CHARS
+      REDACTED
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      mapping_sink
+      token_caller
+      default_outcome
+      default_usage_dir
+      iter_records
+      summarize
+      format_summary
+      main
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      UsageLogger
+      JsonlSink
+   

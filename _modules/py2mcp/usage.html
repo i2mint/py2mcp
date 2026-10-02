@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="alternate" type="text/markdown" href="usage.html.md">
+<link rel="describedby" href="../../llms.txt" type="text/markdown">
+    <title>py2mcp.usage &#8212; py2mcp</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/epythet.css?v=80bbab5e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../_static/documentation_options.js?v=d50bcae4"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/py2mcp/usage';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.16" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">py2mcp</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../ai-agents.html">
+    For AI agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/py2mcp" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../ai-agents.html">
+    For AI agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/py2mcp" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">py2mcp.usage</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for py2mcp.usage</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Per-call usage logging for a py2mcp / FastMCP server: who called which tool,</span>
+<span class="sd">with what, and what came back.</span>
+
+<span class="sd">A deployed connector otherwise leaves only a web-server access log (a timestamp</span>
+<span class="sd">and a status code per ``POST /mcp``), which cannot even tell "a client connected"</span>
+<span class="sd">from "a client used a tool". :class:`UsageLogger` is a FastMCP middleware that</span>
+<span class="sd">writes **one record per tool call** (and, optionally, one per ``initialize``</span>
+<span class="sd">handshake, flagged as such) to a *sink*: any callable taking a dict. It observes</span>
+<span class="sd">only — a sink failure is logged and never fails the tool call — and it is off</span>
+<span class="sd">unless a server attaches it (``middleware=[UsageLogger(...)]`` on any py2mcp</span>
+<span class="sd">builder).</span>
+
+<span class="sd">The record is a flat, JSON-ready dict::</span>
+
+<span class="sd">    {"id": ..., "ts": "2026-10-02T14:03:11.123456+00:00", "event": "tool_call",</span>
+<span class="sd">     "server": "snout", "version": "1.4.0", "session": ..., "request": ...,</span>
+<span class="sd">     "caller": "someone@example.com", "tool": "search", "args": {"q": "..."},</span>
+<span class="sd">     "outcome": "ok" | "empty" | "error" | "cancelled",</span>
+<span class="sd">     "error_type": "ToolError", "error_cause": "ValueError", "error": "...",</span>
+<span class="sd">     "result_chars": 812, "result_count": 7, "latency_ms": 41.2}</span>
+
+<span class="sd">Field names map onto the OpenTelemetry MCP semantic conventions where those</span>
+<span class="sd">exist (``tool`` ↔ ``gen_ai.tool.name``, ``args`` ↔ ``gen_ai.tool.call.arguments``,</span>
+<span class="sd">``session`` ↔ ``mcp.session.id``, ``latency_ms`` ↔ ``mcp.server.operation.duration``,</span>
+<span class="sd">``error_type`` ↔ ``error.type``); ``caller`` and ``outcome`` have no counterpart</span>
+<span class="sd">there and are the two fields a connector owner actually asks about.</span>
+
+<span class="sd">Three defaults need no new dependency:</span>
+
+<span class="sd">- the **sink** is :class:`JsonlSink` — one JSON-lines file per day under</span>
+<span class="sd">  ``$XDG_DATA_HOME/py2mcp/usage/&lt;server&gt;/`` (never inside the app directory or a</span>
+<span class="sd">  repo), pruned to ``retention_days``; :func:`mapping_sink` adapts any</span>
+<span class="sd">  ``MutableMapping`` (a ``dol`` store, hence blob storage) in one line. A sink</span>
+<span class="sd">  may be ``async``; a sync sink runs on the event loop, so keep it local and</span>
+<span class="sd">  cheap (a remote store belongs behind an async or batching sink);</span>
+<span class="sd">- the **caller** is read from the verified OAuth token (:func:`token_caller`:</span>
+<span class="sd">  ``email``, else ``sub``), ``None`` on an unauthenticated (stdio) path;</span>
+<span class="sd">- the **outcome** is :func:`default_outcome`: ``error`` when the tool raised or</span>
+<span class="sd">  flagged ``is_error``, ``empty`` when it returned nothing (the generic "no</span>
+<span class="sd">  match"), else ``ok``. A custom classifier may return a mapping instead of a</span>
+<span class="sd">  label (``{"outcome": "no_match", "result_count": 0}``) and it is merged into</span>
+<span class="sd">  the record.</span>
+
+<span class="sd">Privacy is a first-class setting, because the arguments are the users' own</span>
+<span class="sd">questions: ``include_args=False`` drops them, ``redact=("api_key",)`` masks named</span>
+<span class="sd">top-level fields, ``max_args_chars`` caps the rest — and because an exception</span>
+<span class="sd">message or an ``is_error`` result often echoes the input (a validation error</span>
+<span class="sd">quotes the offending value), **error text is recorded only when every argument</span>
+<span class="sd">is**: with ``include_args=False`` or a non-empty ``redact``, a failure is</span>
+<span class="sd">recorded as its ``error_type`` alone. Results are recorded as a size and a</span>
+<span class="sd">count, never as content.</span>
+
+<span class="sd">``session`` is the transport's ``mcp-session-id`` on HTTP (``None`` under</span>
+<span class="sd">stateless HTTP, where there is none, and on the ``initialize`` request, which</span>
+<span class="sd">precedes it), or FastMCP's per-session id on stdio. Reading it never creates</span>
+<span class="sd">one. Reading the log back is :func:`iter_records` → :func:`summarize` →</span>
+<span class="sd">:func:`format_summary`, also available as ``py2mcp usage &lt;dir&gt;``.</span>
+
+<span class="sd">&gt;&gt;&gt; from py2mcp import mk_mcp_server</span>
+<span class="sd">&gt;&gt;&gt; records = []</span>
+<span class="sd">&gt;&gt;&gt; def add(a: int, b: int) -&gt; int:</span>
+<span class="sd">...     return a + b</span>
+<span class="sd">&gt;&gt;&gt; mcp = mk_mcp_server(add, middleware=[UsageLogger(records.append, name='demo')])</span>
+<span class="sd">&gt;&gt;&gt; import asyncio</span>
+<span class="sd">&gt;&gt;&gt; _ = asyncio.run(mcp.call_tool('add', {'a': 2, 'b': 3}))</span>
+<span class="sd">&gt;&gt;&gt; records[0]['tool'], records[0]['args'], records[0]['outcome']</span>
+<span class="sd">('add', {'a': 2, 'b': 3}, 'ok')</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Collection</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">Iterator</span><span class="p">,</span>
+    <span class="n">Mapping</span><span class="p">,</span>
+    <span class="n">MutableMapping</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp.server.middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">Middleware</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"UsageLogger"</span><span class="p">,</span>
+    <span class="s2">"JsonlSink"</span><span class="p">,</span>
+    <span class="s2">"mapping_sink"</span><span class="p">,</span>
+    <span class="s2">"token_caller"</span><span class="p">,</span>
+    <span class="s2">"default_outcome"</span><span class="p">,</span>
+    <span class="s2">"default_usage_dir"</span><span class="p">,</span>
+    <span class="s2">"iter_records"</span><span class="p">,</span>
+    <span class="s2">"summarize"</span><span class="p">,</span>
+    <span class="s2">"format_summary"</span><span class="p">,</span>
+    <span class="s2">"main"</span><span class="p">,</span>
+    <span class="s2">"DFLT_RETENTION_DAYS"</span><span class="p">,</span>
+    <span class="s2">"DFLT_MAX_ARGS_CHARS"</span><span class="p">,</span>
+    <span class="s2">"DFLT_MAX_ERROR_CHARS"</span><span class="p">,</span>
+    <span class="s2">"REDACTED"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1">#: Days of JSON-lines files :class:`JsonlSink` keeps before pruning. The arguments</span>
+<span class="c1">#: are users' questions, so an unbounded log is a liability, not an asset.</span>
+<span class="n">DFLT_RETENTION_DAYS</span> <span class="o">=</span> <span class="mi">90</span>
+
+<span class="c1">#: Cap on the serialized ``args`` stored per record (a pasted document as an</span>
+<span class="c1">#: argument must not become a megabyte-per-call log).</span>
+<span class="n">DFLT_MAX_ARGS_CHARS</span> <span class="o">=</span> <span class="mi">4000</span>
+
+<span class="c1">#: Cap on the error text stored per record (when error text is recorded at all).</span>
+<span class="n">DFLT_MAX_ERROR_CHARS</span> <span class="o">=</span> <span class="mi">500</span>
+
+<span class="c1">#: What a redacted argument value is replaced with.</span>
+<span class="n">REDACTED</span> <span class="o">=</span> <span class="s2">"&lt;redacted&gt;"</span>
+
+<span class="c1">#: Server name used for the default sink directory when none is given.</span>
+<span class="n">DFLT_SERVER_SLUG</span> <span class="o">=</span> <span class="s2">"server"</span>
+
+<span class="c1">#: Outcome labels this module produces itself. A custom ``outcome`` callable may</span>
+<span class="c1">#: return any label (e.g. ``"no_match"``, ``"refused"``); :func:`summarize` and</span>
+<span class="c1">#: :func:`format_summary` tabulate whatever labels they see.</span>
+<span class="n">OUTCOME_OK</span><span class="p">,</span> <span class="n">OUTCOME_EMPTY</span><span class="p">,</span> <span class="n">OUTCOME_ERROR</span> <span class="o">=</span> <span class="s2">"ok"</span><span class="p">,</span> <span class="s2">"empty"</span><span class="p">,</span> <span class="s2">"error"</span>
+<span class="n">OUTCOME_CANCELLED</span><span class="p">,</span> <span class="n">OUTCOME_UNKNOWN</span> <span class="o">=</span> <span class="s2">"cancelled"</span><span class="p">,</span> <span class="s2">"unknown"</span>
+
+<span class="c1">#: The HTTP header the Streamable-HTTP transport uses for its session id.</span>
+<span class="n">SESSION_HEADER</span> <span class="o">=</span> <span class="s2">"mcp-session-id"</span>
+
+<span class="n">Sink</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span>
+<span class="n">Caller</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+<span class="n">Outcome</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
+
+
+<span class="c1"># --- defaults for the three seams ---------------------------------------------</span>
+
+
+<div class="viewcode-block" id="token_caller">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.token_caller">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">token_caller</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The caller's identity from the verified OAuth token, or ``None``.</span>
+
+<span class="sd">    Reads FastMCP's current access token (set by the ``auth=`` resource-server</span>
+<span class="sd">    layer on the HTTP path) and returns its ``email`` claim, else ``sub``,</span>
+<span class="sd">    lowercased — the same rule ``enlace_metering.token_email`` applies, so one</span>
+<span class="sd">    caller has one name across the platform. Deliberately **no** fallback to the</span>
+<span class="sd">    OAuth ``client_id`` (a shared identity) and none to a guess: outside a</span>
+<span class="sd">    request, or on an unauthenticated (stdio) server, the result is ``None`` and</span>
+<span class="sd">    the record says ``"caller": null``.</span>
+
+<span class="sd">    &gt;&gt;&gt; token_caller() is None   # no request in flight here</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp.server.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_access_token</span>
+
+        <span class="n">token</span> <span class="o">=</span> <span class="n">get_access_token</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001 — no active request/token context</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">claims</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">"claims"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">ident</span> <span class="o">=</span> <span class="n">claims</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"email"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">claims</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sub"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">ident</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="n">ident</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_empty_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">""</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="p">[]</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="default_outcome">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.default_outcome">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">default_outcome</span><span class="p">(</span><span class="n">tool</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Classify a tool result: ``error``, ``empty`` (the generic "no match"), or ``ok``.</span>
+
+<span class="sd">    ``result`` is a FastMCP ``ToolResult`` (or anything with ``is_error``,</span>
+<span class="sd">    ``content`` and ``structured_content``). A tool that *raised* never reaches</span>
+<span class="sd">    this function — the middleware records ``error`` itself. ``empty`` is what a</span>
+<span class="sd">    search returning no rows looks like from outside: no content blocks, or a</span>
+<span class="sd">    structured ``{"result": []}`` / ``None`` / ``""`` / ``{}``. A tool with its</span>
+<span class="sd">    own "no match" shape (``{"matches": [], "total": 0}``) is ``ok`` here; give</span>
+<span class="sd">    the logger an ``outcome=`` that knows that shape.</span>
+
+<span class="sd">    &gt;&gt;&gt; class R:</span>
+<span class="sd">    ...     def __init__(self, content=(), structured_content=None, is_error=False):</span>
+<span class="sd">    ...         self.content, self.structured_content, self.is_error = list(content), structured_content, is_error</span>
+<span class="sd">    &gt;&gt;&gt; default_outcome('search', R(['x'], {'result': ['x']}))</span>
+<span class="sd">    'ok'</span>
+<span class="sd">    &gt;&gt;&gt; default_outcome('search', R([], {'result': []}))</span>
+<span class="sd">    'empty'</span>
+<span class="sd">    &gt;&gt;&gt; default_outcome('search', R(['oops'], is_error=True))</span>
+<span class="sd">    'error'</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"is_error"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">OUTCOME_ERROR</span>
+    <span class="n">structured</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"structured_content"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structured</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="n">structured</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s2">"result"</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="n">OUTCOME_EMPTY</span> <span class="k">if</span> <span class="n">_is_empty_value</span><span class="p">(</span><span class="n">structured</span><span class="p">[</span><span class="s2">"result"</span><span class="p">])</span> <span class="k">else</span> <span class="n">OUTCOME_OK</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">content</span> <span class="ow">and</span> <span class="n">_is_empty_value</span><span class="p">(</span><span class="n">structured</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">OUTCOME_EMPTY</span>
+    <span class="k">return</span> <span class="n">OUTCOME_OK</span></div>
+
+
+
+<div class="viewcode-block" id="default_usage_dir">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.default_usage_dir">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">default_usage_dir</span><span class="p">(</span><span class="n">server</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_SERVER_SLUG</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Where :class:`JsonlSink` writes when given no root: the user data dir.</span>
+
+<span class="sd">    ``$XDG_DATA_HOME/py2mcp/usage/&lt;server&gt;`` (``~/.local/share/...`` by default) —</span>
+<span class="sd">    a package data directory, never the current directory, so a usage log is</span>
+<span class="sd">    never one ``git add`` away from a repository.</span>
+
+<span class="sd">    &gt;&gt;&gt; str(default_usage_dir('snout')).endswith('py2mcp/usage/snout')</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"XDG_DATA_HOME"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">"~"</span><span class="p">),</span> <span class="s2">".local"</span><span class="p">,</span> <span class="s2">"share"</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">base</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"py2mcp"</span> <span class="o">/</span> <span class="s2">"usage"</span> <span class="o">/</span> <span class="n">_slug</span><span class="p">(</span><span class="n">server</span><span class="p">)</span></div>
+
+
+
+<span class="n">_SLUG_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[^A-Za-z0-9._-]+"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_slug</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A filesystem-safe slug for a server name (``'My Server' -&gt; 'My_Server'``)."""</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">_SLUG_RE</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"._"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span> <span class="ow">or</span> <span class="n">DFLT_SERVER_SLUG</span>
+
+
+<span class="c1"># --- sinks ---------------------------------------------------------------------</span>
+
+<span class="n">_DAY_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^\d</span><span class="si">{4}</span><span class="s2">-\d</span><span class="si">{2}</span><span class="s2">-\d</span><span class="si">{2}</span><span class="s2">$"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="JsonlSink">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.JsonlSink">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JsonlSink</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Append records to one JSON-lines file per UTC day; prune old days.</span>
+
+<span class="sd">    Files are ``&lt;root&gt;/&lt;YYYY-MM-DD&gt;.jsonl``. Files older than ``retention_days``</span>
+<span class="sd">    (``0`` keeps today only, ``None`` keeps everything) are pruned at</span>
+<span class="sd">    construction and on the first write of each new day. Each write is one</span>
+<span class="sd">    ``O_APPEND`` write of one line, so concurrent workers on the same host</span>
+<span class="sd">    interleave whole lines. ``root`` defaults to :func:`default_usage_dir`; it</span>
+<span class="sd">    must be **one directory per server**, since the day files carry no server</span>
+<span class="sd">    name and pruning covers the whole directory.</span>
+
+<span class="sd">    The sink is built to be attached to a live server, so by default it does not</span>
+<span class="sd">    raise: a directory that cannot be created at construction is reported via</span>
+<span class="sd">    ``logging`` and retried on every write (``strict=True`` raises instead), and</span>
+<span class="sd">    a directory removed at runtime is recreated on the next write.</span>
+
+<span class="sd">    &gt;&gt;&gt; import tempfile</span>
+<span class="sd">    &gt;&gt;&gt; sink = JsonlSink(tempfile.mkdtemp(), retention_days=None)</span>
+<span class="sd">    &gt;&gt;&gt; sink({'id': 'a', 'ts': '2026-10-02T10:00:00+00:00', 'event': 'tool_call'})</span>
+<span class="sd">    &gt;&gt;&gt; sorted(p.name for p in sink.root.iterdir())</span>
+<span class="sd">    ['2026-10-02.jsonl']</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">root</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">retention_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">DFLT_RETENTION_DAYS</span><span class="p">,</span>
+        <span class="n">server</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_SERVER_SLUG</span><span class="p">,</span>
+        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">default_usage_dir</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">retention_days</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">retention_days</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"retention_days must be &gt;= 0 or None, got </span><span class="si">{</span><span class="n">retention_days</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retention_days</span> <span class="o">=</span> <span class="n">retention_days</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_day</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prune</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+                <span class="k">raise</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">"py2mcp.usage: cannot create usage-log dir </span><span class="si">%s</span><span class="s2">; will retry on write"</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
+                <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">day</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ts"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))[:</span><span class="mi">10</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_DAY_RE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">day</span><span class="p">):</span>
+            <span class="n">day</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">day</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_day</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_day</span> <span class="o">=</span> <span class="n">day</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prune</span><span class="p">(</span><span class="n">today</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">day</span><span class="p">))</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">day</span><span class="si">}</span><span class="s2">.jsonl"</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+<div class="viewcode-block" id="JsonlSink.prune">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.JsonlSink.prune">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">today</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Delete day files older than ``retention_days``; return what was removed."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">retention_days</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="n">today</span> <span class="o">=</span> <span class="n">today</span> <span class="ow">or</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">cutoff</span> <span class="o">=</span> <span class="n">today</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retention_days</span><span class="p">)</span>
+        <span class="n">removed</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.jsonl"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_DAY_RE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cutoff</span><span class="p">:</span>
+                    <span class="n">path</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+                    <span class="n">removed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># not a real date</span>
+                <span class="k">continue</span>
+            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"py2mcp.usage: could not prune </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">removed</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"JsonlSink(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span><span class="si">!r}</span><span class="s2">, retention_days=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">retention_days</span><span class="si">}</span><span class="s2">)"</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_default_key</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'ts'</span><span class="p">,</span><span class="w"> </span><span class="s1">''</span><span class="p">))[:</span><span class="mi">10</span><span class="p">]</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'undated'</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">record</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="si">}</span><span class="s2">.json"</span>
+
+
+<div class="viewcode-block" id="mapping_sink">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.mapping_sink">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mapping_sink</span><span class="p">(</span>
+    <span class="n">store</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_default_key</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sink</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A sink that does ``store[key(record)] = record`` — any ``MutableMapping``.</span>
+
+<span class="sd">    The default key is ``"&lt;YYYY-MM-DD&gt;/&lt;id&gt;.json"``, so a ``dol`` file store lays</span>
+<span class="sd">    records out one per file by day, and "last 30 days" is a key-prefix scan.</span>
+<span class="sd">    The write happens on the event loop, so this is for a local store; a remote</span>
+<span class="sd">    one (S3, a database) belongs behind an ``async`` sink or a batching one.</span>
+
+<span class="sd">    &gt;&gt;&gt; store = {}</span>
+<span class="sd">    &gt;&gt;&gt; sink = mapping_sink(store)</span>
+<span class="sd">    &gt;&gt;&gt; sink({'id': 'abc', 'ts': '2026-10-02T10:00:00+00:00'})</span>
+<span class="sd">    &gt;&gt;&gt; list(store)</span>
+<span class="sd">    ['2026-10-02/abc.json']</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">sink</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">(</span><span class="n">record</span><span class="p">)]</span> <span class="o">=</span> <span class="n">record</span>
+
+    <span class="k">return</span> <span class="n">sink</span></div>
+
+
+
+<span class="c1"># --- the middleware --------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_redact</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">redact</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">REDACTED</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">redact</span> <span class="k">else</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_bounded_args</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">max_chars</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return ``(args_as_stored, truncated)``: the dict, or a cut string if too long."""</span>
+    <span class="k">if</span> <span class="n">max_chars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">max_chars</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">text</span><span class="p">[:</span><span class="n">max_chars</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"…"</span><span class="p">,</span> <span class="kc">True</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_result_size</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""``(chars, count)``: text length of the content; the item count when it is a list."""</span>
+    <span class="n">chars</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">():</span>
+        <span class="n">chars</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="n">count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">structured</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"structured_content"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structured</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="n">structured</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s2">"result"</span><span class="p">}:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structured</span><span class="p">[</span><span class="s2">"result"</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">structured</span><span class="p">[</span><span class="s2">"result"</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">chars</span><span class="p">,</span> <span class="n">count</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_first_text</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">():</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">)[:</span><span class="n">limit</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_session_id</span><span class="p">(</span><span class="n">fc</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The transport's session id, read without side effects (or ``None``).</span>
+
+<span class="sd">    On HTTP it is the ``mcp-session-id`` header (absent under stateless HTTP and</span>
+<span class="sd">    on the ``initialize`` request itself). Elsewhere (stdio, in-memory) it is</span>
+<span class="sd">    FastMCP's per-session id, read only once a request context exists:</span>
+<span class="sd">    ``Context.session_id`` *generates and caches* an id when read earlier, which</span>
+<span class="sd">    would silently change the session id every tool sees.</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp.server.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_http_request</span>
+
+        <span class="n">request</span> <span class="o">=</span> <span class="n">get_http_request</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001 — no HTTP request in flight</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">request</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">SESSION_HEADER</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">fc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">fc</span><span class="p">,</span> <span class="s2">"request_context"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">fc</span><span class="o">.</span><span class="n">session_id</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_request_id</span><span class="p">(</span><span class="n">fc</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">fc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">fc</span><span class="p">,</span> <span class="s2">"request_context"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">fc</span><span class="o">.</span><span class="n">request_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="UsageLogger">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.UsageLogger">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UsageLogger</span><span class="p">(</span><span class="n">Middleware</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""FastMCP middleware: one record per tool call (and per handshake) to ``sink``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sink: ``record -&gt; None`` (sync or ``async``). Default: a :class:`JsonlSink`</span>
+<span class="sd">            under :func:`default_usage_dir` for ``name``. Any list's ``append``</span>
+<span class="sd">            works for tests; :func:`mapping_sink` adapts a store.</span>
+<span class="sd">        name: The connector/server name written into every record (and the</span>
+<span class="sd">            default sink's directory).</span>
+<span class="sd">        version: The connector version written into every record, if known.</span>
+<span class="sd">        caller: ``() -&gt; str | None`` resolving the caller for the in-flight</span>
+<span class="sd">            request. Default :func:`token_caller`.</span>
+<span class="sd">        outcome: ``(tool_name, result) -&gt; label | mapping`` classifying a result</span>
+<span class="sd">            that did not raise. Default :func:`default_outcome`. A mapping is</span>
+<span class="sd">            merged into the record (it must carry ``"outcome"``), so a connector</span>
+<span class="sd">            that knows its own "no match" shape can also set the true</span>
+<span class="sd">            ``result_count``.</span>
+<span class="sd">        include_args: Record the tool arguments at all. ``True`` by default —</span>
+<span class="sd">            the arguments are the point of the log — but they are the users'</span>
+<span class="sd">            questions, so a connector that must not keep them sets ``False``.</span>
+<span class="sd">        redact: Top-level argument names whose values are replaced with</span>
+<span class="sd">            :data:`REDACTED` (nested keys are not inspected; pre-shape the</span>
+<span class="sd">            arguments with ``input_trans`` or drop them with ``include_args``).</span>
+<span class="sd">        max_args_chars: Cap on the serialized arguments stored per record</span>
+<span class="sd">            (``None`` for no cap).</span>
+<span class="sd">        max_error_chars: Cap on the error text stored per record.</span>
+<span class="sd">        handshakes: Also record ``initialize`` requests (as ``event:</span>
+<span class="sd">            "initialize"`` with the client's name/version, and ``outcome``</span>
+<span class="sd">            ``error`` if the handshake failed), so a connector that is *enabled*</span>
+<span class="sd">            can be told from one that is *used*.</span>
+
+<span class="sd">    Error text (an exception message, or an ``is_error`` result's text) is</span>
+<span class="sd">    recorded only when ``include_args`` is true and ``redact`` is empty, because</span>
+<span class="sd">    it routinely echoes the arguments; otherwise only ``error_type`` is kept.</span>
+<span class="sd">    The logger never raises into the tool call: a failing sink, caller or</span>
+<span class="sd">    classifier is reported via ``logging`` (logger ``py2mcp.usage``) and the</span>
+<span class="sd">    call proceeds. A cancelled call is recorded as ``cancelled`` with no text;</span>
+<span class="sd">    other ``BaseException``s (shutdown) pass through unrecorded.</span>
+
+<span class="sd">    &gt;&gt;&gt; records = []</span>
+<span class="sd">    &gt;&gt;&gt; logger = UsageLogger(records.append, name='demo', redact=('token',))</span>
+<span class="sd">    &gt;&gt;&gt; logger.name, logger.redact, logger.records_error_text</span>
+<span class="sd">    ('demo', frozenset({'token'}), False)</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">sink</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sink</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_SERVER_SLUG</span><span class="p">,</span>
+        <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">caller</span><span class="p">:</span> <span class="n">Caller</span> <span class="o">=</span> <span class="n">token_caller</span><span class="p">,</span>
+        <span class="n">outcome</span><span class="p">:</span> <span class="n">Outcome</span> <span class="o">=</span> <span class="n">default_outcome</span><span class="p">,</span>
+        <span class="n">include_args</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">redact</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+        <span class="n">max_args_chars</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">DFLT_MAX_ARGS_CHARS</span><span class="p">,</span>
+        <span class="n">max_error_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DFLT_MAX_ERROR_CHARS</span><span class="p">,</span>
+        <span class="n">handshakes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sink</span><span class="p">:</span> <span class="n">Sink</span> <span class="o">=</span> <span class="n">sink</span> <span class="k">if</span> <span class="n">sink</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">JsonlSink</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_async_sink</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sink</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">caller</span> <span class="o">=</span> <span class="n">caller</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outcome</span> <span class="o">=</span> <span class="n">outcome</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_args</span> <span class="o">=</span> <span class="n">include_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redact</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">redact</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_args_chars</span> <span class="o">=</span> <span class="n">max_args_chars</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_error_chars</span> <span class="o">=</span> <span class="n">max_error_chars</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handshakes</span> <span class="o">=</span> <span class="n">handshakes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">records_error_text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Whether error messages are stored (only when every argument is)."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">redact</span>
+
+    <span class="c1"># -- record assembly -------------------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_base_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">fc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">"fastmcp_context"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">caller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">caller</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001 — identity must never break the call</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"py2mcp.usage: caller() raised"</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">caller</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">,</span>
+            <span class="s2">"ts"</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="s2">"event"</span><span class="p">:</span> <span class="n">event</span><span class="p">,</span>
+            <span class="s2">"server"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">"version"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+            <span class="s2">"session"</span><span class="p">:</span> <span class="n">_session_id</span><span class="p">(</span><span class="n">fc</span><span class="p">),</span>
+            <span class="s2">"request"</span><span class="p">:</span> <span class="n">_request_id</span><span class="p">(</span><span class="n">fc</span><span class="p">),</span>
+            <span class="s2">"caller"</span><span class="p">:</span> <span class="n">caller</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_note_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">BaseException</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">record</span><span class="p">[</span><span class="s2">"outcome"</span><span class="p">]</span> <span class="o">=</span> <span class="n">OUTCOME_ERROR</span>
+        <span class="n">record</span><span class="p">[</span><span class="s2">"error_type"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">exc</span>
+        <span class="k">while</span> <span class="n">root</span><span class="o">.</span><span class="n">__cause__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">__cause__</span>
+        <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># FastMCP wraps a tool's exception in ToolError</span>
+            <span class="n">record</span><span class="p">[</span><span class="s2">"error_cause"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">records_error_text</span><span class="p">:</span>
+            <span class="n">record</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_error_chars</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_note_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">tool</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">classified</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outcome</span><span class="p">(</span><span class="n">tool</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001 — a bad classifier must not break the call</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"py2mcp.usage: outcome() raised"</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">classified</span> <span class="o">=</span> <span class="n">OUTCOME_UNKNOWN</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">record</span><span class="p">[</span><span class="s2">"result_chars"</span><span class="p">],</span> <span class="n">record</span><span class="p">[</span><span class="s2">"result_count"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_result_size</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"is_error"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">record</span><span class="p">[</span><span class="s2">"error_type"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"ToolResult.is_error"</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">records_error_text</span><span class="p">:</span>
+                    <span class="n">record</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_first_text</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_error_chars</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classified</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+                <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">classified</span><span class="p">)</span>
+                <span class="n">record</span><span class="p">[</span><span class="s2">"outcome"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"outcome"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">OUTCOME_UNKNOWN</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">record</span><span class="p">[</span><span class="s2">"outcome"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">classified</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001 — observe-only, whatever the result shape</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"py2mcp.usage: could not describe result"</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"outcome"</span><span class="p">,</span> <span class="n">OUTCOME_UNKNOWN</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_sink</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">sink</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sink</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001 — observe-only: never fail the call</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"py2mcp.usage: sink failed for record </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">record</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">),</span>
+                <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="c1"># -- hooks -------------------------------------------------------------------</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">call_next</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">handshakes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"clientInfo"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_record</span><span class="p">(</span><span class="s2">"initialize"</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">"client"</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="s2">"client_version"</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="s2">"version"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="s2">"protocol"</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"protocolVersion"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_note_error</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emit</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="n">record</span><span class="p">[</span><span class="s2">"outcome"</span><span class="p">]</span> <span class="o">=</span> <span class="n">OUTCOME_OK</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emit</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_call_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">call_next</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">message</span>
+        <span class="n">tool</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"unknown"</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_record</span><span class="p">(</span><span class="s2">"tool_call"</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="n">record</span><span class="p">[</span><span class="s2">"tool"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tool</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_args</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s2">"arguments"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span>
+            <span class="n">stored</span><span class="p">,</span> <span class="n">truncated</span> <span class="o">=</span> <span class="n">_bounded_args</span><span class="p">(</span>
+                <span class="n">_redact</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">redact</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_args_chars</span>
+            <span class="p">)</span>
+            <span class="n">record</span><span class="p">[</span><span class="s2">"args"</span><span class="p">]</span> <span class="o">=</span> <span class="n">stored</span>
+            <span class="k">if</span> <span class="n">truncated</span><span class="p">:</span>
+                <span class="n">record</span><span class="p">[</span><span class="s2">"args_truncated"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
+            <span class="n">record</span><span class="p">[</span><span class="s2">"latency_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">record</span><span class="p">[</span><span class="s2">"outcome"</span><span class="p">]</span> <span class="o">=</span> <span class="n">OUTCOME_CANCELLED</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emit</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">record</span><span class="p">[</span><span class="s2">"latency_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_note_error</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emit</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="n">record</span><span class="p">[</span><span class="s2">"latency_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_note_result</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">tool</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emit</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<span class="c1"># --- reading it back -------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_as_date</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)[:</span><span class="mi">10</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"expected a YYYY-MM-DD date, got </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+
+<div class="viewcode-block" id="iter_records">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.iter_records">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">iter_records</span><span class="p">(</span>
+    <span class="n">root</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">since</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">until</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Yield the records under ``root`` (a :class:`JsonlSink` dir, or one ``.jsonl``).</span>
+
+<span class="sd">    Day files are read in date order; ``since``/``until`` (inclusive, by day)</span>
+<span class="sd">    select by file name, so a month out of a year of logs costs reading a month.</span>
+<span class="sd">    Lines that are not valid JSON objects are skipped, not raised — a log is</span>
+<span class="sd">    read long after it was written, and one torn line must not hide the rest.</span>
+<span class="sd">    A ``root`` that does not exist raises ``FileNotFoundError`` rather than</span>
+<span class="sd">    reading as an empty log.</span>
+
+<span class="sd">    &gt;&gt;&gt; import tempfile</span>
+<span class="sd">    &gt;&gt;&gt; sink = JsonlSink(tempfile.mkdtemp(), retention_days=None)</span>
+<span class="sd">    &gt;&gt;&gt; sink({'id': '1', 'ts': '2026-10-01T10:00:00+00:00', 'event': 'tool_call'})</span>
+<span class="sd">    &gt;&gt;&gt; sink({'id': '2', 'ts': '2026-10-02T10:00:00+00:00', 'event': 'tool_call'})</span>
+<span class="sd">    &gt;&gt;&gt; [r['id'] for r in iter_records(sink.root, since='2026-10-02')]</span>
+<span class="sd">    ['2']</span>
+<span class="sd">    """</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">root</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"no usage log at </span><span class="si">{</span><span class="n">root</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">_as_date</span><span class="p">(</span><span class="n">since</span><span class="p">),</span> <span class="n">_as_date</span><span class="p">(</span><span class="n">until</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.jsonl"</span><span class="p">)</span> <span class="k">if</span> <span class="n">_DAY_RE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stem</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_DAY_RE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">):</span>
+            <span class="n">day</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">lo</span> <span class="ow">and</span> <span class="n">day</span> <span class="o">&lt;</span> <span class="n">lo</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">hi</span> <span class="ow">and</span> <span class="n">day</span> <span class="o">&gt;</span> <span class="n">hi</span><span class="p">):</span>
+                <span class="k">continue</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">record</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">record</span></div>
+
+
+
+<div class="viewcode-block" id="summarize">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.summarize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize</span><span class="p">(</span><span class="n">records</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Aggregate records into counts: by caller, by tool and outcome, by day.</span>
+
+<span class="sd">    Returns a JSON-ready dict with ``calls``, ``handshakes``, ``first``/``last``</span>
+<span class="sd">    timestamps, ``callers`` (calls per caller), ``servers`` (calls per server</span>
+<span class="sd">    name, in case a directory holds more than one), ``tools`` (per tool:</span>
+<span class="sd">    ``calls``, one count per outcome label seen, and mean/max latency), ``days``</span>
+<span class="sd">    (calls per day) and ``outcomes`` (totals per label) — the "who used what,</span>
+<span class="sd">    which tools fail, which questions return nothing" view.</span>
+
+<span class="sd">    &gt;&gt;&gt; recs = [</span>
+<span class="sd">    ...     {'event': 'initialize', 'ts': '2026-10-02T08:00:00+00:00', 'caller': 'a'},</span>
+<span class="sd">    ...     {'event': 'tool_call', 'ts': '2026-10-02T08:01:00+00:00', 'caller': 'a',</span>
+<span class="sd">    ...      'tool': 'search', 'outcome': 'ok', 'latency_ms': 10.0},</span>
+<span class="sd">    ...     {'event': 'tool_call', 'ts': '2026-10-02T09:00:00+00:00', 'caller': 'b',</span>
+<span class="sd">    ...      'tool': 'search', 'outcome': 'no_match', 'latency_ms': 30.0},</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; s = summarize(recs)</span>
+<span class="sd">    &gt;&gt;&gt; s['calls'], s['handshakes'], s['callers'], s['outcomes']</span>
+<span class="sd">    (2, 1, {'a': 1, 'b': 1}, {'ok': 1, 'empty': 0, 'error': 0, 'no_match': 1})</span>
+<span class="sd">    &gt;&gt;&gt; s['tools']['search']['latency_ms_mean'], s['tools']['search']['latency_ms_max']</span>
+<span class="sd">    (20.0, 30.0)</span>
+<span class="sd">    """</span>
+    <span class="n">calls</span> <span class="o">=</span> <span class="n">handshakes</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="n">last</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">callers</span><span class="p">:</span> <span class="n">Counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="n">servers</span><span class="p">:</span> <span class="n">Counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="n">days</span><span class="p">:</span> <span class="n">Counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="n">outcomes</span><span class="p">:</span> <span class="n">Counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">({</span><span class="n">OUTCOME_OK</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">OUTCOME_EMPTY</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">OUTCOME_ERROR</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+    <span class="n">tools</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span>
+        <span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">"calls"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"_sum"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">"_max"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">"_labels"</span><span class="p">:</span> <span class="n">Counter</span><span class="p">()}</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ts"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ts</span><span class="p">:</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="n">ts</span> <span class="k">if</span> <span class="n">first</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ts</span> <span class="o">&lt;</span> <span class="n">first</span> <span class="k">else</span> <span class="n">first</span>
+            <span class="n">last</span> <span class="o">=</span> <span class="n">ts</span> <span class="k">if</span> <span class="n">last</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ts</span> <span class="o">&gt;</span> <span class="n">last</span> <span class="k">else</span> <span class="n">last</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"event"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"initialize"</span><span class="p">:</span>
+            <span class="n">handshakes</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"event"</span><span class="p">,</span> <span class="s2">"tool_call"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"tool_call"</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">calls</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">callers</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"caller"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"(anonymous)"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">servers</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"server"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"(unnamed)"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">days</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ts</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">"undated"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"outcome"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">OUTCOME_UNKNOWN</span><span class="p">)</span>
+        <span class="n">outcomes</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">tools</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tool"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"unknown"</span><span class="p">)]</span>
+        <span class="n">t</span><span class="p">[</span><span class="s2">"calls"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">t</span><span class="p">[</span><span class="s2">"_labels"</span><span class="p">][</span><span class="n">label</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">latency</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"latency_ms"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">latency</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">t</span><span class="p">[</span><span class="s2">"_sum"</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">latency</span><span class="p">)</span>
+            <span class="n">t</span><span class="p">[</span><span class="s2">"_max"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s2">"_max"</span><span class="p">],</span> <span class="nb">float</span><span class="p">(</span><span class="n">latency</span><span class="p">))</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span>
+    <span class="n">tools_out</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tools</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">kv</span><span class="p">:</span> <span class="o">-</span><span class="n">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">"calls"</span><span class="p">]):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s2">"calls"</span><span class="p">]</span>
+        <span class="n">tools_out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"calls"</span><span class="p">:</span> <span class="n">n</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="n">tools_out</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s2">"_labels"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">tools_out</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">"latency_ms_mean"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s2">"_sum"</span><span class="p">]</span> <span class="o">/</span> <span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">tools_out</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">"latency_ms_max"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s2">"_max"</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"calls"</span><span class="p">:</span> <span class="n">calls</span><span class="p">,</span>
+        <span class="s2">"handshakes"</span><span class="p">:</span> <span class="n">handshakes</span><span class="p">,</span>
+        <span class="s2">"first"</span><span class="p">:</span> <span class="n">first</span><span class="p">,</span>
+        <span class="s2">"last"</span><span class="p">:</span> <span class="n">last</span><span class="p">,</span>
+        <span class="s2">"callers"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">callers</span><span class="o">.</span><span class="n">most_common</span><span class="p">()),</span>
+        <span class="s2">"servers"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">servers</span><span class="o">.</span><span class="n">most_common</span><span class="p">()),</span>
+        <span class="s2">"tools"</span><span class="p">:</span> <span class="n">tools_out</span><span class="p">,</span>
+        <span class="s2">"days"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">days</span><span class="o">.</span><span class="n">items</span><span class="p">())),</span>
+        <span class="s2">"outcomes"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">outcomes</span><span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="format_summary">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.format_summary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_summary</span><span class="p">(</span><span class="n">summary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Render :func:`summarize` output as plain text, one column per outcome label.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(format_summary(summarize([</span>
+<span class="sd">    ...     {'event': 'tool_call', 'ts': '2026-10-02T08:01:00+00:00', 'caller': 'a',</span>
+<span class="sd">    ...      'tool': 'search', 'outcome': 'ok', 'latency_ms': 10.0}])))</span>
+<span class="sd">    calls: 1   handshakes: 0   first: 2026-10-02T08:01:00+00:00   last: 2026-10-02T08:01:00+00:00</span>
+<span class="sd">    outcomes: ok=1 empty=0 error=0</span>
+<span class="sd">    &lt;BLANKLINE&gt;</span>
+<span class="sd">    callers</span>
+<span class="sd">      a                                   1</span>
+<span class="sd">    &lt;BLANKLINE&gt;</span>
+<span class="sd">    tools                      calls     ok  empty  error  mean_ms   max_ms</span>
+<span class="sd">      search                       1      1      0      0     10.0     10.0</span>
+<span class="sd">    &lt;BLANKLINE&gt;</span>
+<span class="sd">    days</span>
+<span class="sd">      2026-10-02                          1</span>
+<span class="sd">    """</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s2">"outcomes"</span><span class="p">])</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s2">"calls: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">'calls'</span><span class="p">]</span><span class="si">}</span><span class="s2">   handshakes: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">'handshakes'</span><span class="p">]</span><span class="si">}</span><span class="s2">   "</span>
+        <span class="sa">f</span><span class="s2">"first: </span><span class="si">{</span><span class="n">summary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'first'</span><span class="p">)</span><span class="si">}</span><span class="s2">   last: </span><span class="si">{</span><span class="n">summary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'last'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="s2">"outcomes: "</span> <span class="o">+</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"outcomes"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span>
+        <span class="s2">""</span><span class="p">,</span>
+        <span class="s2">"callers"</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">c</span><span class="si">:</span><span class="s2">&lt;34</span><span class="si">}{</span><span class="n">n</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"callers"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">summary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"servers"</span><span class="p">,</span> <span class="p">{}))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"servers"</span><span class="p">]</span>
+        <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s2">&lt;34</span><span class="si">}{</span><span class="n">n</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"servers"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">))</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'tools'</span><span class="si">:</span><span class="s2">&lt;24</span><span class="si">}{</span><span class="s1">'calls'</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span>
+    <span class="p">)</span>
+    <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="n">header</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'mean_ms'</span><span class="si">:</span><span class="s2">&gt;9</span><span class="si">}{</span><span class="s1">'max_ms'</span><span class="si">:</span><span class="s2">&gt;9</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"tools"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;22</span><span class="si">}{</span><span class="n">t</span><span class="p">[</span><span class="s1">'calls'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">row</span> <span class="o">+=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">t</span><span class="p">[</span><span class="s1">'latency_ms_mean'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;9.1f</span><span class="si">}{</span><span class="n">t</span><span class="p">[</span><span class="s1">'latency_ms_max'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;9.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"days"</span><span class="p">]</span>
+    <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">d</span><span class="si">:</span><span class="s2">&lt;34</span><span class="si">}{</span><span class="n">n</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"days"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../_autosummary/py2mcp.usage.html#py2mcp.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""CLI: ``py2mcp usage &lt;dir&gt; [--since D] [--until D] [--json] [--records]``."""</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">"py2mcp usage"</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Summarize a py2mcp usage log (a JsonlSink directory or file)."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"root"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"The usage-log directory (or one .jsonl file)."</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--since"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"First day to include (YYYY-MM-DD)."</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--until"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Last day to include (YYYY-MM-DD)."</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--json"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Print the summary as JSON instead of text."</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--records"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Print the selected records (one JSON object per line) instead of a summary."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">records</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iter_records</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">since</span><span class="p">,</span> <span class="n">until</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">until</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">records</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">return</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">summarize</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">json</span> <span class="k">else</span> <span class="n">format_summary</span><span class="p">(</span><span class="n">summary</span><span class="p">))</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

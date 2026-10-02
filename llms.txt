@@ -13,9 +13,10 @@
 - [py2mcp.main](_autosummary/py2mcp.main.html.md): Build a &#96;FastMCP&#96; server from Python functions, reference strings, or a store.
 - [py2mcp.serve](_autosummary/py2mcp.serve.html.md): Serve a py2mcp &#96;FastMCP&#96; server over stdio, as a packaged integration launches it.
 - [py2mcp.trans](_autosummary/py2mcp.trans.html.md): Input transformation for py2mcp tools: convert arguments before a function runs.
+- [py2mcp.usage](_autosummary/py2mcp.usage.html.md): Per-call usage logging for a py2mcp / FastMCP server: who called which tool,
 - [py2mcp.util](_autosummary/py2mcp.util.html.md): Resolve object references and turn a mapping into CRUD functions.
 - [For AI agents](ai-agents.html.md): &#96;py2mcp&#96; ships artifacts for coding agents alongside its code. This page lists
-- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-09-22 14:39 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-10-02 07:29 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
 
 ## Optional
 

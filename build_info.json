@@ -1,34 +1,34 @@
 {
   "schema_version": 1,
-  "built_at": "2026-09-22T14:39:21Z",
+  "built_at": "2026-10-02T07:29:29Z",
   "package": {
     "name": "py2mcp",
-    "version": "0.1.15",
+    "version": "0.1.16",
     "display_name": "py2mcp",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "8c29353b7a5af119cdbac906a58d4b8b8aebe0ce",
-    "short_commit": "8c29353",
+    "commit": "6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c",
+    "short_commit": "6d54dc2",
     "branch": "main",
     "tags": [
-      "0.1.15"
+      "0.1.16"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/py2mcp",
-    "commit_url": "https://github.com/i2mint/py2mcp/commit/8c29353b7a5af119cdbac906a58d4b8b8aebe0ce",
+    "commit_url": "https://github.com/i2mint/py2mcp/commit/6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/py2mcp",
-    "sha": "f0944aa43037ff573b2d04ce77825339faa5212a",
+    "sha": "1a11737cb872a930c93e9c9bfaab4bff4e83887a",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "35741542434",
-    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/35741542434",
+    "run_id": "36978644975",
+    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/36978644975",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -57,16 +57,16 @@
     "docs_dir": "docsrc"
   },
   "site": {
-    "modules_documented": 7,
-    "objects_documented": 31
+    "modules_documented": 8,
+    "objects_documented": 53
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.15",
+    "latest": "0.1.16",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 8c29353b7a5af119cdbac906a58d4b8b8aebe0ce\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,

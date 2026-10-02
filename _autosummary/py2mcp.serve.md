@@ -92,6 +92,11 @@ ValueError: py2mcp server config '...py2mcp_config.json' must be a JSON object w
 
 CLI: `python -m py2mcp --config cfg.json` (or `--ref mod:func ...`).
 
+`py2mcp usage <dir>` is the one subcommand: it summarizes a usage log
+written by [`py2mcp.usage.UsageLogger`](py2mcp.usage.md#py2mcp.usage.UsageLogger) (see [`py2mcp.usage.main()`](py2mcp.usage.md#py2mcp.usage.main))
+and is dispatched on the first word so the flag-only serving form above is
+unchanged.
+
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 

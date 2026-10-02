@@ -15,6 +15,7 @@ Main entry points:
 - `mk_mcp_from_store`: list/get/set/delete tools over any `MutableMapping`
 - `mk_input_trans`: per-argument conversion of tool inputs
 - `serve_stdio` and `serve_http`: build from refs and run
+- `UsageLogger`: one record per tool call, to a sink (`py2mcp usage` reads it)
 
 ```pycon
 >>> from py2mcp import mk_mcp_server
@@ -43,6 +44,106 @@ Main entry points:
 | [`mk_http_app`](#py2mcp.mk_http_app)(refs, \*[, name, auth, ...])             | Build a Streamable-HTTP **ASGI app** from `refs` (+ optional OAuth).           |
 | [`serve_http`](#py2mcp.serve_http)(refs, \*[, name, host, port, ...])        | Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn. |
 | [`mk_auth_provider`](#py2mcp.mk_auth_provider)(auth)                               | Build a FastMCP **resource-server** auth provider from an auth-config dict.    |
+| [`mapping_sink`](#py2mcp.mapping_sink)(store, \*[, key])                       | A sink that does `store[key(record)] = record` — any `MutableMapping`.         |
+
+### Classes
+
+| [`UsageLogger`](#py2mcp.UsageLogger)([sink, name, version, caller, ...])   | FastMCP middleware: one record per tool call (and per handshake) to `sink`.   |
+|----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`JsonlSink`](#py2mcp.JsonlSink)([root, retention_days, server, strict]) | Append records to one JSON-lines file per UTC day; prune old days.            |
+
+### *class* py2mcp.JsonlSink(root=None, , retention_days=90, server='server', strict=False)
+
+Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
+Append records to one JSON-lines file per UTC day; prune old days.
+
+Files are `<root>/<YYYY-MM-DD>.jsonl`. Files older than `retention_days`
+(`0` keeps today only, `None` keeps everything) are pruned at
+construction and on the first write of each new day. Each write is one
+`O_APPEND` write of one line, so concurrent workers on the same host
+interleave whole lines. `root` defaults to `default_usage_dir()`; it
+must be **one directory per server**, since the day files carry no server
+name and pruning covers the whole directory.
+
+The sink is built to be attached to a live server, so by default it does not
+raise: a directory that cannot be created at construction is reported via
+`logging` and retried on every write (`strict=True` raises instead), and
+a directory removed at runtime is recreated on the next write.
+
+```pycon
+>>> import tempfile
+>>> sink = JsonlSink(tempfile.mkdtemp(), retention_days=None)
+>>> sink({'id': 'a', 'ts': '2026-10-02T10:00:00+00:00', 'event': 'tool_call'})
+>>> sorted(p.name for p in sink.root.iterdir())
+['2026-10-02.jsonl']
+```
+
+#### prune(, today=None)
+
+Delete day files older than `retention_days`; return what was removed.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]
+
+### *class* py2mcp.UsageLogger(sink=None, \*, name='server', version=None, caller=<function token_caller>, outcome=<function default_outcome>, include_args=True, redact=(), max_args_chars=4000, max_error_chars=500, handshakes=True)
+
+Bases: `Middleware`
+
+FastMCP middleware: one record per tool call (and per handshake) to `sink`.
+
+* **Parameters:**
+  * **sink** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]) – `record -> None` (sync or `async`). Default: a [`JsonlSink`](#py2mcp.JsonlSink)
+    under `default_usage_dir()` for `name`. Any list’s `append`
+    works for tests; [`mapping_sink()`](#py2mcp.mapping_sink) adapts a store.
+  * **name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – The connector/server name written into every record (and the
+    default sink’s directory).
+  * **version** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The connector version written into every record, if known.
+  * **caller** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – `() -> str | None` resolving the caller for the in-flight
+    request. Default `token_caller()`.
+  * **outcome** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], `Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]]) – `(tool_name, result) -> label | mapping` classifying a result
+    that did not raise. Default `default_outcome()`. A mapping is
+    merged into the record (it must carry `"outcome"`), so a connector
+    that knows its own “no match” shape can also set the true
+    `result_count`.
+  * **include_args** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Record the tool arguments at all. `True` by default —
+    the arguments are the point of the log — but they are the users’
+    questions, so a connector that must not keep them sets `False`.
+  * **redact** ([`Collection`](https://docs.python.org/3/library/typing.html#typing.Collection)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Top-level argument names whose values are replaced with
+    `REDACTED` (nested keys are not inspected; pre-shape the
+    arguments with `input_trans` or drop them with `include_args`).
+  * **max_args_chars** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`int`](https://docs.python.org/3/builtins/functions.html#int)]) – Cap on the serialized arguments stored per record
+    (`None` for no cap).
+  * **max_error_chars** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Cap on the error text stored per record.
+  * **handshakes** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Also record `initialize` requests (as `event:
+    "initialize"` with the client’s name/version, and `outcome`
+    `error` if the handshake failed), so a connector that is *enabled*
+    can be told from one that is *used*.
+
+Error text (an exception message, or an `is_error` result’s text) is
+recorded only when `include_args` is true and `redact` is empty, because
+it routinely echoes the arguments; otherwise only `error_type` is kept.
+The logger never raises into the tool call: a failing sink, caller or
+classifier is reported via `logging` (logger `py2mcp.usage`) and the
+call proceeds. A cancelled call is recorded as `cancelled` with no text;
+other 
+
+```
+``
+```
+
+BaseException\`\`s (shutdown) pass through unrecorded.
+
+```pycon
+>>> records = []
+>>> logger = UsageLogger(records.append, name='demo', redact=('token',))
+>>> logger.name, logger.redact, logger.records_error_text
+('demo', frozenset({'token'}), False)
+```
+
+#### *property* records_error_text *: [bool](https://docs.python.org/3/builtins/functions.html#bool)*
+
+Whether error messages are stored (only when every argument is).
 
 ### py2mcp.claude_install_link(name, mcp_url, , admin=False)
 
@@ -159,6 +260,26 @@ ValueError: py2mcp server config '...py2mcp_config.json' must be a JSON object w
 
 #### SEE ALSO
 [`resolve_server_config()`](#py2mcp.resolve_server_config): merge the config with command-line refs.
+
+### py2mcp.mapping_sink(store, \*, key=<function \_default_key>)
+
+A sink that does `store[key(record)] = record` — any `MutableMapping`.
+
+The default key is `"<YYYY-MM-DD>/<id>.json"`, so a `dol` file store lays
+records out one per file by day, and “last 30 days” is a key-prefix scan.
+The write happens on the event loop, so this is for a local store; a remote
+one (S3, a database) belongs behind an `async` sink or a batching one.
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
+
+```pycon
+>>> store = {}
+>>> sink = mapping_sink(store)
+>>> sink({'id': 'abc', 'ts': '2026-10-02T10:00:00+00:00'})
+>>> list(store)
+['2026-10-02/abc.json']
+```
 
 ### py2mcp.markdown_install_badge(name, mcp_url, , admin=False)
 
@@ -672,4 +793,5 @@ does not return while the server runs.
 | [`main`](py2mcp.main.md#module-py2mcp.main)   | Build a `FastMCP` server from Python functions, reference strings, or a store.                                               |
 | [`serve`](py2mcp.serve.md#module-py2mcp.serve) | Serve a py2mcp `FastMCP` server over stdio, as a packaged integration launches it.                                           |
 | [`trans`](py2mcp.trans.md#module-py2mcp.trans) | Input transformation for py2mcp tools: convert arguments before a function runs.                                             |
+| [`usage`](py2mcp.usage.md#module-py2mcp.usage) | Per-call usage logging for a py2mcp / FastMCP server: who called which tool, with what, and what came back.                  |
 | [`util`](py2mcp.util.md#module-py2mcp.util)   | Resolve object references and turn a mapping into CRUD functions.                                                            |
