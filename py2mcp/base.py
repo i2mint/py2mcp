@@ -8,6 +8,8 @@ arguments before the function runs. Nothing here is part of the public API.
 from typing import Callable, Iterable, Any, Optional
 from functools import wraps
 
+__all__ = ["normalize_middleware"]
+
 
 def _wrap_with_input_trans(func: Callable, input_trans: Optional[Callable]) -> Callable:
     """Wrap a function to apply input transformation.
@@ -85,3 +87,8 @@ def _normalize_middleware(middleware: Any) -> Optional[list]:
     if isinstance(middleware, Iterable) and not isinstance(middleware, (str, bytes)):
         return list(middleware)
     return [middleware]
+
+
+#: Public name for :func:`_normalize_middleware`, for hosts (``enlace_connector``)
+#: that compose middleware lists before handing them to a builder.
+normalize_middleware = _normalize_middleware

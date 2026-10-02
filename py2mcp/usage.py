@@ -15,33 +15,46 @@ The record is a flat, JSON-ready dict::
     {"id": ..., "ts": "2026-10-02T14:03:11.123456+00:00", "event": "tool_call",
      "server": "snout", "version": "1.4.0", "session": ..., "request": ...,
      "caller": "someone@example.com", "tool": "search", "args": {"q": "..."},
-     "outcome": "ok" | "empty" | "error", "error": "ValueError: ...",
+     "outcome": "ok" | "empty" | "error" | "cancelled",
+     "error_type": "ToolError", "error_cause": "ValueError", "error": "...",
      "result_chars": 812, "result_count": 7, "latency_ms": 41.2}
 
 Field names map onto the OpenTelemetry MCP semantic conventions where those
 exist (``tool`` ↔ ``gen_ai.tool.name``, ``args`` ↔ ``gen_ai.tool.call.arguments``,
 ``session`` ↔ ``mcp.session.id``, ``latency_ms`` ↔ ``mcp.server.operation.duration``,
-``error`` ↔ ``error.type``); ``caller`` and ``outcome`` have no counterpart there
-and are the two fields a connector owner actually asks about.
+``error_type`` ↔ ``error.type``); ``caller`` and ``outcome`` have no counterpart
+there and are the two fields a connector owner actually asks about.
 
 Three defaults need no new dependency:
 
 - the **sink** is :class:`JsonlSink` — one JSON-lines file per day under
   ``$XDG_DATA_HOME/py2mcp/usage/<server>/`` (never inside the app directory or a
   repo), pruned to ``retention_days``; :func:`mapping_sink` adapts any
-  ``MutableMapping`` (a ``dol`` store, hence blob storage) in one line;
+  ``MutableMapping`` (a ``dol`` store, hence blob storage) in one line. A sink
+  may be ``async``; a sync sink runs on the event loop, so keep it local and
+  cheap (a remote store belongs behind an async or batching sink);
 - the **caller** is read from the verified OAuth token (:func:`token_caller`:
-  ``email``, else ``sub``, else ``client_id``), ``None`` on an unauthenticated
-  (stdio) path;
+  ``email``, else ``sub``), ``None`` on an unauthenticated (stdio) path;
 - the **outcome** is :func:`default_outcome`: ``error`` when the tool raised or
   flagged ``is_error``, ``empty`` when it returned nothing (the generic "no
-  match"), else ``ok``.
+  match"), else ``ok``. A custom classifier may return a mapping instead of a
+  label (``{"outcome": "no_match", "result_count": 0}``) and it is merged into
+  the record.
 
 Privacy is a first-class setting, because the arguments are the users' own
 questions: ``include_args=False`` drops them, ``redact=("api_key",)`` masks named
-fields, ``max_args_chars`` caps the rest. Reading the log back is
-:func:`iter_records` → :func:`summarize` → :func:`format_summary`, also
-available as ``py2mcp usage <dir>``.
+top-level fields, ``max_args_chars`` caps the rest — and because an exception
+message or an ``is_error`` result often echoes the input (a validation error
+quotes the offending value), **error text is recorded only when every argument
+is**: with ``include_args=False`` or a non-empty ``redact``, a failure is
+recorded as its ``error_type`` alone. Results are recorded as a size and a
+count, never as content.
+
+``session`` is the transport's ``mcp-session-id`` on HTTP (``None`` under
+stateless HTTP, where there is none, and on the ``initialize`` request, which
+precedes it), or FastMCP's per-session id on stdio. Reading it never creates
+one. Reading the log back is :func:`iter_records` → :func:`summarize` →
+:func:`format_summary`, also available as ``py2mcp usage <dir>``.
 
 >>> from py2mcp import mk_mcp_server
 >>> records = []
@@ -57,6 +70,8 @@ available as ``py2mcp usage <dir>``.
 from __future__ import annotations
 
 import argparse
+import asyncio
+import inspect
 import json
 import logging
 import os
@@ -73,8 +88,10 @@ from typing import (
     Collection,
     Iterable,
     Iterator,
+    Mapping,
     MutableMapping,
     Optional,
+    Union,
 )
 
 from fastmcp.server.middleware import Middleware
@@ -92,6 +109,7 @@ __all__ = [
     "main",
     "DFLT_RETENTION_DAYS",
     "DFLT_MAX_ARGS_CHARS",
+    "DFLT_MAX_ERROR_CHARS",
     "REDACTED",
 ]
 
@@ -105,20 +123,27 @@ DFLT_RETENTION_DAYS = 90
 #: argument must not become a megabyte-per-call log).
 DFLT_MAX_ARGS_CHARS = 4000
 
+#: Cap on the error text stored per record (when error text is recorded at all).
+DFLT_MAX_ERROR_CHARS = 500
+
 #: What a redacted argument value is replaced with.
 REDACTED = "<redacted>"
 
 #: Server name used for the default sink directory when none is given.
 DFLT_SERVER_SLUG = "server"
 
-#: Outcome labels :func:`default_outcome` produces. A custom ``outcome`` callable
-#: may return any string (e.g. ``"no_match"``, ``"refused"``); these three are the
-#: ones :func:`summarize` always tabulates.
+#: Outcome labels this module produces itself. A custom ``outcome`` callable may
+#: return any label (e.g. ``"no_match"``, ``"refused"``); :func:`summarize` and
+#: :func:`format_summary` tabulate whatever labels they see.
 OUTCOME_OK, OUTCOME_EMPTY, OUTCOME_ERROR = "ok", "empty", "error"
+OUTCOME_CANCELLED, OUTCOME_UNKNOWN = "cancelled", "unknown"
 
-Sink = Callable[[dict], None]
+#: The HTTP header the Streamable-HTTP transport uses for its session id.
+SESSION_HEADER = "mcp-session-id"
+
+Sink = Callable[[dict], Any]
 Caller = Callable[[], Optional[str]]
-Outcome = Callable[[str, Any], str]
+Outcome = Callable[[str, Any], Union[str, Mapping[str, Any]]]
 
 
 # --- defaults for the three seams ---------------------------------------------
@@ -128,10 +153,12 @@ def token_caller() -> Optional[str]:
     """The caller's identity from the verified OAuth token, or ``None``.
 
     Reads FastMCP's current access token (set by the ``auth=`` resource-server
-    layer on the HTTP path) and returns its ``email`` claim, else ``sub``, else
-    the token's ``client_id`` — lowercased. Outside a request, or on an
-    unauthenticated (stdio) server, there is no token and the result is ``None``:
-    the record then says ``"caller": null`` rather than guessing.
+    layer on the HTTP path) and returns its ``email`` claim, else ``sub``,
+    lowercased — the same rule ``enlace_metering.token_email`` applies, so one
+    caller has one name across the platform. Deliberately **no** fallback to the
+    OAuth ``client_id`` (a shared identity) and none to a guess: outside a
+    request, or on an unauthenticated (stdio) server, the result is ``None`` and
+    the record says ``"caller": null``.
 
     >>> token_caller() is None   # no request in flight here
     True
@@ -145,9 +172,7 @@ def token_caller() -> Optional[str]:
     if token is None:
         return None
     claims = getattr(token, "claims", None) or {}
-    ident = (
-        claims.get("email") or claims.get("sub") or getattr(token, "client_id", None)
-    )
+    ident = claims.get("email") or claims.get("sub")
     return str(ident).lower() if ident else None
 
 
@@ -162,7 +187,9 @@ def default_outcome(tool: str, result: Any) -> str:
     ``content`` and ``structured_content``). A tool that *raised* never reaches
     this function — the middleware records ``error`` itself. ``empty`` is what a
     search returning no rows looks like from outside: no content blocks, or a
-    structured ``{"result": []}`` / ``None`` / ``""`` / ``{}``.
+    structured ``{"result": []}`` / ``None`` / ``""`` / ``{}``. A tool with its
+    own "no match" shape (``{"matches": [], "total": 0}``) is ``ok`` here; give
+    the logger an ``outcome=`` that knows that shape.
 
     >>> class R:
     ...     def __init__(self, content=(), structured_content=None, is_error=False):
@@ -218,11 +245,18 @@ _DAY_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 class JsonlSink:
     """Append records to one JSON-lines file per UTC day; prune old days.
 
-    Files are ``<root>/<YYYY-MM-DD>.jsonl``. On the first write of a new day,
-    files older than ``retention_days`` are deleted (``None`` keeps everything).
-    Each write is one ``O_APPEND`` write of one line, so concurrent workers on
-    the same host interleave whole lines. ``root`` defaults to
-    :func:`default_usage_dir`.
+    Files are ``<root>/<YYYY-MM-DD>.jsonl``. Files older than ``retention_days``
+    (``0`` keeps today only, ``None`` keeps everything) are pruned at
+    construction and on the first write of each new day. Each write is one
+    ``O_APPEND`` write of one line, so concurrent workers on the same host
+    interleave whole lines. ``root`` defaults to :func:`default_usage_dir`; it
+    must be **one directory per server**, since the day files carry no server
+    name and pruning covers the whole directory.
+
+    The sink is built to be attached to a live server, so by default it does not
+    raise: a directory that cannot be created at construction is reported via
+    ``logging`` and retried on every write (``strict=True`` raises instead), and
+    a directory removed at runtime is recreated on the next write.
 
     >>> import tempfile
     >>> sink = JsonlSink(tempfile.mkdtemp(), retention_days=None)
@@ -237,12 +271,27 @@ class JsonlSink:
         *,
         retention_days: Optional[int] = DFLT_RETENTION_DAYS,
         server: str = DFLT_SERVER_SLUG,
+        strict: bool = False,
     ):
         self.root = Path(root) if root is not None else default_usage_dir(server)
+        if retention_days is not None and retention_days < 0:
+            raise ValueError(
+                f"retention_days must be >= 0 or None, got {retention_days}"
+            )
         self.retention_days = retention_days
-        self.root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.Lock()
         self._day: Optional[str] = None
+        try:
+            self.root.mkdir(parents=True, exist_ok=True)
+            self.prune()
+        except OSError:
+            if strict:
+                raise
+            _logger.error(
+                "py2mcp.usage: cannot create usage-log dir %s; will retry on write",
+                self.root,
+                exc_info=True,
+            )
 
     def __call__(self, record: dict) -> None:
         day = str(record.get("ts", ""))[:10]
@@ -250,6 +299,7 @@ class JsonlSink:
             day = datetime.now(timezone.utc).date().isoformat()
         line = json.dumps(record, default=str, ensure_ascii=False) + "\n"
         with self._lock:
+            self.root.mkdir(parents=True, exist_ok=True)
             if day != self._day:
                 self._day = day
                 self.prune(today=date.fromisoformat(day))
@@ -258,19 +308,22 @@ class JsonlSink:
 
     def prune(self, *, today: Optional[date] = None) -> list[Path]:
         """Delete day files older than ``retention_days``; return what was removed."""
-        if self.retention_days is None:
+        if self.retention_days is None or not self.root.is_dir():
             return []
         today = today or datetime.now(timezone.utc).date()
         cutoff = today - timedelta(days=self.retention_days)
         removed = []
         for path in self.root.glob("*.jsonl"):
-            if _DAY_RE.match(path.stem):
-                try:
-                    if date.fromisoformat(path.stem) < cutoff:
-                        path.unlink()
-                        removed.append(path)
-                except (ValueError, OSError):  # not a day file / already gone
-                    continue
+            if not _DAY_RE.match(path.stem):
+                continue
+            try:
+                if date.fromisoformat(path.stem) < cutoff:
+                    path.unlink()
+                    removed.append(path)
+            except ValueError:  # not a real date
+                continue
+            except OSError:
+                _logger.warning("py2mcp.usage: could not prune %s", path, exc_info=True)
         return removed
 
     def __repr__(self) -> str:
@@ -286,9 +339,10 @@ def mapping_sink(
 ) -> Sink:
     """A sink that does ``store[key(record)] = record`` — any ``MutableMapping``.
 
-    The default key is ``"<YYYY-MM-DD>/<id>.json"``, so a ``dol`` file store (or
-    its S3 counterpart) lays records out one per file by day, and "last 30 days"
-    is a key-prefix scan. This is the seam that takes the log off the host.
+    The default key is ``"<YYYY-MM-DD>/<id>.json"``, so a ``dol`` file store lays
+    records out one per file by day, and "last 30 days" is a key-prefix scan.
+    The write happens on the event loop, so this is for a local store; a remote
+    one (S3, a database) belongs behind an ``async`` sink or a batching one.
 
     >>> store = {}
     >>> sink = mapping_sink(store)
@@ -321,68 +375,103 @@ def _bounded_args(args: dict, max_chars: Optional[int]) -> tuple[Any, bool]:
 
 
 def _result_size(result: Any) -> tuple[int, Optional[int]]:
-    """``(chars, count)``: text length of the content, and the item count if obvious."""
+    """``(chars, count)``: text length of the content; the item count when it is a list."""
     chars = 0
     for block in getattr(result, "content", None) or ():
         chars += len(getattr(block, "text", "") or "")
     count: Optional[int] = None
     structured = getattr(result, "structured_content", None)
     if isinstance(structured, dict) and set(structured) == {"result"}:
-        value = structured["result"]
-        if isinstance(value, (list, dict, str)):
-            count = len(value)
-    elif isinstance(structured, dict):
-        count = len(structured)
+        if isinstance(structured["result"], list):
+            count = len(structured["result"])
     return chars, count
 
 
-def _context_ids(context: Any) -> tuple[Optional[str], Optional[str]]:
-    fc = getattr(context, "fastmcp_context", None)
-    if fc is None:
-        return None, None
+def _first_text(result: Any, limit: int) -> Optional[str]:
+    for block in getattr(result, "content", None) or ():
+        text = getattr(block, "text", None)
+        if text:
+            return str(text)[:limit]
+    return None
+
+
+def _session_id(fc: Any) -> Optional[str]:
+    """The transport's session id, read without side effects (or ``None``).
+
+    On HTTP it is the ``mcp-session-id`` header (absent under stateless HTTP and
+    on the ``initialize`` request itself). Elsewhere (stdio, in-memory) it is
+    FastMCP's per-session id, read only once a request context exists:
+    ``Context.session_id`` *generates and caches* an id when read earlier, which
+    would silently change the session id every tool sees.
+    """
     try:
-        session = fc.session_id
-    except Exception:  # noqa: BLE001 — no session on this transport
-        session = None
-    try:
-        request = fc.request_id
-    except Exception:  # noqa: BLE001
+        from fastmcp.server.dependencies import get_http_request
+
+        request = get_http_request()
+    except Exception:  # noqa: BLE001 — no HTTP request in flight
         request = None
-    return (str(session) if session else None), (str(request) if request else None)
+    if request is not None:
+        return request.headers.get(SESSION_HEADER) or None
+    if fc is not None and getattr(fc, "request_context", None) is not None:
+        try:
+            return str(fc.session_id)
+        except Exception:  # noqa: BLE001
+            return None
+    return None
+
+
+def _request_id(fc: Any) -> Optional[str]:
+    if fc is None or getattr(fc, "request_context", None) is None:
+        return None
+    try:
+        return str(fc.request_id)
+    except Exception:  # noqa: BLE001
+        return None
 
 
 class UsageLogger(Middleware):
     """FastMCP middleware: one record per tool call (and per handshake) to ``sink``.
 
     Args:
-        sink: ``record -> None``. Default: a :class:`JsonlSink` under
-            :func:`default_usage_dir` for ``name``. Any list's ``append`` works
-            for tests; :func:`mapping_sink` adapts a store.
+        sink: ``record -> None`` (sync or ``async``). Default: a :class:`JsonlSink`
+            under :func:`default_usage_dir` for ``name``. Any list's ``append``
+            works for tests; :func:`mapping_sink` adapts a store.
         name: The connector/server name written into every record (and the
             default sink's directory).
         version: The connector version written into every record, if known.
         caller: ``() -> str | None`` resolving the caller for the in-flight
             request. Default :func:`token_caller`.
-        outcome: ``(tool_name, result) -> str`` classifying a result that did
-            not raise. Default :func:`default_outcome`; a connector whose tools
-            return a specific "no match" shape plugs its own in here.
+        outcome: ``(tool_name, result) -> label | mapping`` classifying a result
+            that did not raise. Default :func:`default_outcome`. A mapping is
+            merged into the record (it must carry ``"outcome"``), so a connector
+            that knows its own "no match" shape can also set the true
+            ``result_count``.
         include_args: Record the tool arguments at all. ``True`` by default —
             the arguments are the point of the log — but they are the users'
             questions, so a connector that must not keep them sets ``False``.
-        redact: Argument names whose values are replaced with :data:`REDACTED`.
+        redact: Top-level argument names whose values are replaced with
+            :data:`REDACTED` (nested keys are not inspected; pre-shape the
+            arguments with ``input_trans`` or drop them with ``include_args``).
         max_args_chars: Cap on the serialized arguments stored per record
             (``None`` for no cap).
+        max_error_chars: Cap on the error text stored per record.
         handshakes: Also record ``initialize`` requests (as ``event:
-            "initialize"`` with the client's name/version), so a connector that
-            is *enabled* can be told from one that is *used*.
+            "initialize"`` with the client's name/version, and ``outcome``
+            ``error`` if the handshake failed), so a connector that is *enabled*
+            can be told from one that is *used*.
 
-    The logger never raises into the tool call: a failing sink is reported via
-    ``logging`` (logger ``py2mcp.usage``) and the call proceeds.
+    Error text (an exception message, or an ``is_error`` result's text) is
+    recorded only when ``include_args`` is true and ``redact`` is empty, because
+    it routinely echoes the arguments; otherwise only ``error_type`` is kept.
+    The logger never raises into the tool call: a failing sink, caller or
+    classifier is reported via ``logging`` (logger ``py2mcp.usage``) and the
+    call proceeds. A cancelled call is recorded as ``cancelled`` with no text;
+    other ``BaseException``s (shutdown) pass through unrecorded.
 
     >>> records = []
     >>> logger = UsageLogger(records.append, name='demo', redact=('token',))
-    >>> logger.name, logger.redact
-    ('demo', frozenset({'token'}))
+    >>> logger.name, logger.redact, logger.records_error_text
+    ('demo', frozenset({'token'}), False)
     """
 
     def __init__(
@@ -396,9 +485,11 @@ class UsageLogger(Middleware):
         include_args: bool = True,
         redact: Collection[str] = (),
         max_args_chars: Optional[int] = DFLT_MAX_ARGS_CHARS,
+        max_error_chars: int = DFLT_MAX_ERROR_CHARS,
         handshakes: bool = True,
     ):
         self.sink: Sink = sink if sink is not None else JsonlSink(server=name)
+        self._async_sink = inspect.iscoroutinefunction(self.sink)
         self.name = name
         self.version = version
         self.caller = caller
@@ -406,12 +497,18 @@ class UsageLogger(Middleware):
         self.include_args = include_args
         self.redact = frozenset(redact)
         self.max_args_chars = max_args_chars
+        self.max_error_chars = max_error_chars
         self.handshakes = handshakes
+
+    @property
+    def records_error_text(self) -> bool:
+        """Whether error messages are stored (only when every argument is)."""
+        return self.include_args and not self.redact
 
     # -- record assembly -------------------------------------------------------
 
     def _base_record(self, event: str, context: Any) -> dict:
-        session, request = _context_ids(context)
+        fc = getattr(context, "fastmcp_context", None)
         try:
             caller = self.caller()
         except Exception:  # noqa: BLE001 — identity must never break the call
@@ -423,14 +520,49 @@ class UsageLogger(Middleware):
             "event": event,
             "server": self.name,
             "version": self.version,
-            "session": session,
-            "request": request,
+            "session": _session_id(fc),
+            "request": _request_id(fc),
             "caller": caller,
         }
 
-    def _emit(self, record: dict) -> None:
+    def _note_error(self, record: dict, exc: BaseException) -> None:
+        record["outcome"] = OUTCOME_ERROR
+        record["error_type"] = type(exc).__name__
+        root = exc
+        while root.__cause__ is not None:
+            root = root.__cause__
+        if root is not exc:  # FastMCP wraps a tool's exception in ToolError
+            record["error_cause"] = type(root).__name__
+        if self.records_error_text:
+            record["error"] = str(exc)[: self.max_error_chars]
+
+    def _note_result(self, record: dict, tool: str, result: Any) -> None:
         try:
-            self.sink(record)
+            classified = self.outcome(tool, result)
+        except Exception:  # noqa: BLE001 — a bad classifier must not break the call
+            _logger.warning("py2mcp.usage: outcome() raised", exc_info=True)
+            classified = OUTCOME_UNKNOWN
+        try:
+            record["result_chars"], record["result_count"] = _result_size(result)
+            if getattr(result, "is_error", False):
+                record["error_type"] = "ToolResult.is_error"
+                if self.records_error_text:
+                    record["error"] = _first_text(result, self.max_error_chars)
+            if isinstance(classified, Mapping):
+                record.update(classified)
+                record["outcome"] = str(record.get("outcome") or OUTCOME_UNKNOWN)
+            else:
+                record["outcome"] = str(classified)
+        except Exception:  # noqa: BLE001 — observe-only, whatever the result shape
+            _logger.warning("py2mcp.usage: could not describe result", exc_info=True)
+            record.setdefault("outcome", OUTCOME_UNKNOWN)
+
+    async def _emit(self, record: dict) -> None:
+        try:
+            if self._async_sink:
+                await self.sink(record)
+            else:
+                self.sink(record)
         except Exception:  # noqa: BLE001 — observe-only: never fail the call
             _logger.warning(
                 "py2mcp.usage: sink failed for record %s",
@@ -453,8 +585,15 @@ class UsageLogger(Middleware):
                 "protocol": getattr(params, "protocolVersion", None),
             }
         )
-        self._emit(record)
-        return await call_next(context)
+        try:
+            result = await call_next(context)
+        except Exception as exc:
+            self._note_error(record, exc)
+            await self._emit(record)
+            raise
+        record["outcome"] = OUTCOME_OK
+        await self._emit(record)
+        return result
 
     async def on_call_tool(self, context, call_next):
         message = context.message
@@ -472,31 +611,20 @@ class UsageLogger(Middleware):
         t0 = time.perf_counter()
         try:
             result = await call_next(context)
-        except BaseException as exc:
+        except asyncio.CancelledError:
             record["latency_ms"] = round((time.perf_counter() - t0) * 1000, 2)
-            record["outcome"] = OUTCOME_ERROR
-            record["error"] = f"{type(exc).__name__}: {exc}"
-            self._emit(record)
+            record["outcome"] = OUTCOME_CANCELLED
+            await self._emit(record)
+            raise
+        except Exception as exc:
+            record["latency_ms"] = round((time.perf_counter() - t0) * 1000, 2)
+            self._note_error(record, exc)
+            await self._emit(record)
             raise
         record["latency_ms"] = round((time.perf_counter() - t0) * 1000, 2)
-        try:
-            record["outcome"] = str(self.outcome(tool, result))
-        except Exception:  # noqa: BLE001 — a bad classifier must not break the call
-            _logger.warning("py2mcp.usage: outcome() raised", exc_info=True)
-            record["outcome"] = OUTCOME_OK
-        if getattr(result, "is_error", False):
-            record["error"] = _first_text(result)
-        record["result_chars"], record["result_count"] = _result_size(result)
-        self._emit(record)
+        self._note_result(record, tool, result)
+        await self._emit(record)
         return result
-
-
-def _first_text(result: Any, limit: int = 500) -> Optional[str]:
-    for block in getattr(result, "content", None) or ():
-        text = getattr(block, "text", None)
-        if text:
-            return str(text)[:limit]
-    return None
 
 
 # --- reading it back -------------------------------------------------------------
@@ -509,7 +637,10 @@ def _as_date(value: Optional[str | date | datetime]) -> Optional[date]:
         return value.date()
     if isinstance(value, date):
         return value
-    return date.fromisoformat(str(value)[:10])
+    try:
+        return date.fromisoformat(str(value)[:10])
+    except ValueError as exc:
+        raise ValueError(f"expected a YYYY-MM-DD date, got {value!r}") from exc
 
 
 def iter_records(
@@ -524,6 +655,8 @@ def iter_records(
     select by file name, so a month out of a year of logs costs reading a month.
     Lines that are not valid JSON objects are skipped, not raised — a log is
     read long after it was written, and one torn line must not hide the rest.
+    A ``root`` that does not exist raises ``FileNotFoundError`` rather than
+    reading as an empty log.
 
     >>> import tempfile
     >>> sink = JsonlSink(tempfile.mkdtemp(), retention_days=None)
@@ -533,6 +666,8 @@ def iter_records(
     ['2']
     """
     root = Path(root)
+    if not root.exists():
+        raise FileNotFoundError(f"no usage log at {root}")
     lo, hi = _as_date(since), _as_date(until)
     if root.is_file():
         files = [root]
@@ -560,31 +695,33 @@ def summarize(records: Iterable[dict]) -> dict:
     """Aggregate records into counts: by caller, by tool and outcome, by day.
 
     Returns a JSON-ready dict with ``calls``, ``handshakes``, ``first``/``last``
-    timestamps, ``callers`` (calls per caller), ``tools`` (per tool: ``calls``
-    plus one count per outcome label, and mean/max latency), ``days`` (calls
-    per day) and ``outcomes`` (totals per label) — the "who used what, which
-    tools fail, which questions return nothing" view.
+    timestamps, ``callers`` (calls per caller), ``servers`` (calls per server
+    name, in case a directory holds more than one), ``tools`` (per tool:
+    ``calls``, one count per outcome label seen, and mean/max latency), ``days``
+    (calls per day) and ``outcomes`` (totals per label) — the "who used what,
+    which tools fail, which questions return nothing" view.
 
     >>> recs = [
     ...     {'event': 'initialize', 'ts': '2026-10-02T08:00:00+00:00', 'caller': 'a'},
     ...     {'event': 'tool_call', 'ts': '2026-10-02T08:01:00+00:00', 'caller': 'a',
     ...      'tool': 'search', 'outcome': 'ok', 'latency_ms': 10.0},
     ...     {'event': 'tool_call', 'ts': '2026-10-02T09:00:00+00:00', 'caller': 'b',
-    ...      'tool': 'search', 'outcome': 'empty', 'latency_ms': 30.0},
+    ...      'tool': 'search', 'outcome': 'no_match', 'latency_ms': 30.0},
     ... ]
     >>> s = summarize(recs)
     >>> s['calls'], s['handshakes'], s['callers'], s['outcomes']
-    (2, 1, {'a': 1, 'b': 1}, {'ok': 1, 'empty': 1, 'error': 0})
+    (2, 1, {'a': 1, 'b': 1}, {'ok': 1, 'empty': 0, 'error': 0, 'no_match': 1})
     >>> s['tools']['search']['latency_ms_mean'], s['tools']['search']['latency_ms_max']
     (20.0, 30.0)
     """
     calls = handshakes = 0
     first = last = None
     callers: Counter = Counter()
+    servers: Counter = Counter()
     days: Counter = Counter()
     outcomes: Counter = Counter({OUTCOME_OK: 0, OUTCOME_EMPTY: 0, OUTCOME_ERROR: 0})
     tools: dict[str, dict] = defaultdict(
-        lambda: {"calls": 0, "latency_ms_sum": 0.0, "latency_ms_max": 0.0}
+        lambda: {"calls": 0, "_sum": 0.0, "_max": 0.0, "_labels": Counter()}
     )
     for r in records:
         ts = r.get("ts")
@@ -598,34 +735,33 @@ def summarize(records: Iterable[dict]) -> dict:
             continue
         calls += 1
         callers[r.get("caller") or "(anonymous)"] += 1
+        servers[r.get("server") or "(unnamed)"] += 1
         days[str(ts or "")[:10] or "undated"] += 1
-        label = str(r.get("outcome") or OUTCOME_OK)
+        label = str(r.get("outcome") or OUTCOME_UNKNOWN)
         outcomes[label] += 1
         t = tools[str(r.get("tool") or "unknown")]
         t["calls"] += 1
-        t[label] = t.get(label, 0) + 1
+        t["_labels"][label] += 1
         latency = r.get("latency_ms")
         if isinstance(latency, (int, float)):
-            t["latency_ms_sum"] += float(latency)
-            t["latency_ms_max"] = max(t["latency_ms_max"], float(latency))
+            t["_sum"] += float(latency)
+            t["_max"] = max(t["_max"], float(latency))
+    labels = list(outcomes)
     tools_out = {}
     for name, t in sorted(tools.items(), key=lambda kv: -kv[1]["calls"]):
         n = t["calls"]
-        tools_out[name] = {
-            k: v for k, v in t.items() if k not in ("latency_ms_sum", "latency_ms_max")
-        }
-        for label in (OUTCOME_OK, OUTCOME_EMPTY, OUTCOME_ERROR):
-            tools_out[name].setdefault(label, 0)
-        tools_out[name]["latency_ms_mean"] = (
-            round(t["latency_ms_sum"] / n, 1) if n else 0.0
-        )
-        tools_out[name]["latency_ms_max"] = round(t["latency_ms_max"], 1)
+        tools_out[name] = {"calls": n}
+        for label in labels:
+            tools_out[name][label] = t["_labels"].get(label, 0)
+        tools_out[name]["latency_ms_mean"] = round(t["_sum"] / n, 1) if n else 0.0
+        tools_out[name]["latency_ms_max"] = round(t["_max"], 1)
     return {
         "calls": calls,
         "handshakes": handshakes,
         "first": first,
         "last": last,
         "callers": dict(callers.most_common()),
+        "servers": dict(servers.most_common()),
         "tools": tools_out,
         "days": dict(sorted(days.items())),
         "outcomes": dict(outcomes),
@@ -633,7 +769,7 @@ def summarize(records: Iterable[dict]) -> dict:
 
 
 def format_summary(summary: dict) -> str:
-    """Render :func:`summarize` output as plain text, one table per section.
+    """Render :func:`summarize` output as plain text, one column per outcome label.
 
     >>> print(format_summary(summarize([
     ...     {'event': 'tool_call', 'ts': '2026-10-02T08:01:00+00:00', 'caller': 'a',
@@ -650,6 +786,7 @@ def format_summary(summary: dict) -> str:
     days
       2026-10-02                          1
     """
+    labels = list(summary["outcomes"])
     lines = [
         f"calls: {summary['calls']}   handshakes: {summary['handshakes']}   "
         f"first: {summary.get('first')}   last: {summary.get('last')}",
@@ -658,15 +795,18 @@ def format_summary(summary: dict) -> str:
         "callers",
     ]
     lines += [f"  {c:<34}{n:>5}" for c, n in summary["callers"].items()]
-    lines += [
-        "",
-        f"{'tools':<24}{'calls':>8}{'ok':>7}{'empty':>7}{'error':>7}{'mean_ms':>9}{'max_ms':>9}",
-    ]
+    if len(summary.get("servers", {})) > 1:
+        lines += ["", "servers"]
+        lines += [f"  {s:<34}{n:>5}" for s, n in summary["servers"].items()]
+    width = max(7, *(len(label) + 2 for label in labels))
+    header = f"{'tools':<24}{'calls':>8}" + "".join(
+        f"{label:>{width}}" for label in labels
+    )
+    lines += ["", header + f"{'mean_ms':>9}{'max_ms':>9}"]
     for name, t in summary["tools"].items():
-        lines.append(
-            f"  {name:<22}{t['calls']:>8}{t['ok']:>7}{t['empty']:>7}{t['error']:>7}"
-            f"{t['latency_ms_mean']:>9.1f}{t['latency_ms_max']:>9.1f}"
-        )
+        row = f"  {name:<22}{t['calls']:>8}"
+        row += "".join(f"{t.get(label, 0):>{width}}" for label in labels)
+        lines.append(row + f"{t['latency_ms_mean']:>9.1f}{t['latency_ms_max']:>9.1f}")
     lines += ["", "days"]
     lines += [f"  {d:<34}{n:>5}" for d, n in summary["days"].items()]
     return "\n".join(lines)
@@ -690,7 +830,10 @@ def main(argv: Optional[list[str]] = None) -> None:
         help="Print the selected records (one JSON object per line) instead of a summary.",
     )
     args = parser.parse_args(argv)
-    records = iter_records(args.root, since=args.since, until=args.until)
+    try:
+        records = list(iter_records(args.root, since=args.since, until=args.until))
+    except (FileNotFoundError, ValueError) as exc:
+        parser.error(str(exc))
     if args.records:
         for record in records:
             print(json.dumps(record, ensure_ascii=False))

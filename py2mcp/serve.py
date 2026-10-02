@@ -205,7 +205,8 @@ def main(argv: Optional[list[str]] = None) -> None:
     parser = argparse.ArgumentParser(
         prog="py2mcp",
         description="Serve an MCP server from 'module:function' refs — over stdio "
-        "(default) or Streamable HTTP (--http).",
+        "(default) or Streamable HTTP (--http). "
+        "Also: `py2mcp usage <dir>` summarizes a usage log (see --help there).",
     )
     parser.add_argument(
         "--config",

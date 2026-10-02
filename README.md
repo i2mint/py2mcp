@@ -159,7 +159,7 @@ app = mk_http_app(
 )
 ```
 
-With no `sink=`, records go to one JSON-lines file per day under `$XDG_DATA_HOME/py2mcp/usage/<name>/` (never the app directory), pruned to 90 days. Any callable is a sink — `records.append` in a test, `mapping_sink(dol_store)` to lay records out one-per-key in a `dol` store (and so S3) — and a failing sink never fails the tool call. The arguments are your users' own questions, so logging is off unless you attach the middleware, `include_args=False` drops them, `redact=` masks named fields, and `max_args_chars` caps the rest. Read it back with `py2mcp usage <dir> [--since YYYY-MM-DD] [--json | --records]`, or `iter_records` → `summarize` in Python. Design and prior art: `misc/docs/decisions/0001-usage-logging-is-a-py2mcp-middleware.md`.
+With no `sink=`, records go to one JSON-lines file per day under `$XDG_DATA_HOME/py2mcp/usage/<name>/` (never the app directory), pruned to 90 days. Any callable is a sink — `records.append` in a test, `mapping_sink(dol_store)` to lay records out one-per-key in a `dol` store (and so S3) — and a failing sink never fails the tool call. The arguments are your users' own questions, so logging is off unless you attach the middleware, `include_args=False` drops them, `redact=` masks named fields, `max_args_chars` caps the rest, and error text (which echoes arguments) is kept only when every argument is. Read it back with `py2mcp usage <dir> [--since YYYY-MM-DD] [--json | --records]`, or `iter_records` → `summarize` in Python. Design and prior art: `misc/docs/decisions/0001-usage-logging-is-a-py2mcp-middleware.md`.
 
 ## Instructions (the server's model-facing description)
 
