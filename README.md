@@ -154,7 +154,9 @@ A deployed connector's web-server log says only that something `POST`ed `/mcp`. 
 from py2mcp import mk_http_app, UsageLogger
 
 app = mk_http_app(
-    refs, name="snout", auth=AUTH,
+    refs,
+    name="snout",
+    auth=AUTH,
     middleware=[UsageLogger(name="snout", version="1.4.0", redact=("api_key",))],
 )
 ```
