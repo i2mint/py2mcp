@@ -1,0 +1,47 @@
+{
+  "collection_duration_seconds": 8.357248067855835,
+  "commit_message": "Pass server icons through every builder (icons=) (#22)\n\nFastMCP takes icons= at construction only (its icons property has no setter),\nso a caller that wants a server icon in serverInfo had to bypass py2mcp and\nbuild FastMCP itself. mk_mcp_server, mk_mcp_from_refs, mk_mcp_from_store,\nmk_http_app and serve_http now accept icons= (an Icon, a dict of its fields, a\nsrc string, or a list of them), forwarded only when given.\n\nNeeded by i2mint/enlace_connector#3.\n\nClaude-Session: https://claude.ai/code/session_01U3AS9LZhFB3TuST8E3Wfeb",
+  "commit_sha": "00cfd9310259c0144427331447cc67764a9849af",
+  "metrics": {
+    "coverage": {
+      "branch_coverage": 0.0,
+      "error": "No coverage file found",
+      "line_coverage": 0.0,
+      "statements_covered": 0,
+      "statements_total": 0
+    },
+    "umpyre_stats": {
+      "comment_lines": 79547,
+      "comment_lines_ratio": 0.09074264620326664,
+      "docs_lines": 121752,
+      "empty_lines": 129457,
+      "empty_lines_ratio": 0.14767710598182568,
+      "files_analyzed": 3151,
+      "function_lines": 465806,
+      "function_lines_ratio": 0.5313647159208872,
+      "mean_lines_per_function": 17.76393867744642,
+      "num_classes": 6571,
+      "num_functions": 26222,
+      "pypi_version": "0.1.16",
+      "total_lines": 876622
+    },
+    "wily": {
+      "cyclomatic_avg": 0.0,
+      "error": "wily report failed: Usage: wily report [OPTIONS] FILE [METRICS]...\nTry 'wily report --help' for help.\n\nError: Invalid value for '-f' / '--format': 'json' is not one of 'CONSOLE', 'HTML'.\n",
+      "files_analyzed": 0,
+      "maintainability_index": 0.0,
+      "total_loc": 0
+    },
+    "workflow_status": {
+      "last_run_status": "success",
+      "last_success_timestamp": "2026-10-14T04:42:50Z",
+      "recent_failure_count": 0,
+      "run_url": "https://github.com/i2mint/py2mcp/actions/runs/38512710120",
+      "total_runs_analyzed": 10
+    }
+  },
+  "python_version": "3.10",
+  "schema_version": "1.0",
+  "timestamp": "2026-10-14T04:53:20.800070Z",
+  "workflow_status": {}
+}
