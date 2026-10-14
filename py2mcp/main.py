@@ -26,6 +26,7 @@ from py2mcp.base import (
     _normalize_to_iterable,
     _wrap_with_input_trans,
     _normalize_middleware,
+    _normalize_icons,
 )
 from py2mcp.util import import_object, store_to_funcs
 
@@ -40,6 +41,7 @@ def mk_mcp_server(
     instructions: Optional[str] = None,
     prompts: Optional[Callable | Iterable[Callable]] = None,
     resources: Optional[Mapping[str, Callable]] = None,
+    icons: Optional[Any] = None,
 ) -> FastMCP:
     """Create an MCP server from Python functions.
 
@@ -77,6 +79,10 @@ def mk_mcp_server(
         resources: Optional ``{uri: callable}`` mapping to register as MCP
             resources (via FastMCP's ``@mcp.resource(uri)``) — the callable is
             invoked to produce the resource's content when a client reads ``uri``.
+        icons: Optional server icon(s), sent in the MCP ``serverInfo`` so a client
+            (e.g. claude.ai's connector list) can show one: an ``mcp.types.Icon``,
+            a dict of its fields, a bare ``src`` (URL or ``data:`` URI), or a list
+            of those. ``None`` (default) sends none.
 
     Returns:
         A FastMCP server instance ready to run, with one tool per function.
@@ -137,6 +143,9 @@ def mk_mcp_server(
         server_kwargs["middleware"] = middleware_list
     if instructions:
         server_kwargs["instructions"] = instructions
+    # Like middleware: only when given, so no icon means no new fastmcp floor.
+    if icon_list := _normalize_icons(icons):
+        server_kwargs["icons"] = icon_list
     mcp = FastMCP(name, **server_kwargs)
 
     # Normalize to list of functions
@@ -174,6 +183,7 @@ def mk_mcp_from_refs(
     instructions: Optional[str] = None,
     prompts: Optional[Callable | Iterable[Callable]] = None,
     resources: Optional[Mapping[str, Callable]] = None,
+    icons: Optional[Any] = None,
 ) -> FastMCP:
     """Create an MCP server from ``'module:function'`` reference strings.
 
@@ -194,6 +204,7 @@ def mk_mcp_from_refs(
             model-facing description.
         prompts: Forwarded to :func:`mk_mcp_server`.
         resources: Forwarded to :func:`mk_mcp_server`.
+        icons: Forwarded to :func:`mk_mcp_server`.
 
     Returns:
         A FastMCP server with one tool per reference, each named after the
@@ -231,6 +242,7 @@ def mk_mcp_from_refs(
         instructions=instructions,
         prompts=prompts,
         resources=resources,
+        icons=icons,
     )
 
 
@@ -244,6 +256,7 @@ def mk_mcp_from_store(
     instructions: Optional[str] = None,
     prompts: Optional[Callable | Iterable[Callable]] = None,
     resources: Optional[Mapping[str, Callable]] = None,
+    icons: Optional[Any] = None,
 ) -> FastMCP:
     """Create an MCP server from a MutableMapping with CRUD operations.
 
@@ -265,6 +278,7 @@ def mk_mcp_from_store(
             :func:`mk_mcp_server` as the server's model-facing ``instructions``.
         prompts: Forwarded to :func:`mk_mcp_server`.
         resources: Forwarded to :func:`mk_mcp_server`.
+        icons: Forwarded to :func:`mk_mcp_server`.
 
     Returns:
         A FastMCP server with the four CRUD tools.
@@ -305,4 +319,5 @@ def mk_mcp_from_store(
         instructions=instructions,
         prompts=prompts,
         resources=resources,
+        icons=icons,
     )

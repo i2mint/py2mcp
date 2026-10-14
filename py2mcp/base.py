@@ -56,6 +56,41 @@ def _normalize_to_iterable(funcs: Any) -> Iterable[Callable]:
         )
 
 
+def _normalize_icons(icons: Any) -> Optional[list]:
+    """Normalize ``icons`` to a list of ``mcp.types.Icon`` (or ``None``).
+
+    Each item may be an ``Icon``, a ``{"src": ..., "mimeType": ..., "sizes": ...}``
+    dict, or a bare ``src`` string (a URL or a ``data:`` URI). One item may be
+    given on its own. ``None`` and an empty collection mean no icon.
+
+    >>> _normalize_icons(None) is None
+    True
+    >>> [i.src for i in _normalize_icons("https://x/icon.png")]
+    ['https://x/icon.png']
+    >>> [i.mimeType for i in _normalize_icons([{"src": "data:,", "mimeType": "image/png"}])]
+    ['image/png']
+    """
+    if icons is None:
+        return None
+    from mcp.types import Icon
+
+    items = [icons] if isinstance(icons, (str, dict, Icon)) else list(icons)
+    out = []
+    for item in items:
+        if isinstance(item, Icon):
+            out.append(item)
+        elif isinstance(item, str):
+            out.append(Icon(src=item))
+        elif isinstance(item, dict):
+            out.append(Icon(**item))
+        else:
+            raise TypeError(
+                f"an icon is an mcp.types.Icon, a dict of its fields or a src "
+                f"string, not {type(item).__name__}"
+            )
+    return out or None
+
+
 def _normalize_middleware(middleware: Any) -> Optional[list]:
     """Normalize ``middleware`` to a list for FastMCP (or ``None``).
 
