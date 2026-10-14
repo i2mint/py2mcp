@@ -1,21 +1,31 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-14T04:42:37.888433Z
-commit_sha,dc8f9b13f41c3a88254a6c2d6d5a8919c4364832
-commit_message,Merge a920da4c5ab1ade03b56ba18bba1753dce1ce087 into 6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c
+timestamp,2026-10-14T04:42:44.409402Z
+commit_sha,a920da4c5ab1ade03b56ba18bba1753dce1ce087
+commit_message,"Pass server icons through every builder (icons=)
+
+FastMCP takes icons= at construction only (its icons property has no setter),
+so a caller that wants a server icon in serverInfo had to bypass py2mcp and
+build FastMCP itself. mk_mcp_server, mk_mcp_from_refs, mk_mcp_from_store,
+mk_http_app and serve_http now accept icons= (an Icon, a dict of its fields, a
+src string, or a list of them), forwarded only when given.
+
+Needed by i2mint/enlace_connector#3.
+
+Claude-Session: https://claude.ai/code/session_01U3AS9LZhFB3TuST8E3Wfeb"
 python_version,3.10
-metrics.umpyre_stats.num_functions,26038
-metrics.umpyre_stats.num_classes,6560
-metrics.umpyre_stats.total_lines,879263
-metrics.umpyre_stats.empty_lines,129066
-metrics.umpyre_stats.comment_lines,80206
-metrics.umpyre_stats.docs_lines,121733
-metrics.umpyre_stats.function_lines,466286
-metrics.umpyre_stats.empty_lines_ratio,0.14678884474838585
-metrics.umpyre_stats.comment_lines_ratio,0.09121957821493683
-metrics.umpyre_stats.function_lines_ratio,0.5303145930171064
-metrics.umpyre_stats.mean_lines_per_function,17.907903832859667
-metrics.umpyre_stats.files_analyzed,3141
+metrics.umpyre_stats.num_functions,26222
+metrics.umpyre_stats.num_classes,6571
+metrics.umpyre_stats.total_lines,876622
+metrics.umpyre_stats.empty_lines,129457
+metrics.umpyre_stats.comment_lines,79547
+metrics.umpyre_stats.docs_lines,121752
+metrics.umpyre_stats.function_lines,465806
+metrics.umpyre_stats.empty_lines_ratio,0.14767710598182568
+metrics.umpyre_stats.comment_lines_ratio,0.09074264620326664
+metrics.umpyre_stats.function_lines_ratio,0.5313647159208872
+metrics.umpyre_stats.mean_lines_per_function,17.76393867744642
+metrics.umpyre_stats.files_analyzed,3151
 metrics.umpyre_stats.pypi_version,0.1.16
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T00:54:43Z
@@ -36,4 +46,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,5.963629245758057
+collection_duration_seconds,8.784385442733765
