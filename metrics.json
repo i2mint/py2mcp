@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 5.62766432762146,
-  "commit_message": "Pass server icons through every builder (icons=)\n\nFastMCP takes icons= at construction only (its icons property has no setter),\nso a caller that wants a server icon in serverInfo had to bypass py2mcp and\nbuild FastMCP itself. mk_mcp_server, mk_mcp_from_refs, mk_mcp_from_store,\nmk_http_app and serve_http now accept icons= (an Icon, a dict of its fields, a\nsrc string, or a list of them), forwarded only when given.\n\nNeeded by i2mint/enlace_connector#3.\n\nClaude-Session: https://claude.ai/code/session_01U3AS9LZhFB3TuST8E3Wfeb",
-  "commit_sha": "a920da4c5ab1ade03b56ba18bba1753dce1ce087",
+  "collection_duration_seconds": 5.963629245758057,
+  "commit_message": "Merge a920da4c5ab1ade03b56ba18bba1753dce1ce087 into 6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c",
+  "commit_sha": "dc8f9b13f41c3a88254a6c2d6d5a8919c4364832",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-14T04:42:24.667681Z",
+  "timestamp": "2026-10-14T04:42:37.888433Z",
   "workflow_status": {}
 }
