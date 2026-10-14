@@ -190,6 +190,7 @@ def mk_http_app(
     instructions: Optional[str] = None,
     prompts: Optional[Callable | Iterable[Callable]] = None,
     resources: Optional[Mapping[str, Callable]] = None,
+    icons: Optional[Any] = None,
 ) -> Any:
     """Build a Streamable-HTTP **ASGI app** from ``refs`` (+ optional OAuth).
 
@@ -224,6 +225,7 @@ def mk_http_app(
             connecting client/model).
         prompts: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
         resources: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
+        icons: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
 
     Returns:
         The Starlette ASGI application.
@@ -268,6 +270,7 @@ def mk_http_app(
         instructions=instructions,
         prompts=prompts,
         resources=resources,
+        icons=icons,
     )
     http_kwargs: dict[str, Any] = {"transport": transport}
     if path is not None:
@@ -291,6 +294,7 @@ def serve_http(
     instructions: Optional[str] = None,
     prompts: Optional[Callable | Iterable[Callable]] = None,
     resources: Optional[Mapping[str, Callable]] = None,
+    icons: Optional[Any] = None,
 ) -> None:
     """Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -312,6 +316,7 @@ def serve_http(
         instructions=instructions,
         prompts=prompts,
         resources=resources,
+        icons=icons,
     )
     run_kwargs: dict[str, Any] = {"transport": transport, "host": host, "port": port}
     if stateless_http is not None:
