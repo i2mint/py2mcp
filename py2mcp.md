@@ -1,4 +1,4 @@
-> built 2026-10-02 07:29 UTC from 6d54dc2 (main) · py2mcp 0.1.16. Details: build_info.json
+> built 2026-10-14 04:54 UTC from 9b8b550 (main) · py2mcp 0.1.17. Details: build_info.json
 
 # index.html.md
 
@@ -664,7 +664,7 @@ ValueError: jwt auth needs 'audience' (this server's resource id). ...
 #### SEE ALSO
 [`mk_http_app()`](_autosummary/py2mcp.html.md#py2mcp.mk_http_app): where the provider is attached to a server.
 
-### py2mcp.mk_http_app(refs, , name='py2mcp Server', auth=None, input_trans=None, transport='streamable-http', path=None, stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.mk_http_app(refs, , name='py2mcp Server', auth=None, input_trans=None, transport='streamable-http', path=None, stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Build a Streamable-HTTP **ASGI app** from `refs` (+ optional OAuth).
 
@@ -701,6 +701,7 @@ Builds the app with **no network I/O**.
     connecting client/model).
   * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
 * **Return type:**
   [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)
 * **Returns:**
@@ -787,7 +788,7 @@ No mapping means no conversion:
 #### SEE ALSO
 [`py2mcp.mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server): where the returned callable is applied.
 
-### py2mcp.mk_mcp_from_refs(refs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.mk_mcp_from_refs(refs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Create an MCP server from `'module:function'` reference strings.
 
@@ -808,6 +809,7 @@ runnable server — what tools that read tool references from a file (e.g.
     model-facing description.
   * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -839,7 +841,7 @@ The tools are the resolved functions:
 [`py2mcp.serve.serve_stdio()`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.serve_stdio): build from refs and run over stdio.
 [`py2mcp.http.mk_http_app()`](_autosummary/py2mcp.http.html.md#py2mcp.http.mk_http_app): build from refs as an ASGI app.
 
-### py2mcp.mk_mcp_from_store(store, , name='item', plural='', server_name=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.mk_mcp_from_store(store, , name='item', plural='', server_name=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Create an MCP server from a MutableMapping with CRUD operations.
 
@@ -861,6 +863,7 @@ The store is used live: a tool call reads or writes the mapping you passed.
     [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server) as the server’s model-facing `instructions`.
   * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -894,7 +897,7 @@ An irregular plural and an explicit server name:
 [`py2mcp.util.store_to_funcs()`](_autosummary/py2mcp.util.html.md#py2mcp.util.store_to_funcs): the CRUD functions without a server.
 [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server): expose your own functions instead.
 
-### py2mcp.mk_mcp_server(funcs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.mk_mcp_server(funcs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Create an MCP server from Python functions.
 
@@ -932,6 +935,10 @@ tool’s schema and description.
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Optional `{uri: callable}` mapping to register as MCP
     resources (via FastMCP’s `@mcp.resource(uri)`) — the callable is
     invoked to produce the resource’s content when a client reads `uri`.
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Optional server icon(s), sent in the MCP `serverInfo` so a client
+    (e.g. claude.ai’s connector list) can show one: an `mcp.types.Icon`,
+    a dict of its fields, a bare `src` (URL or `data:` URI), or a list
+    of those. `None` (default) sends none.
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -1035,7 +1042,7 @@ With a config file, its refs come first and its name is the fallback:
 (['os.path:basename'], 'Override')
 ```
 
-### py2mcp.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -1222,7 +1229,7 @@ ValueError: jwt auth needs 'audience' (this server's resource id). ...
 #### SEE ALSO
 [`mk_http_app()`](_autosummary/py2mcp.http.html.md#py2mcp.http.mk_http_app): where the provider is attached to a server.
 
-### py2mcp.http.mk_http_app(refs, , name='py2mcp Server', auth=None, input_trans=None, transport='streamable-http', path=None, stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.http.mk_http_app(refs, , name='py2mcp Server', auth=None, input_trans=None, transport='streamable-http', path=None, stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Build a Streamable-HTTP **ASGI app** from `refs` (+ optional OAuth).
 
@@ -1259,6 +1266,7 @@ Builds the app with **no network I/O**.
     connecting client/model).
   * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
 * **Return type:**
   [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)
 * **Returns:**
@@ -1297,7 +1305,7 @@ metadata route is added next to the endpoint:
 [`serve_http()`](_autosummary/py2mcp.http.html.md#py2mcp.http.serve_http): build and run in-process instead of returning the app.
 [`py2mcp.serve.serve_stdio()`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.serve_stdio): the local stdio counterpart.
 
-### py2mcp.http.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.http.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -1346,7 +1354,7 @@ Main entry points:
 | [`mk_mcp_from_store`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_from_store)(store, \*[, name, plural, ...])  | Create an MCP server from a MutableMapping with CRUD operations.   |
 | [`mk_mcp_server`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server)(funcs, \*[, name, input_trans, ...]) | Create an MCP server from Python functions.                        |
 
-### py2mcp.main.mk_mcp_from_refs(refs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.main.mk_mcp_from_refs(refs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Create an MCP server from `'module:function'` reference strings.
 
@@ -1367,6 +1375,7 @@ runnable server — what tools that read tool references from a file (e.g.
     model-facing description.
   * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -1398,7 +1407,7 @@ The tools are the resolved functions:
 [`py2mcp.serve.serve_stdio()`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.serve_stdio): build from refs and run over stdio.
 [`py2mcp.http.mk_http_app()`](_autosummary/py2mcp.http.html.md#py2mcp.http.mk_http_app): build from refs as an ASGI app.
 
-### py2mcp.main.mk_mcp_from_store(store, , name='item', plural='', server_name=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.main.mk_mcp_from_store(store, , name='item', plural='', server_name=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Create an MCP server from a MutableMapping with CRUD operations.
 
@@ -1420,6 +1429,7 @@ The store is used live: a tool call reads or writes the mapping you passed.
     [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server) as the server’s model-facing `instructions`.
   * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -1453,7 +1463,7 @@ An irregular plural and an explicit server name:
 [`py2mcp.util.store_to_funcs()`](_autosummary/py2mcp.util.html.md#py2mcp.util.store_to_funcs): the CRUD functions without a server.
 [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server): expose your own functions instead.
 
-### py2mcp.main.mk_mcp_server(funcs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.main.mk_mcp_server(funcs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Create an MCP server from Python functions.
 
@@ -1491,6 +1501,10 @@ tool’s schema and description.
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Optional `{uri: callable}` mapping to register as MCP
     resources (via FastMCP’s `@mcp.resource(uri)`) — the callable is
     invoked to produce the resource’s content when a client reads `uri`.
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Optional server icon(s), sent in the MCP `serverInfo` so a client
+    (e.g. claude.ai’s connector list) can show one: an `mcp.types.Icon`,
+    a dict of its fields, a bare `src` (URL or `data:` URI), or a list
+    of those. `None` (default) sends none.
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -2367,7 +2381,7 @@ set). Set and delete return a short confirmation string.
 
 # About this build
 
-This documentation was built on **2026-10-02 07:29 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c"><code>6d54dc2</code></a> on branch <code>main</code>, for **py2mcp 0.1.16** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-14 04:54 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59"><code>9b8b550</code></a> on branch <code>main</code>, for **py2mcp 0.1.17** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2376,9 +2390,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c"><code>6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c</code></a> |
+| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59"><code>9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59</code></a> |
 | Branch              | <code>main</code>                                                                                                                                    |
-| Tags at this commit | <code>0.1.16</code>                                                                                                                                  |
+| Tags at this commit | <code>0.1.17</code>                                                                                                                                  |
 | Working tree        | clean                                                                                                                                                |
 | Remote              | <code>https://github.com/i2mint/py2mcp</code>                                                                                                        |
 
@@ -2387,18 +2401,18 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/py2mcp</code>                                                                 |
-| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/36978644975">36978644975</a>        |
+| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/38513630789">38513630789</a>        |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>1a11737cb872a930c93e9c9bfaab4bff4e83887a</code> (in the history of the built commit) |
+| Event commit | <code>00cfd9310259c0144427331447cc67764a9849af</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.12  |
+| epythet  | 0.2.17  |
 | Sphinx   | 9.1.0   |
 | docutils | 0.22.4  |
-| Python   | 3.12.14 |
+| Python   | 3.12.15 |
 
 ## Configuration as resolved
 
@@ -2414,14 +2428,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/py2mcp/0.1.16/">0.1.16</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/py2mcp/0.1.17/">0.1.17</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/py2mcp && cd py2mcp
-git checkout 6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c
-pip install "epythet==0.2.12"
+git checkout 9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59
+pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

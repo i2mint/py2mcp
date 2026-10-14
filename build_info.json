@@ -1,41 +1,41 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-02T07:29:29Z",
+  "built_at": "2026-10-14T04:54:14Z",
   "package": {
     "name": "py2mcp",
-    "version": "0.1.16",
+    "version": "0.1.17",
     "display_name": "py2mcp",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c",
-    "short_commit": "6d54dc2",
+    "commit": "9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59",
+    "short_commit": "9b8b550",
     "branch": "main",
     "tags": [
-      "0.1.16"
+      "0.1.17"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/py2mcp",
-    "commit_url": "https://github.com/i2mint/py2mcp/commit/6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c",
+    "commit_url": "https://github.com/i2mint/py2mcp/commit/9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/py2mcp",
-    "sha": "1a11737cb872a930c93e9c9bfaab4bff4e83887a",
+    "sha": "00cfd9310259c0144427331447cc67764a9849af",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "36978644975",
-    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/36978644975",
+    "run_id": "38513630789",
+    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/38513630789",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.12",
+    "epythet": "0.2.17",
     "sphinx": "9.1.0",
     "docutils": "0.22.4",
-    "python": "3.12.14"
+    "python": "3.12.15"
   },
   "config": {
     "theme": "auto",
@@ -62,11 +62,11 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.16",
+    "latest": "0.1.17",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 6d54dc2a3ea08f325f01e05dcc6ecf0f3489988c\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,

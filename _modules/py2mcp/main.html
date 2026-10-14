@@ -27,20 +27,20 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/epythet.css?v=80bbab5e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=d50bcae4"></script>
+    <script src="../../_static/documentation_options.js?v=71734efd"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -408,8 +408,9 @@ window.runMermaid = runMermaid;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.16" />
+  <meta name="docsearch:version" content="0.1.17" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -738,6 +739,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">_normalize_to_iterable</span><span class="p">,</span>
     <span class="n">_wrap_with_input_trans</span><span class="p">,</span>
     <span class="n">_normalize_middleware</span><span class="p">,</span>
+    <span class="n">_normalize_icons</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_object</span><span class="p">,</span> <span class="n">store_to_funcs</span>
 
@@ -754,6 +756,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icons</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create an MCP server from Python functions.</span>
 
@@ -791,6 +794,10 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        resources: Optional ``{uri: callable}`` mapping to register as MCP</span>
 <span class="sd">            resources (via FastMCP's ``@mcp.resource(uri)``) — the callable is</span>
 <span class="sd">            invoked to produce the resource's content when a client reads ``uri``.</span>
+<span class="sd">        icons: Optional server icon(s), sent in the MCP ``serverInfo`` so a client</span>
+<span class="sd">            (e.g. claude.ai's connector list) can show one: an ``mcp.types.Icon``,</span>
+<span class="sd">            a dict of its fields, a bare ``src`` (URL or ``data:`` URI), or a list</span>
+<span class="sd">            of those. ``None`` (default) sends none.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server instance ready to run, with one tool per function.</span>
@@ -851,6 +858,9 @@ window.runMermaid = runMermaid;</script>
         <span class="n">server_kwargs</span><span class="p">[</span><span class="s2">"middleware"</span><span class="p">]</span> <span class="o">=</span> <span class="n">middleware_list</span>
     <span class="k">if</span> <span class="n">instructions</span><span class="p">:</span>
         <span class="n">server_kwargs</span><span class="p">[</span><span class="s2">"instructions"</span><span class="p">]</span> <span class="o">=</span> <span class="n">instructions</span>
+    <span class="c1"># Like middleware: only when given, so no icon means no new fastmcp floor.</span>
+    <span class="k">if</span> <span class="n">icon_list</span> <span class="o">:=</span> <span class="n">_normalize_icons</span><span class="p">(</span><span class="n">icons</span><span class="p">):</span>
+        <span class="n">server_kwargs</span><span class="p">[</span><span class="s2">"icons"</span><span class="p">]</span> <span class="o">=</span> <span class="n">icon_list</span>
     <span class="n">mcp</span> <span class="o">=</span> <span class="n">FastMCP</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">server_kwargs</span><span class="p">)</span>
 
     <span class="c1"># Normalize to list of functions</span>
@@ -891,6 +901,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icons</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create an MCP server from ``'module:function'`` reference strings.</span>
 
@@ -911,6 +922,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            model-facing description.</span>
 <span class="sd">        prompts: Forwarded to :func:`mk_mcp_server`.</span>
 <span class="sd">        resources: Forwarded to :func:`mk_mcp_server`.</span>
+<span class="sd">        icons: Forwarded to :func:`mk_mcp_server`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server with one tool per reference, each named after the</span>
@@ -948,6 +960,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">,</span>
         <span class="n">prompts</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
         <span class="n">resources</span><span class="o">=</span><span class="n">resources</span><span class="p">,</span>
+        <span class="n">icons</span><span class="o">=</span><span class="n">icons</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -964,6 +977,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">instructions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icons</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create an MCP server from a MutableMapping with CRUD operations.</span>
 
@@ -985,6 +999,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            :func:`mk_mcp_server` as the server's model-facing ``instructions``.</span>
 <span class="sd">        prompts: Forwarded to :func:`mk_mcp_server`.</span>
 <span class="sd">        resources: Forwarded to :func:`mk_mcp_server`.</span>
+<span class="sd">        icons: Forwarded to :func:`mk_mcp_server`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server with the four CRUD tools.</span>
@@ -1025,6 +1040,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">,</span>
         <span class="n">prompts</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
         <span class="n">resources</span><span class="o">=</span><span class="n">resources</span><span class="p">,</span>
+        <span class="n">icons</span><span class="o">=</span><span class="n">icons</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 </pre></div>
@@ -1056,8 +1072,8 @@ window.runMermaid = runMermaid;</script>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1069,7 +1085,7 @@ window.runMermaid = runMermaid;</script>
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
 </p></div>
       
     </div>

@@ -372,7 +372,7 @@ ValueError: jwt auth needs 'audience' (this server's resource id). ...
 #### SEE ALSO
 [`mk_http_app()`](#py2mcp.mk_http_app): where the provider is attached to a server.
 
-### py2mcp.mk_http_app(refs, , name='py2mcp Server', auth=None, input_trans=None, transport='streamable-http', path=None, stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.mk_http_app(refs, , name='py2mcp Server', auth=None, input_trans=None, transport='streamable-http', path=None, stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Build a Streamable-HTTP **ASGI app** from `refs` (+ optional OAuth).
 
@@ -409,6 +409,7 @@ Builds the app with **no network I/O**.
     connecting client/model).
   * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](#py2mcp.mk_mcp_from_refs).
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](#py2mcp.mk_mcp_from_refs).
 * **Return type:**
   [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)
 * **Returns:**
@@ -495,7 +496,7 @@ No mapping means no conversion:
 #### SEE ALSO
 [`py2mcp.mk_mcp_server()`](#py2mcp.mk_mcp_server): where the returned callable is applied.
 
-### py2mcp.mk_mcp_from_refs(refs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.mk_mcp_from_refs(refs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Create an MCP server from `'module:function'` reference strings.
 
@@ -516,6 +517,7 @@ runnable server — what tools that read tool references from a file (e.g.
     model-facing description.
   * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](#py2mcp.mk_mcp_server).
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.mk_mcp_server).
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -547,7 +549,7 @@ The tools are the resolved functions:
 [`py2mcp.serve.serve_stdio()`](py2mcp.serve.html.md#py2mcp.serve.serve_stdio): build from refs and run over stdio.
 [`py2mcp.http.mk_http_app()`](py2mcp.http.html.md#py2mcp.http.mk_http_app): build from refs as an ASGI app.
 
-### py2mcp.mk_mcp_from_store(store, , name='item', plural='', server_name=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.mk_mcp_from_store(store, , name='item', plural='', server_name=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Create an MCP server from a MutableMapping with CRUD operations.
 
@@ -569,6 +571,7 @@ The store is used live: a tool call reads or writes the mapping you passed.
     [`mk_mcp_server()`](#py2mcp.mk_mcp_server) as the server’s model-facing `instructions`.
   * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](#py2mcp.mk_mcp_server).
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.mk_mcp_server).
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -602,7 +605,7 @@ An irregular plural and an explicit server name:
 [`py2mcp.util.store_to_funcs()`](py2mcp.util.html.md#py2mcp.util.store_to_funcs): the CRUD functions without a server.
 [`mk_mcp_server()`](#py2mcp.mk_mcp_server): expose your own functions instead.
 
-### py2mcp.mk_mcp_server(funcs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.mk_mcp_server(funcs, , name='py2mcp Server', input_trans=None, auth=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Create an MCP server from Python functions.
 
@@ -640,6 +643,10 @@ tool’s schema and description.
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Optional `{uri: callable}` mapping to register as MCP
     resources (via FastMCP’s `@mcp.resource(uri)`) — the callable is
     invoked to produce the resource’s content when a client reads `uri`.
+  * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Optional server icon(s), sent in the MCP `serverInfo` so a client
+    (e.g. claude.ai’s connector list) can show one: an `mcp.types.Icon`,
+    a dict of its fields, a bare `src` (URL or `data:` URI), or a list
+    of those. `None` (default) sends none.
 * **Return type:**
   `FastMCP`
 * **Returns:**
@@ -743,7 +750,7 @@ With a config file, its refs come first and its name is the fallback:
 (['os.path:basename'], 'Override')
 ```
 
-### py2mcp.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None)
 
 Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
