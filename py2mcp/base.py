@@ -127,3 +127,29 @@ def _normalize_middleware(middleware: Any) -> Optional[list]:
 #: Public name for :func:`_normalize_middleware`, for hosts (``enlace_connector``)
 #: that compose middleware lists before handing them to a builder.
 normalize_middleware = _normalize_middleware
+
+
+def _resolve_annotations(annotations: Any, func: Callable) -> Optional[Any]:
+    """Annotations for ``func``: look up by name in a mapping, or call a callable.
+
+    Returns a ``ToolAnnotations`` (dicts are converted) or ``None``.
+
+    >>> def f(): pass
+    >>> _resolve_annotations({'f': {'readOnlyHint': True}}, f).readOnlyHint
+    True
+    >>> _resolve_annotations({}, f) is None
+    True
+    >>> _resolve_annotations(lambda fn: {'openWorldHint': False}, f).openWorldHint
+    False
+    """
+    if annotations is None:
+        return None
+    if callable(annotations):
+        found = annotations(func)
+    else:
+        found = annotations.get(getattr(func, "__name__", None))
+    if found is None or not isinstance(found, dict):
+        return found
+    from mcp.types import ToolAnnotations
+
+    return ToolAnnotations(**found)

@@ -27,6 +27,7 @@ from py2mcp.base import (
     _wrap_with_input_trans,
     _normalize_middleware,
     _normalize_icons,
+    _resolve_annotations,
 )
 from py2mcp.util import import_object, store_to_funcs
 
@@ -42,6 +43,7 @@ def mk_mcp_server(
     prompts: Optional[Callable | Iterable[Callable]] = None,
     resources: Optional[Mapping[str, Callable]] = None,
     icons: Optional[Any] = None,
+    annotations: Optional[Any] = None,
 ) -> FastMCP:
     """Create an MCP server from Python functions.
 
@@ -83,6 +85,14 @@ def mk_mcp_server(
             (e.g. claude.ai's connector list) can show one: an ``mcp.types.Icon``,
             a dict of its fields, a bare ``src`` (URL or ``data:`` URI), or a list
             of those. ``None`` (default) sends none.
+        annotations: Optional per-tool MCP annotations (``readOnlyHint``,
+            ``destructiveHint``, ``idempotentHint``, ``openWorldHint``), so a host
+            can gate tools by them instead of treating all as destructive. Either a
+            ``{tool_name: annotations}`` mapping (tools absent from it get none), or
+            a callable ``func -> annotations | None`` evaluated per function (e.g. to
+            derive them from your own side-effect metadata). Each value is an
+            ``mcp.types.ToolAnnotations`` or a dict of its fields. ``None`` (default)
+            sets none.
 
     Returns:
         A FastMCP server instance ready to run, with one tool per function.
@@ -129,6 +139,13 @@ def mk_mcp_server(
         >>> [str(r.uri) for r in asyncio.run(mcp.list_resources())]
         ['schema://analysis']
 
+        Annotations, by tool name (or a callable ``func -> annotations``):
+
+        >>> mcp = mk_mcp_server([add, greet], annotations={'add': {'readOnlyHint': True}})
+        >>> tools = {t.name: t for t in asyncio.run(mcp.list_tools())}
+        >>> tools['add'].annotations.readOnlyHint, tools['greet'].annotations
+        (True, None)
+
     See Also:
         :func:`mk_mcp_from_refs`: the same from ``'module:function'`` strings.
         :func:`mk_mcp_from_store`: CRUD tools generated from a mapping.
@@ -153,12 +170,17 @@ def mk_mcp_server(
 
     # Register each function as a tool
     for func in func_list:
+        original = func
         # Wrap with input transformation if provided
         if input_trans is not None:
             func = _wrap_with_input_trans(func, input_trans)
 
-        # Register as MCP tool
-        mcp.tool(func)
+        # Register as MCP tool (annotations only when there are some, so the
+        # default path is the plain ``mcp.tool(func)`` call)
+        if tool_annotations := _resolve_annotations(annotations, original):
+            mcp.tool(func, annotations=tool_annotations)
+        else:
+            mcp.tool(func)
 
     # Register prompts, if any
     if prompts is not None:
@@ -184,6 +206,7 @@ def mk_mcp_from_refs(
     prompts: Optional[Callable | Iterable[Callable]] = None,
     resources: Optional[Mapping[str, Callable]] = None,
     icons: Optional[Any] = None,
+    annotations: Optional[Any] = None,
 ) -> FastMCP:
     """Create an MCP server from ``'module:function'`` reference strings.
 
@@ -205,6 +228,7 @@ def mk_mcp_from_refs(
         prompts: Forwarded to :func:`mk_mcp_server`.
         resources: Forwarded to :func:`mk_mcp_server`.
         icons: Forwarded to :func:`mk_mcp_server`.
+        annotations: Forwarded to :func:`mk_mcp_server`.
 
     Returns:
         A FastMCP server with one tool per reference, each named after the
@@ -243,6 +267,7 @@ def mk_mcp_from_refs(
         prompts=prompts,
         resources=resources,
         icons=icons,
+        annotations=annotations,
     )
 
 
