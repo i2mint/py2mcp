@@ -41,3 +41,27 @@ def test_from_refs():
 
 def test_default_unchanged():
     assert _tools(mk_mcp_server(read))["read"].annotations is None
+
+
+def test_unknown_tool_name_raises():
+    import pytest
+
+    with pytest.raises(ValueError):
+        mk_mcp_server(read, annotations={"raed": {"readOnlyHint": True}})
+
+
+def test_bad_type_raises():
+    import pytest
+
+    with pytest.raises(TypeError):
+        mk_mcp_server(read, annotations=[1])
+
+
+def test_store_and_instance():
+    from mcp.types import ToolAnnotations
+    from py2mcp import mk_mcp_from_store
+
+    server = mk_mcp_from_store(
+        {}, name="p", annotations={"delete_p": ToolAnnotations(destructiveHint=True)}
+    )
+    assert _tools(server)["delete_p"].annotations.destructiveHint is True

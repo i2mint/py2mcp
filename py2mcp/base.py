@@ -5,6 +5,7 @@ iterable) and the wrapper that applies an ``input_trans`` to a tool's keyword
 arguments before the function runs. Nothing here is part of the public API.
 """
 
+from collections.abc import Mapping
 from typing import Callable, Iterable, Any, Optional
 from functools import wraps
 
@@ -146,8 +147,13 @@ def _resolve_annotations(annotations: Any, func: Callable) -> Optional[Any]:
         return None
     if callable(annotations):
         found = annotations(func)
-    else:
+    elif isinstance(annotations, Mapping):
         found = annotations.get(getattr(func, "__name__", None))
+    else:
+        raise TypeError(
+            "annotations must be a {tool_name: annotations} mapping or a callable, "
+            f"got {type(annotations).__name__}"
+        )
     if found is None or not isinstance(found, dict):
         return found
     from mcp.types import ToolAnnotations

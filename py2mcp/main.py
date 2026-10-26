@@ -168,6 +168,11 @@ def mk_mcp_server(
     # Normalize to list of functions
     func_list = list(_normalize_to_iterable(funcs))
 
+    if isinstance(annotations, Mapping):
+        unknown = set(annotations) - {getattr(f, "__name__", None) for f in func_list}
+        if unknown:
+            raise ValueError(f"annotations name no registered tool: {sorted(unknown)}")
+
     # Register each function as a tool
     for func in func_list:
         original = func
@@ -282,6 +287,7 @@ def mk_mcp_from_store(
     prompts: Optional[Callable | Iterable[Callable]] = None,
     resources: Optional[Mapping[str, Callable]] = None,
     icons: Optional[Any] = None,
+    annotations: Optional[Any] = None,
 ) -> FastMCP:
     """Create an MCP server from a MutableMapping with CRUD operations.
 
@@ -304,6 +310,8 @@ def mk_mcp_from_store(
         prompts: Forwarded to :func:`mk_mcp_server`.
         resources: Forwarded to :func:`mk_mcp_server`.
         icons: Forwarded to :func:`mk_mcp_server`.
+        annotations: Forwarded to :func:`mk_mcp_server`; keys are the generated
+            tool names (e.g. ``delete_project``).
 
     Returns:
         A FastMCP server with the four CRUD tools.
@@ -345,4 +353,5 @@ def mk_mcp_from_store(
         prompts=prompts,
         resources=resources,
         icons=icons,
+        annotations=annotations,
     )
