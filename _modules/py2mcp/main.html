@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=71734efd"></script>
+    <script src="../../_static/documentation_options.js?v=9969ed3f"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -411,7 +411,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.17" />
+  <meta name="docsearch:version" content="0.1.18" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -741,6 +741,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">_wrap_with_input_trans</span><span class="p">,</span>
     <span class="n">_normalize_middleware</span><span class="p">,</span>
     <span class="n">_normalize_icons</span><span class="p">,</span>
+    <span class="n">_resolve_annotations</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_object</span><span class="p">,</span> <span class="n">store_to_funcs</span>
 
@@ -758,6 +759,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icons</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">annotations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create an MCP server from Python functions.</span>
 
@@ -799,6 +801,14 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            (e.g. claude.ai's connector list) can show one: an ``mcp.types.Icon``,</span>
 <span class="sd">            a dict of its fields, a bare ``src`` (URL or ``data:`` URI), or a list</span>
 <span class="sd">            of those. ``None`` (default) sends none.</span>
+<span class="sd">        annotations: Optional per-tool MCP annotations (``readOnlyHint``,</span>
+<span class="sd">            ``destructiveHint``, ``idempotentHint``, ``openWorldHint``), so a host</span>
+<span class="sd">            can gate tools by them instead of treating all as destructive. Either a</span>
+<span class="sd">            ``{tool_name: annotations}`` mapping (tools absent from it get none), or</span>
+<span class="sd">            a callable ``func -&gt; annotations | None`` evaluated per function (e.g. to</span>
+<span class="sd">            derive them from your own side-effect metadata). Each value is an</span>
+<span class="sd">            ``mcp.types.ToolAnnotations`` or a dict of its fields. ``None`` (default)</span>
+<span class="sd">            sets none.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server instance ready to run, with one tool per function.</span>
@@ -845,6 +855,13 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        &gt;&gt;&gt; [str(r.uri) for r in asyncio.run(mcp.list_resources())]</span>
 <span class="sd">        ['schema://analysis']</span>
 
+<span class="sd">        Annotations, by tool name (or a callable ``func -&gt; annotations``):</span>
+
+<span class="sd">        &gt;&gt;&gt; mcp = mk_mcp_server([add, greet], annotations={'add': {'readOnlyHint': True}})</span>
+<span class="sd">        &gt;&gt;&gt; tools = {t.name: t for t in asyncio.run(mcp.list_tools())}</span>
+<span class="sd">        &gt;&gt;&gt; tools['add'].annotations.readOnlyHint, tools['greet'].annotations</span>
+<span class="sd">        (True, None)</span>
+
 <span class="sd">    See Also:</span>
 <span class="sd">        :func:`mk_mcp_from_refs`: the same from ``'module:function'`` strings.</span>
 <span class="sd">        :func:`mk_mcp_from_store`: CRUD tools generated from a mapping.</span>
@@ -867,14 +884,24 @@ window.runMermaid = runMermaid;</script>
     <span class="c1"># Normalize to list of functions</span>
     <span class="n">func_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_normalize_to_iterable</span><span class="p">(</span><span class="n">funcs</span><span class="p">))</span>
 
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="n">unknown</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">func_list</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"annotations name no registered tool: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">unknown</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
     <span class="c1"># Register each function as a tool</span>
     <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_list</span><span class="p">:</span>
+        <span class="n">original</span> <span class="o">=</span> <span class="n">func</span>
         <span class="c1"># Wrap with input transformation if provided</span>
         <span class="k">if</span> <span class="n">input_trans</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">func</span> <span class="o">=</span> <span class="n">_wrap_with_input_trans</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">input_trans</span><span class="p">)</span>
 
-        <span class="c1"># Register as MCP tool</span>
-        <span class="n">mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="c1"># Register as MCP tool (annotations only when there are some, so the</span>
+        <span class="c1"># default path is the plain ``mcp.tool(func)`` call)</span>
+        <span class="k">if</span> <span class="n">tool_annotations</span> <span class="o">:=</span> <span class="n">_resolve_annotations</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">original</span><span class="p">):</span>
+            <span class="n">mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">tool_annotations</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
     <span class="c1"># Register prompts, if any</span>
     <span class="k">if</span> <span class="n">prompts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -903,6 +930,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icons</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">annotations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create an MCP server from ``'module:function'`` reference strings.</span>
 
@@ -924,6 +952,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        prompts: Forwarded to :func:`mk_mcp_server`.</span>
 <span class="sd">        resources: Forwarded to :func:`mk_mcp_server`.</span>
 <span class="sd">        icons: Forwarded to :func:`mk_mcp_server`.</span>
+<span class="sd">        annotations: Forwarded to :func:`mk_mcp_server`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server with one tool per reference, each named after the</span>
@@ -962,6 +991,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">prompts</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
         <span class="n">resources</span><span class="o">=</span><span class="n">resources</span><span class="p">,</span>
         <span class="n">icons</span><span class="o">=</span><span class="n">icons</span><span class="p">,</span>
+        <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -979,6 +1009,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">prompts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icons</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">annotations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastMCP</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create an MCP server from a MutableMapping with CRUD operations.</span>
 
@@ -1001,6 +1032,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        prompts: Forwarded to :func:`mk_mcp_server`.</span>
 <span class="sd">        resources: Forwarded to :func:`mk_mcp_server`.</span>
 <span class="sd">        icons: Forwarded to :func:`mk_mcp_server`.</span>
+<span class="sd">        annotations: Forwarded to :func:`mk_mcp_server`; keys are the generated</span>
+<span class="sd">            tool names (e.g. ``delete_project``).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A FastMCP server with the four CRUD tools.</span>
@@ -1042,6 +1075,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">prompts</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
         <span class="n">resources</span><span class="o">=</span><span class="n">resources</span><span class="p">,</span>
         <span class="n">icons</span><span class="o">=</span><span class="n">icons</span><span class="p">,</span>
+        <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 </pre></div>

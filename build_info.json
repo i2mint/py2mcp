@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-26T06:31:00Z",
+  "built_at": "2026-10-26T06:37:15Z",
   "package": {
     "name": "py2mcp",
-    "version": "0.1.17",
+    "version": "0.1.18",
     "display_name": "py2mcp",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "1c136cceb537058b8883103125f983966f18f1ff",
-    "short_commit": "1c136cc",
+    "commit": "e664c466b1712e6e6f764e60c0900547e4d13cbf",
+    "short_commit": "e664c46",
     "branch": "main",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/py2mcp",
-    "commit_url": "https://github.com/i2mint/py2mcp/commit/1c136cceb537058b8883103125f983966f18f1ff",
+    "commit_url": "https://github.com/i2mint/py2mcp/commit/e664c466b1712e6e6f764e60c0900547e4d13cbf",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/py2mcp",
-    "sha": "1c136cceb537058b8883103125f983966f18f1ff",
+    "sha": "e664c466b1712e6e6f764e60c0900547e4d13cbf",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "40280095637",
-    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/40280095637",
+    "run_id": "40280715738",
+    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/40280715738",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -60,16 +60,16 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.18",
+    "latest": "0.1.19",
     "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 1c136cceb537058b8883103125f983966f18f1ff\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout e664c466b1712e6e6f764e60c0900547e4d13cbf\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": false,
     "notes": [
-      "The documented version (0.1.17) is behind the latest release on PyPI (0.1.18): `pip install py2mcp` gives newer code than these docs describe."
+      "The documented version (0.1.18) is behind the latest release on PyPI (0.1.19): `pip install py2mcp` gives newer code than these docs describe."
     ]
   }
 }
