@@ -112,9 +112,6 @@ The dominant use of [`claude_install_link()`](#py2mcp.util.claude_install_link) 
 so this saves writing the same link syntax around it. Arguments are those of
 [`claude_install_link()`](#py2mcp.util.claude_install_link).
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> markdown_install_badge('snout', 'https://x.io/mcp')
 '[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'
@@ -129,6 +126,9 @@ URL itself is percent-encoded already):
 [Add tools \[beta\] to Claude
 ```
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 ### py2mcp.util.store_to_funcs(store, , name='item', plural='')
 
 Convert a MutableMapping into CRUD functions.
@@ -138,7 +138,7 @@ function takes no arguments; the others take `key` (and `value` for
 set). Set and delete return a short confirmation string.
 
 * **Parameters:**
-  * **store** ([`MutableMapping`](https://docs.python.org/3/library/typing.html#typing.MutableMapping)[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)]) – The mapping the functions read and write.
+  * **store** ([`MutableMapping`](https://docs.python.org/3/library/typing.html#typing.MutableMapping)[`KT`, `VT`]) – The mapping the functions read and write.
   * **name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Singular noun used in the function names.
   * **plural** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Plural noun for the list function (defaults to name + ‘s’).
 * **Return type:**

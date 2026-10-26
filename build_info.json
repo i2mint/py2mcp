@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-14T04:54:14Z",
+  "built_at": "2026-10-26T06:31:00Z",
   "package": {
     "name": "py2mcp",
     "version": "0.1.17",
@@ -9,31 +9,29 @@
   },
   "git": {
     "available": true,
-    "commit": "9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59",
-    "short_commit": "9b8b550",
+    "commit": "1c136cceb537058b8883103125f983966f18f1ff",
+    "short_commit": "1c136cc",
     "branch": "main",
-    "tags": [
-      "0.1.17"
-    ],
+    "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/py2mcp",
-    "commit_url": "https://github.com/i2mint/py2mcp/commit/9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59",
+    "commit_url": "https://github.com/i2mint/py2mcp/commit/1c136cceb537058b8883103125f983966f18f1ff",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/py2mcp",
-    "sha": "00cfd9310259c0144427331447cc67764a9849af",
+    "sha": "1c136cceb537058b8883103125f983966f18f1ff",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "38513630789",
-    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/38513630789",
+    "run_id": "40280095637",
+    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/40280095637",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.17",
-    "sphinx": "9.1.0",
+    "epythet": "0.2.22",
+    "sphinx": "9.1.1",
     "docutils": "0.22.4",
     "python": "3.12.15"
   },
@@ -62,14 +60,16 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.17",
-    "relation": "same",
+    "latest": "0.1.18",
+    "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 1c136cceb537058b8883103125f983966f18f1ff\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.1.17) is behind the latest release on PyPI (0.1.18): `pip install py2mcp` gives newer code than these docs describe."
+    ]
   }
 }

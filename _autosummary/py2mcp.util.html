@@ -34,6 +34,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_autodoc_typehints.css?v=057ac668" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/epythet.css?v=80bbab5e" />
   
@@ -521,11 +522,6 @@ the dotted form (use <code class="docutils literal notranslate"><span class="pre
 <p>The dominant use of <a class="reference internal" href="#py2mcp.util.claude_install_link" title="py2mcp.util.claude_install_link"><code class="xref py py-func docutils literal notranslate"><span class="pre">claude_install_link()</span></code></a> is pasting one into a README,
 so this saves writing the same link syntax around it. Arguments are those of
 <a class="reference internal" href="#py2mcp.util.claude_install_link" title="py2mcp.util.claude_install_link"><code class="xref py py-func docutils literal notranslate"><span class="pre">claude_install_link()</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
-</dd>
-</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">markdown_install_badge</span><span class="p">(</span><span class="s1">'snout'</span><span class="p">,</span> <span class="s1">'https://x.io/mcp'</span><span class="p">)</span>
 <span class="go">'[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=snout&amp;connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'</span>
 </pre></div>
@@ -537,6 +533,11 @@ URL itself is percent-encoded already):</p>
 <span class="go">[Add tools \[beta\] to Claude</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -549,7 +550,7 @@ set). Set and delete return a short confirmation string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>store</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeVar" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code></a>(<code class="docutils literal notranslate"><span class="pre">KT</span></code>), <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeVar" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code></a>(<code class="docutils literal notranslate"><span class="pre">VT</span></code>)]</span>) – The mapping the functions read and write.</p></li>
+<li><p><strong>store</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></a>[<code class="docutils literal notranslate"><span class="pre">KT</span></code>, <code class="docutils literal notranslate"><span class="pre">VT</span></code>]</span>) – The mapping the functions read and write.</p></li>
 <li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Singular noun used in the function names.</p></li>
 <li><p><strong>plural</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Plural noun for the list function (defaults to name + ‘s’).</p></li>
 </ul>

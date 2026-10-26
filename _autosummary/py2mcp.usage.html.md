@@ -165,7 +165,7 @@ FastMCP middleware: one record per tool call (and per handshake) to `sink`.
   * **version** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The connector version written into every record, if known.
   * **caller** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – `() -> str | None` resolving the caller for the in-flight
     request. Default [`token_caller()`](#py2mcp.usage.token_caller).
-  * **outcome** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], `Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]]) – `(tool_name, result) -> label | mapping` classifying a result
+  * **outcome** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]]) – `(tool_name, result) -> label | mapping` classifying a result
     that did not raise. Default [`default_outcome()`](#py2mcp.usage.default_outcome). A mapping is
     merged into the record (it must carry `"outcome"`), so a connector
     that knows its own “no match” shape can also set the true
@@ -221,9 +221,6 @@ structured `{"result": []}` / `None` / `""` / `{}`. A tool with its
 own “no match” shape (`{"matches": [], "total": 0}`) is `ok` here; give
 the logger an `outcome=` that knows that shape.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> class R:
 ...     def __init__(self, content=(), structured_content=None, is_error=False):
@@ -236,6 +233,9 @@ the logger an `outcome=` that knows that shape.
 'error'
 ```
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 ### py2mcp.usage.default_usage_dir(server='server')
 
 Where [`JsonlSink`](#py2mcp.usage.JsonlSink) writes when given no root: the user data dir.
@@ -244,20 +244,17 @@ Where [`JsonlSink`](#py2mcp.usage.JsonlSink) writes when given no root: the user
 a package data directory, never the current directory, so a usage log is
 never one `git add` away from a repository.
 
-* **Return type:**
-  [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)
-
 ```pycon
 >>> str(default_usage_dir('snout')).endswith('py2mcp/usage/snout')
 True
 ```
 
+* **Return type:**
+  [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)
+
 ### py2mcp.usage.format_summary(summary)
 
 Render [`summarize()`](#py2mcp.usage.summarize) output as plain text, one column per outcome label.
-
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ```pycon
 >>> print(format_summary(summarize([
@@ -276,6 +273,9 @@ days
   2026-10-02                          1
 ```
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 ### py2mcp.usage.iter_records(root, , since=None, until=None)
 
 Yield the records under `root` (a [`JsonlSink`](#py2mcp.usage.JsonlSink) dir, or one `.jsonl`).
@@ -287,9 +287,6 @@ read long after it was written, and one torn line must not hide the rest.
 A `root` that does not exist raises `FileNotFoundError` rather than
 reading as an empty log.
 
-* **Return type:**
-  [`Iterator`](https://docs.python.org/3/library/typing.html#typing.Iterator)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]
-
 ```pycon
 >>> import tempfile
 >>> sink = JsonlSink(tempfile.mkdtemp(), retention_days=None)
@@ -298,6 +295,9 @@ reading as an empty log.
 >>> [r['id'] for r in iter_records(sink.root, since='2026-10-02')]
 ['2']
 ```
+
+* **Return type:**
+  [`Iterator`](https://docs.python.org/3/library/typing.html#typing.Iterator)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]
 
 ### py2mcp.usage.main(argv=None)
 
@@ -315,9 +315,6 @@ records out one per file by day, and “last 30 days” is a key-prefix scan.
 The write happens on the event loop, so this is for a local store; a remote
 one (S3, a database) belongs behind an `async` sink or a batching one.
 
-* **Return type:**
-  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
-
 ```pycon
 >>> store = {}
 >>> sink = mapping_sink(store)
@@ -325,6 +322,9 @@ one (S3, a database) belongs behind an `async` sink or a batching one.
 >>> list(store)
 ['2026-10-02/abc.json']
 ```
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
 
 ### py2mcp.usage.summarize(records)
 
@@ -336,9 +336,6 @@ name, in case a directory holds more than one), `tools` (per tool:
 `calls`, one count per outcome label seen, and mean/max latency), `days`
 (calls per day) and `outcomes` (totals per label) — the “who used what,
 which tools fail, which questions return nothing” view.
-
-* **Return type:**
-  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
 
 ```pycon
 >>> recs = [
@@ -355,6 +352,9 @@ which tools fail, which questions return nothing” view.
 (20.0, 30.0)
 ```
 
+* **Return type:**
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
+
 ### py2mcp.usage.token_caller()
 
 The caller’s identity from the verified OAuth token, or `None`.
@@ -367,10 +367,10 @@ OAuth `client_id` (a shared identity) and none to a guess: outside a
 request, or on an unauthenticated (stdio) server, the result is `None` and
 the record says `"caller": null`.
 
-* **Return type:**
-  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
-
 ```pycon
 >>> token_caller() is None   # no request in flight here
 True
 ```
+
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]

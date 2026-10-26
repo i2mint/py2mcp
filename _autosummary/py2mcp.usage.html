@@ -34,6 +34,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_autodoc_typehints.css?v=057ac668" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/epythet.css?v=80bbab5e" />
   
@@ -597,7 +598,7 @@ default sink’s directory).</p></li>
 <li><p><strong>version</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – The connector version written into every record, if known.</p></li>
 <li><p><strong>caller</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – <code class="docutils literal notranslate"><span class="pre">()</span> <span class="pre">-&gt;</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></code> resolving the caller for the in-flight
 request. Default <a class="reference internal" href="#py2mcp.usage.token_caller" title="py2mcp.usage.token_caller"><code class="xref py py-func docutils literal notranslate"><span class="pre">token_caller()</span></code></a>.</p></li>
-<li><p><strong>outcome</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]]</span>) – <code class="docutils literal notranslate"><span class="pre">(tool_name,</span> <span class="pre">result)</span> <span class="pre">-&gt;</span> <span class="pre">label</span> <span class="pre">|</span> <span class="pre">mapping</span></code> classifying a result
+<li><p><strong>outcome</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]]</span>) – <code class="docutils literal notranslate"><span class="pre">(tool_name,</span> <span class="pre">result)</span> <span class="pre">-&gt;</span> <span class="pre">label</span> <span class="pre">|</span> <span class="pre">mapping</span></code> classifying a result
 that did not raise. Default <a class="reference internal" href="#py2mcp.usage.default_outcome" title="py2mcp.usage.default_outcome"><code class="xref py py-func docutils literal notranslate"><span class="pre">default_outcome()</span></code></a>. A mapping is
 merged into the record (it must carry <code class="docutils literal notranslate"><span class="pre">&quot;outcome&quot;</span></code>), so a connector
 that knows its own “no match” shape can also set the true
@@ -650,11 +651,6 @@ search returning no rows looks like from outside: no content blocks, or a
 structured <code class="docutils literal notranslate"><span class="pre">{&quot;result&quot;:</span> <span class="pre">[]}</span></code> / <code class="docutils literal notranslate"><span class="pre">None</span></code> / <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> / <code class="docutils literal notranslate"><span class="pre">{}</span></code>. A tool with its
 own “no match” shape (<code class="docutils literal notranslate"><span class="pre">{&quot;matches&quot;:</span> <span class="pre">[],</span> <span class="pre">&quot;total&quot;:</span> <span class="pre">0}</span></code>) is <code class="docutils literal notranslate"><span class="pre">ok</span></code> here; give
 the logger an <code class="docutils literal notranslate"><span class="pre">outcome=</span></code> that knows that shape.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
-</dd>
-</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">R</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">(),</span> <span class="n">structured_content</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_error</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">structured_content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_error</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">content</span><span class="p">),</span> <span class="n">structured_content</span><span class="p">,</span> <span class="n">is_error</span>
@@ -666,6 +662,11 @@ the logger an <code class="docutils literal notranslate"><span class="pre">outco
 <span class="go">'error'</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -675,26 +676,21 @@ the logger an <code class="docutils literal notranslate"><span class="pre">outco
 <p><code class="docutils literal notranslate"><span class="pre">$XDG_DATA_HOME/py2mcp/usage/&lt;server&gt;</span></code> (<code class="docutils literal notranslate"><span class="pre">~/.local/share/...</span></code> by default) —
 a package data directory, never the current directory, so a usage log is
 never one <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span></code> away from a repository.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">default_usage_dir</span><span class="p">(</span><span class="s1">'snout'</span><span class="p">))</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'py2mcp/usage/snout'</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></span></p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">default_usage_dir</span><span class="p">(</span><span class="s1">'snout'</span><span class="p">))</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'py2mcp/usage/snout'</span><span class="p">)</span>
-<span class="go">True</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="py2mcp.usage.format_summary">
 <span class="sig-prename descclassname"><span class="pre">py2mcp.usage.</span></span><span class="sig-name descname"><span class="pre">format_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/py2mcp/usage.html#format_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#py2mcp.usage.format_summary" title="Link to this definition">#</a></dt>
 <dd><p>Render <a class="reference internal" href="#py2mcp.usage.summarize" title="py2mcp.usage.summarize"><code class="xref py py-func docutils literal notranslate"><span class="pre">summarize()</span></code></a> output as plain text, one column per outcome label.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
-</dd>
-</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">format_summary</span><span class="p">(</span><span class="n">summarize</span><span class="p">([</span>
 <span class="gp">... </span>    <span class="p">{</span><span class="s1">'event'</span><span class="p">:</span> <span class="s1">'tool_call'</span><span class="p">,</span> <span class="s1">'ts'</span><span class="p">:</span> <span class="s1">'2026-10-02T08:01:00+00:00'</span><span class="p">,</span> <span class="s1">'caller'</span><span class="p">:</span> <span class="s1">'a'</span><span class="p">,</span>
 <span class="gp">... </span>     <span class="s1">'tool'</span><span class="p">:</span> <span class="s1">'search'</span><span class="p">,</span> <span class="s1">'outcome'</span><span class="p">:</span> <span class="s1">'ok'</span><span class="p">,</span> <span class="s1">'latency_ms'</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">}])))</span>
@@ -711,6 +707,11 @@ never one <code class="docutils literal notranslate"><span class="pre">git</span
 <span class="go">  2026-10-02                          1</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -723,11 +724,6 @@ Lines that are not valid JSON objects are skipped, not raised — a log is
 read long after it was written, and one torn line must not hide the rest.
 A <code class="docutils literal notranslate"><span class="pre">root</span></code> that does not exist raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> rather than
 reading as an empty log.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>]</span></p>
-</dd>
-</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sink</span> <span class="o">=</span> <span class="n">JsonlSink</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(),</span> <span class="n">retention_days</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sink</span><span class="p">({</span><span class="s1">'id'</span><span class="p">:</span> <span class="s1">'1'</span><span class="p">,</span> <span class="s1">'ts'</span><span class="p">:</span> <span class="s1">'2026-10-01T10:00:00+00:00'</span><span class="p">,</span> <span class="s1">'event'</span><span class="p">:</span> <span class="s1">'tool_call'</span><span class="p">})</span>
@@ -736,6 +732,11 @@ reading as an empty log.</p>
 <span class="go">['2']</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>]</span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -744,7 +745,7 @@ reading as an empty log.</p>
 <dd><p>CLI: <code class="docutils literal notranslate"><span class="pre">py2mcp</span> <span class="pre">usage</span> <span class="pre">&lt;dir&gt;</span> <span class="pre">[--since</span> <span class="pre">D]</span> <span class="pre">[--until</span> <span class="pre">D]</span> <span class="pre">[--json]</span> <span class="pre">[--records]</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -757,11 +758,6 @@ reading as an empty log.</p>
 records out one per file by day, and “last 30 days” is a key-prefix scan.
 The write happens on the event loop, so this is for a local store; a remote
 one (S3, a database) belongs behind an <code class="docutils literal notranslate"><span class="pre">async</span></code> sink or a batching one.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
-</dd>
-</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sink</span> <span class="o">=</span> <span class="n">mapping_sink</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sink</span><span class="p">({</span><span class="s1">'id'</span><span class="p">:</span> <span class="s1">'abc'</span><span class="p">,</span> <span class="s1">'ts'</span><span class="p">:</span> <span class="s1">'2026-10-02T10:00:00+00:00'</span><span class="p">})</span>
@@ -769,6 +765,11 @@ one (S3, a database) belongs behind an <code class="docutils literal notranslate
 <span class="go">['2026-10-02/abc.json']</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -781,11 +782,6 @@ name, in case a directory holds more than one), <code class="docutils literal no
 <code class="docutils literal notranslate"><span class="pre">calls</span></code>, one count per outcome label seen, and mean/max latency), <code class="docutils literal notranslate"><span class="pre">days</span></code>
 (calls per day) and <code class="docutils literal notranslate"><span class="pre">outcomes</span></code> (totals per label) — the “who used what,
 which tools fail, which questions return nothing” view.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
-</dd>
-</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recs</span> <span class="o">=</span> <span class="p">[</span>
 <span class="gp">... </span>    <span class="p">{</span><span class="s1">'event'</span><span class="p">:</span> <span class="s1">'initialize'</span><span class="p">,</span> <span class="s1">'ts'</span><span class="p">:</span> <span class="s1">'2026-10-02T08:00:00+00:00'</span><span class="p">,</span> <span class="s1">'caller'</span><span class="p">:</span> <span class="s1">'a'</span><span class="p">},</span>
 <span class="gp">... </span>    <span class="p">{</span><span class="s1">'event'</span><span class="p">:</span> <span class="s1">'tool_call'</span><span class="p">,</span> <span class="s1">'ts'</span><span class="p">:</span> <span class="s1">'2026-10-02T08:01:00+00:00'</span><span class="p">,</span> <span class="s1">'caller'</span><span class="p">:</span> <span class="s1">'a'</span><span class="p">,</span>
@@ -800,6 +796,11 @@ which tools fail, which questions return nothing” view.</p>
 <span class="go">(20.0, 30.0)</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -813,15 +814,15 @@ caller has one name across the platform. Deliberately <strong>no</strong> fallba
 OAuth <code class="docutils literal notranslate"><span class="pre">client_id</span></code> (a shared identity) and none to a guess: outside a
 request, or on an unauthenticated (stdio) server, the result is <code class="docutils literal notranslate"><span class="pre">None</span></code> and
 the record says <code class="docutils literal notranslate"><span class="pre">&quot;caller&quot;:</span> <span class="pre">null</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">token_caller</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>   <span class="c1"># no request in flight here</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">token_caller</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>   <span class="c1"># no request in flight here</span>
-<span class="go">True</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>

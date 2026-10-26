@@ -5,19 +5,21 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-10-14 04:54 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59"><code>9b8b550</code></a> on branch <code>main</code>, for **py2mcp 0.1.17** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-26 06:31 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/1c136cceb537058b8883103125f983966f18f1ff"><code>1c136cc</code></a> on branch <code>main</code>, for **py2mcp 0.1.17** (from <code>pyproject.toml</code>).
 
-:::{note}
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+:::{warning}
+The documentation and the package may be misaligned:
+
+- The documented version (0.1.17) is behind the latest release on PyPI (0.1.18): `pip install py2mcp` gives newer code than these docs describe.
 :::
 
 ## Source
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/i2mint/py2mcp/commit/9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59"><code>9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59</code></a> |
+| Commit | <a href="https://github.com/i2mint/py2mcp/commit/1c136cceb537058b8883103125f983966f18f1ff"><code>1c136cceb537058b8883103125f983966f18f1ff</code></a> |
 | Branch | <code>main</code> |
-| Tags at this commit | <code>0.1.17</code> |
+| Tags at this commit | none |
 | Working tree | clean |
 | Remote | <code>https://github.com/i2mint/py2mcp</code> |
 
@@ -26,16 +28,16 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 | | |
 |---|---|
 | Repository | <code>i2mint/py2mcp</code> |
-| Run | <a href="https://github.com/i2mint/py2mcp/actions/runs/38513630789">38513630789</a> |
+| Run | <a href="https://github.com/i2mint/py2mcp/actions/runs/40280095637">40280095637</a> |
 | Ref | <code>refs/heads/main</code> |
-| Event commit | <code>00cfd9310259c0144427331447cc67764a9849af</code> (in the history of the built commit) |
+| Event commit | <code>1c136cceb537058b8883103125f983966f18f1ff</code> (in the history of the built commit) |
 
 ## Tools
 
 | | |
 |---|---|
-| epythet | 0.2.17 |
-| Sphinx | 9.1.0 |
+| epythet | 0.2.22 |
+| Sphinx | 9.1.1 |
 | docutils | 0.22.4 |
 | Python | 3.12.15 |
 
@@ -53,14 +55,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/py2mcp/0.1.17/">0.1.17</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/py2mcp/0.1.18/">0.1.18</a>, newer than the documented version (0.1.17).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/py2mcp && cd py2mcp
-git checkout 9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59
-pip install "epythet==0.2.17"
+git checkout 1c136cceb537058b8883103125f983966f18f1ff
+pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

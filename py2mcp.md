@@ -1,4 +1,4 @@
-> built 2026-10-14 04:54 UTC from 9b8b550 (main) · py2mcp 0.1.17. Details: build_info.json
+> built 2026-10-26 06:31 UTC from 1c136cc (main) · py2mcp 0.1.17. Details: build_info.json
 
 # index.html.md
 
@@ -393,7 +393,7 @@ FastMCP middleware: one record per tool call (and per handshake) to `sink`.
   * **version** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The connector version written into every record, if known.
   * **caller** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – `() -> str | None` resolving the caller for the in-flight
     request. Default `token_caller()`.
-  * **outcome** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], `Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]]) – `(tool_name, result) -> label | mapping` classifying a result
+  * **outcome** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]]) – `(tool_name, result) -> label | mapping` classifying a result
     that did not raise. Default `default_outcome()`. A mapping is
     merged into the record (it must carry `"outcome"`), so a connector
     that knows its own “no match” shape can also set the true
@@ -562,9 +562,6 @@ records out one per file by day, and “last 30 days” is a key-prefix scan.
 The write happens on the event loop, so this is for a local store; a remote
 one (S3, a database) belongs behind an `async` sink or a batching one.
 
-* **Return type:**
-  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
-
 ```pycon
 >>> store = {}
 >>> sink = mapping_sink(store)
@@ -573,6 +570,9 @@ one (S3, a database) belongs behind an `async` sink or a batching one.
 ['2026-10-02/abc.json']
 ```
 
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
+
 ### py2mcp.markdown_install_badge(name, mcp_url, , admin=False)
 
 Markdown link that installs an MCP server as a claude.ai connector.
@@ -580,9 +580,6 @@ Markdown link that installs an MCP server as a claude.ai connector.
 The dominant use of [`claude_install_link()`](_autosummary/py2mcp.html.md#py2mcp.claude_install_link) is pasting one into a README,
 so this saves writing the same link syntax around it. Arguments are those of
 [`claude_install_link()`](_autosummary/py2mcp.html.md#py2mcp.claude_install_link).
-
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ```pycon
 >>> markdown_install_badge('snout', 'https://x.io/mcp')
@@ -597,6 +594,9 @@ URL itself is percent-encoded already):
 >>> print(markdown_install_badge('tools [beta]', 'https://x.io/mcp').split('](')[0])
 [Add tools \[beta\] to Claude
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### py2mcp.mk_auth_provider(auth)
 
@@ -699,7 +699,7 @@ Builds the app with **no network I/O**.
     `fastmcp.server.dependencies.get_access_token()`.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description (surfaced to the
     connecting client/model).
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
 * **Return type:**
@@ -807,7 +807,7 @@ runnable server — what tools that read tool references from a file (e.g.
   * **middleware** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server) as the server’s
     model-facing description.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
   * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
 * **Return type:**
@@ -861,7 +861,7 @@ The store is used live: a tool call reads or writes the mapping you passed.
     CRUD tool call, e.g. to meter or audit store reads and mutations.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Optional natural-language server description, forwarded to
     [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server) as the server’s model-facing `instructions`.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
   * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_server).
 * **Return type:**
@@ -907,7 +907,7 @@ tool, named after the function, with its signature and docstring as the
 tool’s schema and description.
 
 * **Parameters:**
-  * **funcs** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – A function or iterable of functions to expose as MCP tools.
+  * **funcs** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – A function or iterable of functions to expose as MCP tools.
   * **name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the MCP server.
   * **input_trans** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]]) – Called with the dict of keyword arguments of every tool
     call; the dict it returns is what the function receives. Build one
@@ -928,7 +928,7 @@ tool’s schema and description.
     to the client/model as the server’s `instructions` — a good place to
     explain what the tools do and the intended workflow. `None` (default)
     leaves it unset.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional callable or iterable of callables to register as MCP
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional callable or iterable of callables to register as MCP
     prompts (via FastMCP’s `@mcp.prompt`), so a prompts-and-tools server
     can be built declaratively in one call instead of reaching past the
     builder to register prompts by hand on the returned server.
@@ -1008,7 +1008,7 @@ Refs from `--ref` are appended after any from the config file; an explicit
 it is unit-testable without standing up a server.
 
 * **Parameters:**
-  * **config** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path of a JSON config as read by [`load_server_config()`](_autosummary/py2mcp.html.md#py2mcp.load_server_config),
+  * **config** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path of a JSON config as read by [`load_server_config()`](_autosummary/py2mcp.html.md#py2mcp.load_server_config),
     or `None` for no config file.
   * **refs** ([`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Extra `'module:function'` references, appended after the
     config’s.
@@ -1074,15 +1074,14 @@ does not return while the server runs.
     cross-cutting concerns; logging/metering is as useful on the local
     stdio path as on the remote one.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 #### SEE ALSO
 [`py2mcp.http.serve_http()`](_autosummary/py2mcp.http.html.md#py2mcp.http.serve_http): the same over Streamable HTTP.
 [`main()`](_autosummary/py2mcp.main.html.md#module-py2mcp.main): the command line that calls this.
-
-* **Return type:**
-  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### Modules
 
@@ -1264,7 +1263,7 @@ Builds the app with **no network I/O**.
     `fastmcp.server.dependencies.get_access_token()`.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description (surfaced to the
     connecting client/model).
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
 * **Return type:**
@@ -1373,7 +1372,7 @@ runnable server — what tools that read tool references from a file (e.g.
   * **middleware** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server) as the server’s
     model-facing description.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
   * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
 * **Return type:**
@@ -1427,7 +1426,7 @@ The store is used live: a tool call reads or writes the mapping you passed.
     CRUD tool call, e.g. to meter or audit store reads and mutations.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Optional natural-language server description, forwarded to
     [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server) as the server’s model-facing `instructions`.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
   * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](_autosummary/py2mcp.main.html.md#py2mcp.main.mk_mcp_server).
 * **Return type:**
@@ -1473,7 +1472,7 @@ tool, named after the function, with its signature and docstring as the
 tool’s schema and description.
 
 * **Parameters:**
-  * **funcs** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – A function or iterable of functions to expose as MCP tools.
+  * **funcs** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – A function or iterable of functions to expose as MCP tools.
   * **name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the MCP server.
   * **input_trans** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]]) – Called with the dict of keyword arguments of every tool
     call; the dict it returns is what the function receives. Build one
@@ -1494,7 +1493,7 @@ tool’s schema and description.
     to the client/model as the server’s `instructions` — a good place to
     explain what the tools do and the intended workflow. `None` (default)
     leaves it unset.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional callable or iterable of callables to register as MCP
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional callable or iterable of callables to register as MCP
     prompts (via FastMCP’s `@mcp.prompt`), so a prompts-and-tools server
     can be built declaratively in one call instead of reaching past the
     builder to register prompts by hand on the returned server.
@@ -1679,7 +1678,7 @@ Refs from `--ref` are appended after any from the config file; an explicit
 it is unit-testable without standing up a server.
 
 * **Parameters:**
-  * **config** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path of a JSON config as read by [`load_server_config()`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.load_server_config),
+  * **config** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path of a JSON config as read by [`load_server_config()`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.load_server_config),
     or `None` for no config file.
   * **refs** ([`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Extra `'module:function'` references, appended after the
     config’s.
@@ -1730,15 +1729,14 @@ does not return while the server runs.
     cross-cutting concerns; logging/metering is as useful on the local
     stdio path as on the remote one.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 #### SEE ALSO
 [`py2mcp.http.serve_http()`](_autosummary/py2mcp.http.html.md#py2mcp.http.serve_http): the same over Streamable HTTP.
 [`main()`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.main): the command line that calls this.
-
-* **Return type:**
-  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 
 # _autosummary/py2mcp.trans.html.md
@@ -1989,7 +1987,7 @@ FastMCP middleware: one record per tool call (and per handshake) to `sink`.
   * **version** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The connector version written into every record, if known.
   * **caller** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – `() -> str | None` resolving the caller for the in-flight
     request. Default [`token_caller()`](_autosummary/py2mcp.usage.html.md#py2mcp.usage.token_caller).
-  * **outcome** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], `Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]]) – `(tool_name, result) -> label | mapping` classifying a result
+  * **outcome** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]]) – `(tool_name, result) -> label | mapping` classifying a result
     that did not raise. Default [`default_outcome()`](_autosummary/py2mcp.usage.html.md#py2mcp.usage.default_outcome). A mapping is
     merged into the record (it must carry `"outcome"`), so a connector
     that knows its own “no match” shape can also set the true
@@ -2045,9 +2043,6 @@ structured `{"result": []}` / `None` / `""` / `{}`. A tool with its
 own “no match” shape (`{"matches": [], "total": 0}`) is `ok` here; give
 the logger an `outcome=` that knows that shape.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> class R:
 ...     def __init__(self, content=(), structured_content=None, is_error=False):
@@ -2060,6 +2055,9 @@ the logger an `outcome=` that knows that shape.
 'error'
 ```
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 ### py2mcp.usage.default_usage_dir(server='server')
 
 Where [`JsonlSink`](_autosummary/py2mcp.usage.html.md#py2mcp.usage.JsonlSink) writes when given no root: the user data dir.
@@ -2068,20 +2066,17 @@ Where [`JsonlSink`](_autosummary/py2mcp.usage.html.md#py2mcp.usage.JsonlSink) wr
 a package data directory, never the current directory, so a usage log is
 never one `git add` away from a repository.
 
-* **Return type:**
-  [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)
-
 ```pycon
 >>> str(default_usage_dir('snout')).endswith('py2mcp/usage/snout')
 True
 ```
 
+* **Return type:**
+  [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)
+
 ### py2mcp.usage.format_summary(summary)
 
 Render [`summarize()`](_autosummary/py2mcp.usage.html.md#py2mcp.usage.summarize) output as plain text, one column per outcome label.
-
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ```pycon
 >>> print(format_summary(summarize([
@@ -2100,6 +2095,9 @@ days
   2026-10-02                          1
 ```
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 ### py2mcp.usage.iter_records(root, , since=None, until=None)
 
 Yield the records under `root` (a [`JsonlSink`](_autosummary/py2mcp.usage.html.md#py2mcp.usage.JsonlSink) dir, or one `.jsonl`).
@@ -2111,9 +2109,6 @@ read long after it was written, and one torn line must not hide the rest.
 A `root` that does not exist raises `FileNotFoundError` rather than
 reading as an empty log.
 
-* **Return type:**
-  [`Iterator`](https://docs.python.org/3/library/typing.html#typing.Iterator)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]
-
 ```pycon
 >>> import tempfile
 >>> sink = JsonlSink(tempfile.mkdtemp(), retention_days=None)
@@ -2122,6 +2117,9 @@ reading as an empty log.
 >>> [r['id'] for r in iter_records(sink.root, since='2026-10-02')]
 ['2']
 ```
+
+* **Return type:**
+  [`Iterator`](https://docs.python.org/3/library/typing.html#typing.Iterator)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]
 
 ### py2mcp.usage.main(argv=None)
 
@@ -2139,9 +2137,6 @@ records out one per file by day, and “last 30 days” is a key-prefix scan.
 The write happens on the event loop, so this is for a local store; a remote
 one (S3, a database) belongs behind an `async` sink or a batching one.
 
-* **Return type:**
-  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
-
 ```pycon
 >>> store = {}
 >>> sink = mapping_sink(store)
@@ -2149,6 +2144,9 @@ one (S3, a database) belongs behind an `async` sink or a batching one.
 >>> list(store)
 ['2026-10-02/abc.json']
 ```
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
 
 ### py2mcp.usage.summarize(records)
 
@@ -2160,9 +2158,6 @@ name, in case a directory holds more than one), `tools` (per tool:
 `calls`, one count per outcome label seen, and mean/max latency), `days`
 (calls per day) and `outcomes` (totals per label) — the “who used what,
 which tools fail, which questions return nothing” view.
-
-* **Return type:**
-  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
 
 ```pycon
 >>> recs = [
@@ -2179,6 +2174,9 @@ which tools fail, which questions return nothing” view.
 (20.0, 30.0)
 ```
 
+* **Return type:**
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
+
 ### py2mcp.usage.token_caller()
 
 The caller’s identity from the verified OAuth token, or `None`.
@@ -2191,13 +2189,13 @@ OAuth `client_id` (a shared identity) and none to a guess: outside a
 request, or on an unauthenticated (stdio) server, the result is `None` and
 the record says `"caller": null`.
 
-* **Return type:**
-  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
-
 ```pycon
 >>> token_caller() is None   # no request in flight here
 True
 ```
+
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 
 # _autosummary/py2mcp.util.html.md
@@ -2316,9 +2314,6 @@ The dominant use of [`claude_install_link()`](_autosummary/py2mcp.util.html.md#p
 so this saves writing the same link syntax around it. Arguments are those of
 [`claude_install_link()`](_autosummary/py2mcp.util.html.md#py2mcp.util.claude_install_link).
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> markdown_install_badge('snout', 'https://x.io/mcp')
 '[Add snout to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=snout&connectorUrl=https%3A%2F%2Fx.io%2Fmcp)'
@@ -2333,6 +2328,9 @@ URL itself is percent-encoded already):
 [Add tools \[beta\] to Claude
 ```
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 ### py2mcp.util.store_to_funcs(store, , name='item', plural='')
 
 Convert a MutableMapping into CRUD functions.
@@ -2342,7 +2340,7 @@ function takes no arguments; the others take `key` (and `value` for
 set). Set and delete return a short confirmation string.
 
 * **Parameters:**
-  * **store** ([`MutableMapping`](https://docs.python.org/3/library/typing.html#typing.MutableMapping)[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)]) – The mapping the functions read and write.
+  * **store** ([`MutableMapping`](https://docs.python.org/3/library/typing.html#typing.MutableMapping)[`KT`, `VT`]) – The mapping the functions read and write.
   * **name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Singular noun used in the function names.
   * **plural** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Plural noun for the list function (defaults to name + ‘s’).
 * **Return type:**
@@ -2381,18 +2379,20 @@ set). Set and delete return a short confirmation string.
 
 # About this build
 
-This documentation was built on **2026-10-14 04:54 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59"><code>9b8b550</code></a> on branch <code>main</code>, for **py2mcp 0.1.17** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-26 06:31 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/1c136cceb537058b8883103125f983966f18f1ff"><code>1c136cc</code></a> on branch <code>main</code>, for **py2mcp 0.1.17** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.1.17) is behind the latest release on PyPI (0.1.18): `pip install py2mcp` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59"><code>9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59</code></a> |
+| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/1c136cceb537058b8883103125f983966f18f1ff"><code>1c136cceb537058b8883103125f983966f18f1ff</code></a> |
 | Branch              | <code>main</code>                                                                                                                                    |
-| Tags at this commit | <code>0.1.17</code>                                                                                                                                  |
+| Tags at this commit | none                                                                                                                                                 |
 | Working tree        | clean                                                                                                                                                |
 | Remote              | <code>https://github.com/i2mint/py2mcp</code>                                                                                                        |
 
@@ -2401,16 +2401,16 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/py2mcp</code>                                                                 |
-| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/38513630789">38513630789</a>        |
+| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/40280095637">40280095637</a>        |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>00cfd9310259c0144427331447cc67764a9849af</code> (in the history of the built commit) |
+| Event commit | <code>1c136cceb537058b8883103125f983966f18f1ff</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.17  |
-| Sphinx   | 9.1.0   |
+| epythet  | 0.2.22  |
+| Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
 
@@ -2428,14 +2428,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/py2mcp/0.1.17/">0.1.17</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/py2mcp/0.1.18/">0.1.18</a>, newer than the documented version (0.1.17).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/py2mcp && cd py2mcp
-git checkout 9b8b550fc9a4d6b6ff10b6498c1512230ccb2f59
-pip install "epythet==0.2.17"
+git checkout 1c136cceb537058b8883103125f983966f18f1ff
+pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

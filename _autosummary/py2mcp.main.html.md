@@ -48,7 +48,7 @@ runnable server — what tools that read tool references from a file (e.g.
   * **middleware** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server) as the server’s
     model-facing description.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
   * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
 * **Return type:**
@@ -102,7 +102,7 @@ The store is used live: a tool call reads or writes the mapping you passed.
     CRUD tool call, e.g. to meter or audit store reads and mutations.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Optional natural-language server description, forwarded to
     [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server) as the server’s model-facing `instructions`.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
   * **icons** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Forwarded to [`mk_mcp_server()`](#py2mcp.main.mk_mcp_server).
 * **Return type:**
@@ -148,7 +148,7 @@ tool, named after the function, with its signature and docstring as the
 tool’s schema and description.
 
 * **Parameters:**
-  * **funcs** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – A function or iterable of functions to expose as MCP tools.
+  * **funcs** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – A function or iterable of functions to expose as MCP tools.
   * **name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the MCP server.
   * **input_trans** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]]) – Called with the dict of keyword arguments of every tool
     call; the dict it returns is what the function receives. Build one
@@ -169,7 +169,7 @@ tool’s schema and description.
     to the client/model as the server’s `instructions` — a good place to
     explain what the tools do and the intended workflow. `None` (default)
     leaves it unset.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional callable or iterable of callables to register as MCP
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional callable or iterable of callables to register as MCP
     prompts (via FastMCP’s `@mcp.prompt`), so a prompts-and-tools server
     can be built declaratively in one call instead of reaching past the
     builder to register prompts by hand on the returned server.

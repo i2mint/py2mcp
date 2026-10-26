@@ -109,7 +109,7 @@ Refs from `--ref` are appended after any from the config file; an explicit
 it is unit-testable without standing up a server.
 
 * **Parameters:**
-  * **config** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path of a JSON config as read by [`load_server_config()`](#py2mcp.serve.load_server_config),
+  * **config** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path of a JSON config as read by [`load_server_config()`](#py2mcp.serve.load_server_config),
     or `None` for no config file.
   * **refs** ([`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Extra `'module:function'` references, appended after the
     config’s.
@@ -160,12 +160,11 @@ does not return while the server runs.
     cross-cutting concerns; logging/metering is as useful on the local
     stdio path as on the remote one.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description.
-  * **prompts** (`Union`[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 #### SEE ALSO
 [`py2mcp.http.serve_http()`](py2mcp.http.html.md#py2mcp.http.serve_http): the same over Streamable HTTP.
 [`main()`](#py2mcp.serve.main): the command line that calls this.
-
-* **Return type:**
-  [`None`](https://docs.python.org/3/builtins/constants.html#None)
