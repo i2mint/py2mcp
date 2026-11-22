@@ -71,7 +71,7 @@ def _mk_bearer_verifier(auth: dict) -> Any:
     tokens = auth.get("tokens")
     if isinstance(tokens, str):
         tokens = [tokens]
-    if not tokens:
+    if not tokens or not isinstance(tokens, (list, tuple)):
         raise ValueError("bearer auth needs 'tokens': a list of accepted tokens.")
     for token in tokens:
         if (
@@ -119,7 +119,10 @@ def mk_auth_provider(auth: Optional[dict]) -> Optional[Any]:
     ``type='bearer'`` — a static bearer token for a self-hosted server whose clients
     can set a header. ``tokens`` (**required**) is a list of accepted tokens, each at
     least ``MIN_BEARER_TOKEN_LENGTH`` characters; none, or a blank/short one, raises.
-    Requests without a matching ``Authorization: Bearer <token>`` get a 401.
+    Requests without a matching ``Authorization: Bearer <token>`` get a 401. Load the
+    tokens from an env var or secret store (never a committed config), generate them
+    with ``secrets.token_urlsafe(32)``, and serve behind TLS (a bearer token is
+    readable on plain HTTP). ``required_scopes`` doesn't apply to this type.
 
     Building the provider performs **no network I/O** (key fetching is lazy, on the
     first request), so this is safe to call at scaffold/import time.
