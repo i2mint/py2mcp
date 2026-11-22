@@ -9,6 +9,7 @@ py2mcp.http
    .. autosummary::
    
       SUPPORTED_AUTH_TYPES
+      MIN_BEARER_TOKEN_LENGTH
       DFLT_TRANSPORT
    
    .. rubric:: Functions

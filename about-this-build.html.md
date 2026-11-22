@@ -2,18 +2,16 @@
 
 # About this build
 
-This documentation was built on **2026-10-26 06:37 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/e664c466b1712e6e6f764e60c0900547e4d13cbf"><code>e664c46</code></a> on branch <code>main</code>, for **py2mcp 0.1.18** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 11:39 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/206c64839d8126a4b5f6e47f085c7198f499e7e4"><code>206c648</code></a> on branch <code>main</code>, for **py2mcp 0.1.19** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.18) is behind the latest release on PyPI (0.1.19): `pip install py2mcp` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/e664c466b1712e6e6f764e60c0900547e4d13cbf"><code>e664c466b1712e6e6f764e60c0900547e4d13cbf</code></a> |
+| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/206c64839d8126a4b5f6e47f085c7198f499e7e4"><code>206c64839d8126a4b5f6e47f085c7198f499e7e4</code></a> |
 | Branch              | <code>main</code>                                                                                                                                    |
 | Tags at this commit | none                                                                                                                                                 |
 | Working tree        | clean                                                                                                                                                |
@@ -24,18 +22,18 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/py2mcp</code>                                                                 |
-| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/40280715738">40280715738</a>        |
+| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/45018266503">45018266503</a>        |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>e664c466b1712e6e6f764e60c0900547e4d13cbf</code> (in the history of the built commit) |
+| Event commit | <code>206c64839d8126a4b5f6e47f085c7198f499e7e4</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.22  |
+| epythet  | 0.2.23  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
-| Python   | 3.12.15 |
+| Python   | 3.12.16 |
 
 ## Configuration as resolved
 
@@ -51,14 +49,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/py2mcp/0.1.19/">0.1.19</a>, newer than the documented version (0.1.18).
+Latest release: <a href="https://pypi.org/project/py2mcp/0.1.19/">0.1.19</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/py2mcp && cd py2mcp
-git checkout e664c466b1712e6e6f764e60c0900547e4d13cbf
-pip install "epythet==0.2.22"
+git checkout 206c64839d8126a4b5f6e47f085c7198f499e7e4
+pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

@@ -42,9 +42,10 @@ Building the app performs no network I/O, so it is safe to do at import time:
 
 ### Module Attributes
 
-| [`SUPPORTED_AUTH_TYPES`](#py2mcp.http.SUPPORTED_AUTH_TYPES)   | Auth `type` values [`mk_auth_provider()`](#py2mcp.http.mk_auth_provider) understands.   |
-|-------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| [`DFLT_TRANSPORT`](#py2mcp.http.DFLT_TRANSPORT)         | Default Streamable-HTTP transport (the current remote MCP transport).                                 |
+| [`SUPPORTED_AUTH_TYPES`](#py2mcp.http.SUPPORTED_AUTH_TYPES)    | Auth `type` values [`mk_auth_provider()`](#py2mcp.http.mk_auth_provider) understands.   |
+|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| [`MIN_BEARER_TOKEN_LENGTH`](#py2mcp.http.MIN_BEARER_TOKEN_LENGTH) | Shortest static bearer token `type='bearer'` accepts (a short secret is guessable).                   |
+| [`DFLT_TRANSPORT`](#py2mcp.http.DFLT_TRANSPORT)          | Default Streamable-HTTP transport (the current remote MCP transport).                                 |
 
 ### Functions
 
@@ -57,7 +58,11 @@ Building the app performs no network I/O, so it is safe to do at import time:
 
 Default Streamable-HTTP transport (the current remote MCP transport).
 
-### py2mcp.http.SUPPORTED_AUTH_TYPES *= ('jwt',)*
+### py2mcp.http.MIN_BEARER_TOKEN_LENGTH *= 16*
+
+Shortest static bearer token `type='bearer'` accepts (a short secret is guessable).
+
+### py2mcp.http.SUPPORTED_AUTH_TYPES *= ('jwt', 'bearer')*
 
 Auth `type` values [`mk_auth_provider()`](#py2mcp.http.mk_auth_provider) understands. `'jwt'` is the
 vendor-neutral resource-server pattern (validate a managed IdP’s JWTs);
@@ -81,6 +86,14 @@ Build a FastMCP **resource-server** auth provider from an auth-config dict.
   advertised in the RFC 9728 protected-resource metadata.
 - `base_url` — this server’s public base URL.
 - `required_scopes` (optional) — scopes every request must carry.
+
+`type='bearer'` — a static bearer token for a self-hosted server whose clients
+can set a header. `tokens` (**required**) is a list of accepted tokens, each at
+least `MIN_BEARER_TOKEN_LENGTH` characters; none, or a blank/short one, raises.
+Requests without a matching `Authorization: Bearer <token>` get a 401. Load the
+tokens from an env var or secret store (never a committed config), generate them
+with `secrets.token_urlsafe(32)`, and serve behind TLS (a bearer token is
+readable on plain HTTP). `required_scopes` doesn’t apply to this type.
 
 Building the provider performs **no network I/O** (key fetching is lazy, on the
 first request), so this is safe to call at scaffold/import time.
@@ -206,7 +219,7 @@ metadata route is added next to the endpoint:
 [`serve_http()`](#py2mcp.http.serve_http): build and run in-process instead of returning the app.
 [`py2mcp.serve.serve_stdio()`](py2mcp.serve.html.md#py2mcp.serve.serve_stdio): the local stdio counterpart.
 
-### py2mcp.http.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None, annotations=None)
+### py2mcp.http.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None, annotations=None, check_for_updates=False)
 
 Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -217,6 +230,7 @@ DNS-rebinding-safe default). `auth` is resolved by [`mk_auth_provider()`](#py2mc
 `middleware` (a single FastMCP middleware or a list) is attached as in
 [`mk_http_app()`](#py2mcp.http.mk_http_app); `instructions` sets the server’s model-facing description.
 `prompts`/`resources` are forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+`check_for_updates=False` (default) hides fastmcp’s banner and update check.
 
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)

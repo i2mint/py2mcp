@@ -325,6 +325,14 @@ Build a FastMCP **resource-server** auth provider from an auth-config dict.
 - `base_url` — this server’s public base URL.
 - `required_scopes` (optional) — scopes every request must carry.
 
+`type='bearer'` — a static bearer token for a self-hosted server whose clients
+can set a header. `tokens` (**required**) is a list of accepted tokens, each at
+least `MIN_BEARER_TOKEN_LENGTH` characters; none, or a blank/short one, raises.
+Requests without a matching `Authorization: Bearer <token>` get a 401. Load the
+tokens from an env var or secret store (never a committed config), generate them
+with `secrets.token_urlsafe(32)`, and serve behind TLS (a bearer token is
+readable on plain HTTP). `required_scopes` doesn’t apply to this type.
+
 Building the provider performs **no network I/O** (key fetching is lazy, on the
 first request), so this is safe to call at scaffold/import time.
 
@@ -771,7 +779,7 @@ With a config file, its refs come first and its name is the fallback:
 (['os.path:basename'], 'Override')
 ```
 
-### py2mcp.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None, annotations=None)
+### py2mcp.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None, annotations=None, check_for_updates=False)
 
 Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -782,11 +790,12 @@ DNS-rebinding-safe default). `auth` is resolved by [`mk_auth_provider()`](#py2mc
 `middleware` (a single FastMCP middleware or a list) is attached as in
 [`mk_http_app()`](#py2mcp.mk_http_app); `instructions` sets the server’s model-facing description.
 `prompts`/`resources` are forwarded to [`py2mcp.mk_mcp_from_refs()`](#py2mcp.mk_mcp_from_refs).
+`check_for_updates=False` (default) hides fastmcp’s banner and update check.
 
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
-### py2mcp.serve_stdio(refs, , name='py2mcp Server', input_trans=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.serve_stdio(refs, , name='py2mcp Server', input_trans=None, middleware=None, instructions=None, prompts=None, resources=None, check_for_updates=False)
 
 Build an MCP server from `'module:function'` refs and run it over stdio.
 
@@ -805,6 +814,8 @@ does not return while the server runs.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description.
   * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](#py2mcp.mk_mcp_from_refs).
+  * **check_for_updates** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – `False` (default) hides fastmcp’s banner and skips its
+    PyPI update check, so the server makes no outbound call on start.
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 

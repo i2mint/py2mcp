@@ -17,5 +17,6 @@ py2mcp.serve
       load_server_config
       main
       resolve_server_config
+      run_quietly
       serve_stdio
    

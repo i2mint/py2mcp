@@ -44,6 +44,7 @@ Main entry points:
 |--------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
 | [`main`](#py2mcp.serve.main)([argv])                                    | CLI: `python -m py2mcp --config cfg.json` (or `--ref mod:func ...`).         |
 | [`resolve_server_config`](#py2mcp.serve.resolve_server_config)(\*[, config, refs, name]) | Merge a config file and explicit `refs`/`name` into `(refs, name)`.          |
+| [`run_quietly`](#py2mcp.serve.run_quietly)(server, \*[, check_for_updates])    | Run a FastMCP `server` without fastmcp's banner and PyPI update check.       |
 | [`serve_stdio`](#py2mcp.serve.serve_stdio)(refs, \*[, name, input_trans, ...]) | Build an MCP server from `'module:function'` refs and run it over stdio.     |
 
 ### py2mcp.serve.DFLT_SERVER_NAME *= 'py2mcp Server'*
@@ -143,7 +144,18 @@ With a config file, its refs come first and its name is the fallback:
 (['os.path:basename'], 'Override')
 ```
 
-### py2mcp.serve.serve_stdio(refs, , name='py2mcp Server', input_trans=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.serve.run_quietly(server, , check_for_updates=False, \*\*run_kwargs)
+
+Run a FastMCP `server` without fastmcp’s banner and PyPI update check.
+
+A local or sandboxed server shouldn’t phone home on every start (the update
+check calls pypi.org). Pass `check_for_updates=True` to keep fastmcp’s
+behaviour (banner and check).
+
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
+### py2mcp.serve.serve_stdio(refs, , name='py2mcp Server', input_trans=None, middleware=None, instructions=None, prompts=None, resources=None, check_for_updates=False)
 
 Build an MCP server from `'module:function'` refs and run it over stdio.
 
@@ -162,6 +174,8 @@ does not return while the server runs.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description.
   * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **check_for_updates** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – `False` (default) hides fastmcp’s banner and skips its
+    PyPI update check, so the server makes no outbound call on start.
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 

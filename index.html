@@ -30,8 +30,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx_autodoc_typehints.css?v=057ac668" />
@@ -39,12 +39,12 @@
     <link rel="stylesheet" type="text/css" href="_static/epythet.css?v=80bbab5e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="_static/documentation_options.js?v=9969ed3f"></script>
+    <script src="_static/documentation_options.js?v=3d116926"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.18" />
+  <meta name="docsearch:version" content="0.1.19" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -105,7 +105,7 @@
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
     <span class="fa-solid fa-bars"></span>
   </button>
   
@@ -175,14 +175,14 @@
 
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-end">
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
   </ul>
 </div></div>
       
@@ -217,7 +217,7 @@
   
 
   
-    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page" aria-expanded="false" aria-controls="pst-secondary-sidebar-modal">
       <span class="fa-solid fa-outdent"></span>
     </button>
   
@@ -233,7 +233,7 @@
       
         
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
       <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
@@ -276,14 +276,14 @@
 
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-end">
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
   </ul>
 </div></div>
         
@@ -416,7 +416,7 @@
 </div>
 </section>
 <section id="serving-local-stdio-and-remote-http-oauth">
-<h2>Serving: local (stdio) and remote (HTTP + OAuth)<a class="headerlink" href="#serving-local-stdio-and-remote-http-oauth" title="Link to this heading">#</a></h2>
+<span id="serving-local-stdio-and-remote-http--oauth"></span><h2>Serving: local (stdio) and remote (HTTP + OAuth)<a class="headerlink" href="#serving-local-stdio-and-remote-http-oauth" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">mk_mcp_*</span></code> build a server <em>object</em>; py2mcp also gives you two ways to <strong>run</strong> one.</p>
 <p><strong>Local (stdio)</strong> — for a one-click bundle (e.g. a Claude Desktop <code class="docutils literal notranslate"><span class="pre">.mcpb</span></code>):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">serve_stdio</span>
@@ -488,7 +488,7 @@ through the <code class="docutils literal notranslate"><span class="pre">python<
 <p>With no <code class="docutils literal notranslate"><span class="pre">sink=</span></code>, records go to one JSON-lines file per day under <code class="docutils literal notranslate"><span class="pre">$XDG_DATA_HOME/py2mcp/usage/&lt;name&gt;/</span></code> (never the app directory), pruned to 90 days. Any callable is a sink — <code class="docutils literal notranslate"><span class="pre">records.append</span></code> in a test, <code class="docutils literal notranslate"><span class="pre">mapping_sink(dol_store)</span></code> to lay records out one-per-key in a <code class="docutils literal notranslate"><span class="pre">dol</span></code> store (and so S3) — and a failing sink never fails the tool call. The arguments are your users’ own questions, so logging is off unless you attach the middleware, <code class="docutils literal notranslate"><span class="pre">include_args=False</span></code> drops them, <code class="docutils literal notranslate"><span class="pre">redact=</span></code> masks named fields, <code class="docutils literal notranslate"><span class="pre">max_args_chars</span></code> caps the rest, and error text (which echoes arguments) is kept only when every argument is. Read it back with <code class="docutils literal notranslate"><span class="pre">py2mcp</span> <span class="pre">usage</span> <span class="pre">&lt;dir&gt;</span> <span class="pre">[--since</span> <span class="pre">YYYY-MM-DD]</span> <span class="pre">[--json</span> <span class="pre">|</span> <span class="pre">--records]</span></code>, or <code class="docutils literal notranslate"><span class="pre">iter_records</span></code> → <code class="docutils literal notranslate"><span class="pre">summarize</span></code> in Python. Design and prior art: <code class="docutils literal notranslate"><span class="pre">misc/docs/decisions/0001-usage-logging-is-a-py2mcp-middleware.md</span></code>.</p>
 </section>
 <section id="instructions-the-server-s-model-facing-description">
-<h2>Instructions (the server’s model-facing description)<a class="headerlink" href="#instructions-the-server-s-model-facing-description" title="Link to this heading">#</a></h2>
+<span id="instructions-the-servers-model-facing-description"></span><h2>Instructions (the server’s model-facing description)<a class="headerlink" href="#instructions-the-server-s-model-facing-description" title="Link to this heading">#</a></h2>
 <p>Every builder also accepts <code class="docutils literal notranslate"><span class="pre">instructions=</span></code> — a natural-language string surfaced to
 the connecting client/model as the server’s <a class="reference external" href="https://gofastmcp.com/servers/server"><code class="docutils literal notranslate"><span class="pre">instructions</span></code></a>,
 attached at construction exactly like <code class="docutils literal notranslate"><span class="pre">auth=</span></code>/<code class="docutils literal notranslate"><span class="pre">middleware=</span></code>. It’s the place to say
@@ -572,7 +572,7 @@ them to the allowlist.</p></li>
 </section>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-26 06:37 UTC from <a href="https://github.com/i2mint/py2mcp/commit/e664c466b1712e6e6f764e60c0900547e4d13cbf">e664c46</a> (main) · py2mcp 0.1.18 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 11:39 UTC from <a href="https://github.com/i2mint/py2mcp/commit/206c64839d8126a4b5f6e47f085c7198f499e7e4">206c648</a> (main) · py2mcp 0.1.19 · <a href="about-this-build.html">about this build</a></p>
 
                 </article>
               
@@ -599,7 +599,7 @@ them to the allowlist.</p></li>
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <dialog id="pst-secondary-sidebar-modal" tabindex="-1"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
@@ -649,8 +649,8 @@ them to the allowlist.</p></li>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -662,7 +662,7 @@ them to the allowlist.</p></li>
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
 </p></div>
       
     </div>

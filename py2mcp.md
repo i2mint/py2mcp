@@ -1,4 +1,4 @@
-> built 2026-10-26 06:37 UTC from e664c46 (main) · py2mcp 0.1.18. Details: build_info.json
+> built 2026-11-22 11:39 UTC from 206c648 (main) · py2mcp 0.1.19. Details: build_info.json
 
 # index.html.md
 
@@ -617,6 +617,14 @@ Build a FastMCP **resource-server** auth provider from an auth-config dict.
 - `base_url` — this server’s public base URL.
 - `required_scopes` (optional) — scopes every request must carry.
 
+`type='bearer'` — a static bearer token for a self-hosted server whose clients
+can set a header. `tokens` (**required**) is a list of accepted tokens, each at
+least `MIN_BEARER_TOKEN_LENGTH` characters; none, or a blank/short one, raises.
+Requests without a matching `Authorization: Bearer <token>` get a 401. Load the
+tokens from an env var or secret store (never a committed config), generate them
+with `secrets.token_urlsafe(32)`, and serve behind TLS (a bearer token is
+readable on plain HTTP). `required_scopes` doesn’t apply to this type.
+
 Building the provider performs **no network I/O** (key fetching is lazy, on the
 first request), so this is safe to call at scaffold/import time.
 
@@ -1063,7 +1071,7 @@ With a config file, its refs come first and its name is the fallback:
 (['os.path:basename'], 'Override')
 ```
 
-### py2mcp.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None, annotations=None)
+### py2mcp.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None, annotations=None, check_for_updates=False)
 
 Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -1074,11 +1082,12 @@ DNS-rebinding-safe default). `auth` is resolved by [`mk_auth_provider()`](_autos
 `middleware` (a single FastMCP middleware or a list) is attached as in
 [`mk_http_app()`](_autosummary/py2mcp.html.md#py2mcp.mk_http_app); `instructions` sets the server’s model-facing description.
 `prompts`/`resources` are forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+`check_for_updates=False` (default) hides fastmcp’s banner and update check.
 
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
-### py2mcp.serve_stdio(refs, , name='py2mcp Server', input_trans=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.serve_stdio(refs, , name='py2mcp Server', input_trans=None, middleware=None, instructions=None, prompts=None, resources=None, check_for_updates=False)
 
 Build an MCP server from `'module:function'` refs and run it over stdio.
 
@@ -1097,6 +1106,8 @@ does not return while the server runs.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description.
   * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **check_for_updates** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – `False` (default) hides fastmcp’s banner and skips its
+    PyPI update check, so the server makes no outbound call on start.
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
@@ -1162,9 +1173,10 @@ Building the app performs no network I/O, so it is safe to do at import time:
 
 ### Module Attributes
 
-| [`SUPPORTED_AUTH_TYPES`](_autosummary/py2mcp.http.html.md#py2mcp.http.SUPPORTED_AUTH_TYPES)   | Auth `type` values [`mk_auth_provider()`](_autosummary/py2mcp.http.html.md#py2mcp.http.mk_auth_provider) understands.   |
-|-------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| [`DFLT_TRANSPORT`](_autosummary/py2mcp.http.html.md#py2mcp.http.DFLT_TRANSPORT)         | Default Streamable-HTTP transport (the current remote MCP transport).                                 |
+| [`SUPPORTED_AUTH_TYPES`](_autosummary/py2mcp.http.html.md#py2mcp.http.SUPPORTED_AUTH_TYPES)    | Auth `type` values [`mk_auth_provider()`](_autosummary/py2mcp.http.html.md#py2mcp.http.mk_auth_provider) understands.   |
+|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| [`MIN_BEARER_TOKEN_LENGTH`](_autosummary/py2mcp.http.html.md#py2mcp.http.MIN_BEARER_TOKEN_LENGTH) | Shortest static bearer token `type='bearer'` accepts (a short secret is guessable).                   |
+| [`DFLT_TRANSPORT`](_autosummary/py2mcp.http.html.md#py2mcp.http.DFLT_TRANSPORT)          | Default Streamable-HTTP transport (the current remote MCP transport).                                 |
 
 ### Functions
 
@@ -1177,7 +1189,11 @@ Building the app performs no network I/O, so it is safe to do at import time:
 
 Default Streamable-HTTP transport (the current remote MCP transport).
 
-### py2mcp.http.SUPPORTED_AUTH_TYPES *= ('jwt',)*
+### py2mcp.http.MIN_BEARER_TOKEN_LENGTH *= 16*
+
+Shortest static bearer token `type='bearer'` accepts (a short secret is guessable).
+
+### py2mcp.http.SUPPORTED_AUTH_TYPES *= ('jwt', 'bearer')*
 
 Auth `type` values [`mk_auth_provider()`](_autosummary/py2mcp.http.html.md#py2mcp.http.mk_auth_provider) understands. `'jwt'` is the
 vendor-neutral resource-server pattern (validate a managed IdP’s JWTs);
@@ -1201,6 +1217,14 @@ Build a FastMCP **resource-server** auth provider from an auth-config dict.
   advertised in the RFC 9728 protected-resource metadata.
 - `base_url` — this server’s public base URL.
 - `required_scopes` (optional) — scopes every request must carry.
+
+`type='bearer'` — a static bearer token for a self-hosted server whose clients
+can set a header. `tokens` (**required**) is a list of accepted tokens, each at
+least `MIN_BEARER_TOKEN_LENGTH` characters; none, or a blank/short one, raises.
+Requests without a matching `Authorization: Bearer <token>` get a 401. Load the
+tokens from an env var or secret store (never a committed config), generate them
+with `secrets.token_urlsafe(32)`, and serve behind TLS (a bearer token is
+readable on plain HTTP). `required_scopes` doesn’t apply to this type.
 
 Building the provider performs **no network I/O** (key fetching is lazy, on the
 first request), so this is safe to call at scaffold/import time.
@@ -1326,7 +1350,7 @@ metadata route is added next to the endpoint:
 [`serve_http()`](_autosummary/py2mcp.http.html.md#py2mcp.http.serve_http): build and run in-process instead of returning the app.
 [`py2mcp.serve.serve_stdio()`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.serve_stdio): the local stdio counterpart.
 
-### py2mcp.http.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None, annotations=None)
+### py2mcp.http.serve_http(refs, , name='py2mcp Server', host='127.0.0.1', port=8000, auth=None, input_trans=None, transport='streamable-http', stateless_http=None, middleware=None, instructions=None, prompts=None, resources=None, icons=None, annotations=None, check_for_updates=False)
 
 Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -1337,6 +1361,7 @@ DNS-rebinding-safe default). `auth` is resolved by [`mk_auth_provider()`](_autos
 `middleware` (a single FastMCP middleware or a list) is attached as in
 [`mk_http_app()`](_autosummary/py2mcp.http.html.md#py2mcp.http.mk_http_app); `instructions` sets the server’s model-facing description.
 `prompts`/`resources` are forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+`check_for_updates=False` (default) hides fastmcp’s banner and update check.
 
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
@@ -1655,6 +1680,7 @@ Main entry points:
 |--------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
 | [`main`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.main)([argv])                                    | CLI: `python -m py2mcp --config cfg.json` (or `--ref mod:func ...`).         |
 | [`resolve_server_config`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.resolve_server_config)(\*[, config, refs, name]) | Merge a config file and explicit `refs`/`name` into `(refs, name)`.          |
+| [`run_quietly`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.run_quietly)(server, \*[, check_for_updates])    | Run a FastMCP `server` without fastmcp's banner and PyPI update check.       |
 | [`serve_stdio`](_autosummary/py2mcp.serve.html.md#py2mcp.serve.serve_stdio)(refs, \*[, name, input_trans, ...]) | Build an MCP server from `'module:function'` refs and run it over stdio.     |
 
 ### py2mcp.serve.DFLT_SERVER_NAME *= 'py2mcp Server'*
@@ -1754,7 +1780,18 @@ With a config file, its refs come first and its name is the fallback:
 (['os.path:basename'], 'Override')
 ```
 
-### py2mcp.serve.serve_stdio(refs, , name='py2mcp Server', input_trans=None, middleware=None, instructions=None, prompts=None, resources=None)
+### py2mcp.serve.run_quietly(server, , check_for_updates=False, \*\*run_kwargs)
+
+Run a FastMCP `server` without fastmcp’s banner and PyPI update check.
+
+A local or sandboxed server shouldn’t phone home on every start (the update
+check calls pypi.org). Pass `check_for_updates=True` to keep fastmcp’s
+behaviour (banner and check).
+
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
+### py2mcp.serve.serve_stdio(refs, , name='py2mcp Server', input_trans=None, middleware=None, instructions=None, prompts=None, resources=None, check_for_updates=False)
 
 Build an MCP server from `'module:function'` refs and run it over stdio.
 
@@ -1773,6 +1810,8 @@ does not return while the server runs.
   * **instructions** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The server’s model-facing description.
   * **prompts** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable), [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
   * **resources** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Mapping`](https://docs.python.org/3/library/typing.html#typing.Mapping)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)]]) – Forwarded to [`py2mcp.mk_mcp_from_refs()`](_autosummary/py2mcp.html.md#py2mcp.mk_mcp_from_refs).
+  * **check_for_updates** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – `False` (default) hides fastmcp’s banner and skips its
+    PyPI update check, so the server makes no outbound call on start.
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
@@ -2421,18 +2460,16 @@ set). Set and delete return a short confirmation string.
 
 # About this build
 
-This documentation was built on **2026-10-26 06:37 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/e664c466b1712e6e6f764e60c0900547e4d13cbf"><code>e664c46</code></a> on branch <code>main</code>, for **py2mcp 0.1.18** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 11:39 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/206c64839d8126a4b5f6e47f085c7198f499e7e4"><code>206c648</code></a> on branch <code>main</code>, for **py2mcp 0.1.19** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.18) is behind the latest release on PyPI (0.1.19): `pip install py2mcp` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/e664c466b1712e6e6f764e60c0900547e4d13cbf"><code>e664c466b1712e6e6f764e60c0900547e4d13cbf</code></a> |
+| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/206c64839d8126a4b5f6e47f085c7198f499e7e4"><code>206c64839d8126a4b5f6e47f085c7198f499e7e4</code></a> |
 | Branch              | <code>main</code>                                                                                                                                    |
 | Tags at this commit | none                                                                                                                                                 |
 | Working tree        | clean                                                                                                                                                |
@@ -2443,18 +2480,18 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/py2mcp</code>                                                                 |
-| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/40280715738">40280715738</a>        |
+| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/45018266503">45018266503</a>        |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>e664c466b1712e6e6f764e60c0900547e4d13cbf</code> (in the history of the built commit) |
+| Event commit | <code>206c64839d8126a4b5f6e47f085c7198f499e7e4</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.22  |
+| epythet  | 0.2.23  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
-| Python   | 3.12.15 |
+| Python   | 3.12.16 |
 
 ## Configuration as resolved
 
@@ -2470,14 +2507,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/py2mcp/0.1.19/">0.1.19</a>, newer than the documented version (0.1.18).
+Latest release: <a href="https://pypi.org/project/py2mcp/0.1.19/">0.1.19</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/py2mcp && cd py2mcp
-git checkout e664c466b1712e6e6f764e60c0900547e4d13cbf
-pip install "epythet==0.2.22"
+git checkout 206c64839d8126a4b5f6e47f085c7198f499e7e4
+pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 
