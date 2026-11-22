@@ -42,15 +42,60 @@ from __future__ import annotations
 from typing import Any, Callable, Iterable, Mapping, Optional
 
 from py2mcp.main import mk_mcp_from_refs
-from py2mcp.serve import DFLT_SERVER_NAME
+from py2mcp.serve import DFLT_SERVER_NAME, run_quietly
 
 #: Auth ``type`` values :func:`mk_auth_provider` understands. ``'jwt'`` is the
 #: vendor-neutral resource-server pattern (validate a managed IdP's JWTs);
 #: managed-provider shortcuts (auth0/workos/...) can be added as new types.
-SUPPORTED_AUTH_TYPES = ("jwt",)
+SUPPORTED_AUTH_TYPES = ("jwt", "bearer")
+
+#: Shortest static bearer token ``type='bearer'`` accepts (a short secret is guessable).
+MIN_BEARER_TOKEN_LENGTH = 16
 
 #: Default Streamable-HTTP transport (the current remote MCP transport).
 DFLT_TRANSPORT = "streamable-http"
+
+
+def _mk_bearer_verifier(auth: dict) -> Any:
+    """A fail-closed static bearer-token verifier from ``{'type': 'bearer', 'tokens': [...]}``.
+
+    Tokens are validated up front: none, or a blank/short one, raises (a header-less
+    request reads as the empty token, so a blank one must never be accepted).
+    Comparison is constant-time.
+    """
+    import hmac
+
+    from fastmcp.server.auth import TokenVerifier
+    from mcp.server.auth.provider import AccessToken
+
+    tokens = auth.get("tokens")
+    if isinstance(tokens, str):
+        tokens = [tokens]
+    if not tokens or not isinstance(tokens, (list, tuple)):
+        raise ValueError("bearer auth needs 'tokens': a list of accepted tokens.")
+    for token in tokens:
+        if (
+            not isinstance(token, str)
+            or len(token.strip()) < MIN_BEARER_TOKEN_LENGTH
+            or token != token.strip()
+        ):
+            raise ValueError(
+                f"bearer auth tokens must be strings of at least "
+                f"{MIN_BEARER_TOKEN_LENGTH} characters, without surrounding whitespace."
+            )
+    accepted = [t.encode() for t in tokens]
+
+    class _StaticBearerVerifier(TokenVerifier):
+        async def verify_token(self, token: str) -> Optional[AccessToken]:
+            candidate = token.encode()
+            ok = False
+            for known in accepted:  # no early exit: constant-time per token
+                ok |= hmac.compare_digest(candidate, known)
+            if not ok:
+                return None
+            return AccessToken(token=token, client_id="bearer", scopes=[])
+
+    return _StaticBearerVerifier()
 
 
 def mk_auth_provider(auth: Optional[dict]) -> Optional[Any]:
@@ -70,6 +115,14 @@ def mk_auth_provider(auth: Optional[dict]) -> Optional[Any]:
       advertised in the RFC 9728 protected-resource metadata.
     - ``base_url`` — this server's public base URL.
     - ``required_scopes`` (optional) — scopes every request must carry.
+
+    ``type='bearer'`` — a static bearer token for a self-hosted server whose clients
+    can set a header. ``tokens`` (**required**) is a list of accepted tokens, each at
+    least ``MIN_BEARER_TOKEN_LENGTH`` characters; none, or a blank/short one, raises.
+    Requests without a matching ``Authorization: Bearer <token>`` get a 401. Load the
+    tokens from an env var or secret store (never a committed config), generate them
+    with ``secrets.token_urlsafe(32)``, and serve behind TLS (a bearer token is
+    readable on plain HTTP). ``required_scopes`` doesn't apply to this type.
 
     Building the provider performs **no network I/O** (key fetching is lazy, on the
     first request), so this is safe to call at scaffold/import time.
@@ -119,6 +172,8 @@ def mk_auth_provider(auth: Optional[dict]) -> Optional[Any]:
     if not isinstance(auth, dict):
         raise ValueError("auth must be a dict (or None), e.g. {'type': 'jwt', ...}")
     auth_type = auth.get("type", "jwt")
+    if auth_type == "bearer":
+        return _mk_bearer_verifier(auth)
     if auth_type != "jwt":
         raise ValueError(
             f"Unsupported auth type {auth_type!r}. Supported: "
@@ -299,6 +354,7 @@ def serve_http(
     resources: Optional[Mapping[str, Callable]] = None,
     icons: Optional[Any] = None,
     annotations: Optional[Any] = None,
+    check_for_updates: bool = False,
 ) -> None:
     """Build and **run** a Streamable-HTTP MCP server (blocking) via FastMCP/uvicorn.
 
@@ -309,6 +365,7 @@ def serve_http(
     ``middleware`` (a single FastMCP middleware or a list) is attached as in
     :func:`mk_http_app`; ``instructions`` sets the server's model-facing description.
     ``prompts``/``resources`` are forwarded to :func:`py2mcp.mk_mcp_from_refs`.
+    ``check_for_updates=False`` (default) hides fastmcp's banner and update check.
     """
     provider = mk_auth_provider(auth)
     server = mk_mcp_from_refs(
@@ -326,4 +383,4 @@ def serve_http(
     run_kwargs: dict[str, Any] = {"transport": transport, "host": host, "port": port}
     if stateless_http is not None:
         run_kwargs["stateless_http"] = stateless_http
-    server.run(**run_kwargs)
+    run_quietly(server, check_for_updates=check_for_updates, **run_kwargs)

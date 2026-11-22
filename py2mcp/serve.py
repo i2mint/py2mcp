@@ -144,6 +144,21 @@ def resolve_server_config(
     return merged_refs, (name or cfg_name or DFLT_SERVER_NAME)
 
 
+def run_quietly(server: Any, *, check_for_updates: bool = False, **run_kwargs) -> None:
+    """Run a FastMCP ``server`` without fastmcp's banner and PyPI update check.
+
+    A local or sandboxed server shouldn't phone home on every start (the update
+    check calls pypi.org). Pass ``check_for_updates=True`` to keep fastmcp's
+    behaviour (banner and check).
+    """
+    if not check_for_updates:
+        import fastmcp
+
+        fastmcp.settings.check_for_updates = "off"
+        run_kwargs.setdefault("show_banner", False)
+    server.run(**run_kwargs)
+
+
 def serve_stdio(
     refs: Iterable[str],
     *,
@@ -153,6 +168,7 @@ def serve_stdio(
     instructions: Optional[str] = None,
     prompts: Optional[Callable | Iterable[Callable]] = None,
     resources: Optional[Mapping[str, Callable]] = None,
+    check_for_updates: bool = False,
 ) -> None:
     """Build an MCP server from ``'module:function'`` refs and run it over stdio.
 
@@ -171,6 +187,8 @@ def serve_stdio(
         instructions: The server's model-facing description.
         prompts: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
         resources: Forwarded to :func:`py2mcp.mk_mcp_from_refs`.
+        check_for_updates: ``False`` (default) hides fastmcp's banner and skips its
+            PyPI update check, so the server makes no outbound call on start.
 
     See Also:
         :func:`py2mcp.http.serve_http`: the same over Streamable HTTP.
@@ -185,7 +203,7 @@ def serve_stdio(
         prompts=prompts,
         resources=resources,
     )
-    server.run(transport="stdio")
+    run_quietly(server, check_for_updates=check_for_updates, transport="stdio")
 
 
 def main(argv: Optional[list[str]] = None) -> None:
