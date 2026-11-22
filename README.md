@@ -88,6 +88,7 @@ mcp = mk_mcp_from_store(projects, name="project")
 
 **Local (stdio)** — for a one-click bundle (e.g. a Claude Desktop `.mcpb`):
 
+<!-- wads-docs: skip placeholder package mypkg (and it would block serving on stdio) -->
 ```python
 from py2mcp import serve_stdio
 
@@ -125,6 +126,7 @@ FastMCP's native transports/OAuth — py2mcp does not reinvent them.
 
 Every builder accepts `middleware=` — a single [FastMCP middleware](https://gofastmcp.com/servers/middleware) or an iterable of them — attached at construction, exactly as `auth=` is. It's the one clean seam for cross-cutting concerns that must wrap *every* tool call (usage metering, cost logging, audit trails, rate limiting), so you don't decorate each function individually — and can't forget one (a missed decorator on a paid tool means untracked cost):
 
+<!-- wads-docs: skip fragment; render and estimate are the reader's tools -->
 ```python
 from fastmcp.server.middleware import Middleware
 
@@ -150,6 +152,7 @@ through the `python -m py2mcp` CLI / JSON-config path (unlike `refs`/`name`/`aut
 
 A deployed connector's web-server log says only that something `POST`ed `/mcp`. `UsageLogger` is a middleware that writes **one record per tool call** — time, caller (from the OAuth token), tool, arguments, outcome (`ok` / `empty` / `error`), result size, latency, connector name and version — plus one flagged record per `initialize` handshake, so "a client has it enabled" and "a client actually used it" stop looking the same:
 
+<!-- wads-docs: skip fragment; refs and the deployment values are the reader's -->
 ```python
 from py2mcp import mk_http_app, UsageLogger
 
@@ -171,6 +174,7 @@ attached at construction exactly like `auth=`/`middleware=`. It's the place to s
 what the tools are for and the intended workflow, so a model can orient itself
 without calling a tool:
 
+<!-- wads-docs: skip fragment; continues the middleware example -->
 ```python
 mcp = mk_mcp_server(
     [render, estimate],
@@ -191,6 +195,7 @@ Every builder also accepts `prompts=` and `resources=`, so a server that ships M
 built declaratively in one call, instead of reaching past the builder to register
 them by hand on the returned `FastMCP` object:
 
+<!-- wads-docs: skip fragment; continues the middleware example -->
 ```python
 def summarize_request(topic: str) -> str:
     return f"Summarize the latest on {topic}."
