@@ -1,4 +1,4 @@
-> built 2026-11-22 14:38 UTC from 7c35442 (main) · py2mcp 0.1.20. Details: build_info.json
+> built 2026-11-22 22:19 UTC from f7634b4 (main) · py2mcp 0.1.20. Details: build_info.json
 
 # index.html.md
 
@@ -96,6 +96,7 @@ mcp = mk_mcp_from_store(projects, name="project")
 
 **Local (stdio)** — for a one-click bundle (e.g. a Claude Desktop `.mcpb`):
 
+<!-- wads-docs: skip placeholder package mypkg (and it would block serving on stdio) -->
 ```python
 from py2mcp import serve_stdio
 
@@ -133,6 +134,7 @@ FastMCP’s native transports/OAuth — py2mcp does not reinvent them.
 
 Every builder accepts `middleware=` — a single [FastMCP middleware](https://gofastmcp.com/servers/middleware) or an iterable of them — attached at construction, exactly as `auth=` is. It’s the one clean seam for cross-cutting concerns that must wrap *every* tool call (usage metering, cost logging, audit trails, rate limiting), so you don’t decorate each function individually — and can’t forget one (a missed decorator on a paid tool means untracked cost):
 
+<!-- wads-docs: skip fragment; render and estimate are the reader's tools -->
 ```python
 from fastmcp.server.middleware import Middleware
 
@@ -158,6 +160,7 @@ through the `python -m py2mcp` CLI / JSON-config path (unlike `refs`/`name`/`aut
 
 A deployed connector’s web-server log says only that something `POST`ed `/mcp`. `UsageLogger` is a middleware that writes **one record per tool call** — time, caller (from the OAuth token), tool, arguments, outcome (`ok` / `empty` / `error`), result size, latency, connector name and version — plus one flagged record per `initialize` handshake, so “a client has it enabled” and “a client actually used it” stop looking the same:
 
+<!-- wads-docs: skip fragment; refs and the deployment values are the reader's -->
 ```python
 from py2mcp import mk_http_app, UsageLogger
 
@@ -179,6 +182,7 @@ attached at construction exactly like `auth=`/`middleware=`. It’s the place to
 what the tools are for and the intended workflow, so a model can orient itself
 without calling a tool:
 
+<!-- wads-docs: skip fragment; continues the middleware example -->
 ```python
 mcp = mk_mcp_server(
     [render, estimate],
@@ -199,6 +203,7 @@ Every builder also accepts `prompts=` and `resources=`, so a server that ships M
 built declaratively in one call, instead of reaching past the builder to register
 them by hand on the returned `FastMCP` object:
 
+<!-- wads-docs: skip fragment; continues the middleware example -->
 ```python
 def summarize_request(topic: str) -> str:
     return f"Summarize the latest on {topic}."
@@ -2460,7 +2465,7 @@ set). Set and delete return a short confirmation string.
 
 # About this build
 
-This documentation was built on **2026-11-22 14:38 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/7c354427f97f1092aa8841d2c31233d0cf83c124"><code>7c35442</code></a> on branch <code>main</code>, for **py2mcp 0.1.20** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 22:19 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/f7634b432c22347c37d3a0b6cc606f3318e2cf76"><code>f7634b4</code></a> on branch <code>main</code>, for **py2mcp 0.1.20** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2469,7 +2474,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/7c354427f97f1092aa8841d2c31233d0cf83c124"><code>7c354427f97f1092aa8841d2c31233d0cf83c124</code></a> |
+| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/f7634b432c22347c37d3a0b6cc606f3318e2cf76"><code>f7634b432c22347c37d3a0b6cc606f3318e2cf76</code></a> |
 | Branch              | <code>main</code>                                                                                                                                    |
 | Tags at this commit | none                                                                                                                                                 |
 | Working tree        | clean                                                                                                                                                |
@@ -2480,9 +2485,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/py2mcp</code>                                                                 |
-| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/45033771321">45033771321</a>        |
+| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/45076912671">45076912671</a>        |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>7c354427f97f1092aa8841d2c31233d0cf83c124</code> (in the history of the built commit) |
+| Event commit | <code>f7634b432c22347c37d3a0b6cc606f3318e2cf76</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2513,7 +2518,7 @@ Latest release: <a href="https://pypi.org/project/py2mcp/0.1.20/">0.1.20</a>, th
 
 ```bash
 git clone https://github.com/i2mint/py2mcp && cd py2mcp
-git checkout 7c354427f97f1092aa8841d2c31233d0cf83c124
+git checkout f7634b432c22347c37d3a0b6cc606f3318e2cf76
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

@@ -419,6 +419,7 @@
 <span id="serving-local-stdio-and-remote-http--oauth"></span><h2>Serving: local (stdio) and remote (HTTP + OAuth)<a class="headerlink" href="#serving-local-stdio-and-remote-http-oauth" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">mk_mcp_*</span></code> build a server <em>object</em>; py2mcp also gives you two ways to <strong>run</strong> one.</p>
 <p><strong>Local (stdio)</strong> — for a one-click bundle (e.g. a Claude Desktop <code class="docutils literal notranslate"><span class="pre">.mcpb</span></code>):</p>
+<!-- wads-docs: skip placeholder package mypkg (and it would block serving on stdio) -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">serve_stdio</span>
 
 <span class="n">serve_stdio</span><span class="p">([</span><span class="s2">"mypkg.tools:summarize"</span><span class="p">,</span> <span class="s2">"mypkg.tools:translate"</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">"My Tools"</span><span class="p">)</span>
@@ -452,6 +453,7 @@ FastMCP’s native transports/OAuth — py2mcp does not reinvent them.</p>
 <section id="middleware-metering-logging-rate-limiting">
 <h2>Middleware (metering, logging, rate-limiting)<a class="headerlink" href="#middleware-metering-logging-rate-limiting" title="Link to this heading">#</a></h2>
 <p>Every builder accepts <code class="docutils literal notranslate"><span class="pre">middleware=</span></code> — a single <a class="reference external" href="https://gofastmcp.com/servers/middleware">FastMCP middleware</a> or an iterable of them — attached at construction, exactly as <code class="docutils literal notranslate"><span class="pre">auth=</span></code> is. It’s the one clean seam for cross-cutting concerns that must wrap <em>every</em> tool call (usage metering, cost logging, audit trails, rate limiting), so you don’t decorate each function individually — and can’t forget one (a missed decorator on a paid tool means untracked cost):</p>
+<!-- wads-docs: skip fragment; render and estimate are the reader's tools -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp.server.middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">Middleware</span>
 
 
@@ -475,6 +477,7 @@ through the <code class="docutils literal notranslate"><span class="pre">python<
 <section id="usage-logging-who-called-which-tool-with-what-and-what-came-back">
 <h2>Usage logging (who called which tool, with what, and what came back)<a class="headerlink" href="#usage-logging-who-called-which-tool-with-what-and-what-came-back" title="Link to this heading">#</a></h2>
 <p>A deployed connector’s web-server log says only that something <code class="docutils literal notranslate"><span class="pre">POST</span></code>ed <code class="docutils literal notranslate"><span class="pre">/mcp</span></code>. <code class="docutils literal notranslate"><span class="pre">UsageLogger</span></code> is a middleware that writes <strong>one record per tool call</strong> — time, caller (from the OAuth token), tool, arguments, outcome (<code class="docutils literal notranslate"><span class="pre">ok</span></code> / <code class="docutils literal notranslate"><span class="pre">empty</span></code> / <code class="docutils literal notranslate"><span class="pre">error</span></code>), result size, latency, connector name and version — plus one flagged record per <code class="docutils literal notranslate"><span class="pre">initialize</span></code> handshake, so “a client has it enabled” and “a client actually used it” stop looking the same:</p>
+<!-- wads-docs: skip fragment; refs and the deployment values are the reader's -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_http_app</span><span class="p">,</span> <span class="n">UsageLogger</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">mk_http_app</span><span class="p">(</span>
@@ -494,6 +497,7 @@ the connecting client/model as the server’s <a class="reference external" href
 attached at construction exactly like <code class="docutils literal notranslate"><span class="pre">auth=</span></code>/<code class="docutils literal notranslate"><span class="pre">middleware=</span></code>. It’s the place to say
 what the tools are for and the intended workflow, so a model can orient itself
 without calling a tool:</p>
+<!-- wads-docs: skip fragment; continues the middleware example -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mcp</span> <span class="o">=</span> <span class="n">mk_mcp_server</span><span class="p">(</span>
     <span class="p">[</span><span class="n">render</span><span class="p">,</span> <span class="n">estimate</span><span class="p">],</span>
     <span class="n">instructions</span><span class="o">=</span><span class="s2">"Turn source docs into narrated audio. Always estimate_cost before a render."</span><span class="p">,</span>
@@ -512,6 +516,7 @@ without calling a tool:</p>
 <a class="reference external" href="https://gofastmcp.com/servers/resources">resources</a> alongside its tools can be
 built declaratively in one call, instead of reaching past the builder to register
 them by hand on the returned <code class="docutils literal notranslate"><span class="pre">FastMCP</span></code> object:</p>
+<!-- wads-docs: skip fragment; continues the middleware example -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">summarize_request</span><span class="p">(</span><span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">"Summarize the latest on </span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s2">."</span>
 
@@ -572,7 +577,7 @@ them to the allowlist.</p></li>
 </section>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 14:38 UTC from <a href="https://github.com/i2mint/py2mcp/commit/7c354427f97f1092aa8841d2c31233d0cf83c124">7c35442</a> (main) · py2mcp 0.1.20 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 22:19 UTC from <a href="https://github.com/i2mint/py2mcp/commit/f7634b432c22347c37d3a0b6cc606f3318e2cf76">f7634b4</a> (main) · py2mcp 0.1.20 · <a href="about-this-build.html">about this build</a></p>
 
                 </article>
               

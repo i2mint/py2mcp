@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-22T14:38:21Z",
+  "built_at": "2026-11-22T22:19:40Z",
   "package": {
     "name": "py2mcp",
     "version": "0.1.20",
@@ -9,24 +9,24 @@
   },
   "git": {
     "available": true,
-    "commit": "7c354427f97f1092aa8841d2c31233d0cf83c124",
-    "short_commit": "7c35442",
+    "commit": "f7634b432c22347c37d3a0b6cc606f3318e2cf76",
+    "short_commit": "f7634b4",
     "branch": "main",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/py2mcp",
-    "commit_url": "https://github.com/i2mint/py2mcp/commit/7c354427f97f1092aa8841d2c31233d0cf83c124",
+    "commit_url": "https://github.com/i2mint/py2mcp/commit/f7634b432c22347c37d3a0b6cc606f3318e2cf76",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/py2mcp",
-    "sha": "7c354427f97f1092aa8841d2c31233d0cf83c124",
+    "sha": "f7634b432c22347c37d3a0b6cc606f3318e2cf76",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "45033771321",
-    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/45033771321",
+    "run_id": "45076912671",
+    "run_url": "https://github.com/i2mint/py2mcp/actions/runs/45076912671",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -64,7 +64,7 @@
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout 7c354427f97f1092aa8841d2c31233d0cf83c124\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/py2mcp && cd py2mcp\ngit checkout f7634b432c22347c37d3a0b6cc606f3318e2cf76\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,
