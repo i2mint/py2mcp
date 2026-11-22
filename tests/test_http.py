@@ -129,3 +129,52 @@ def test_cli_http_passes_auth_host_port(tmp_path, monkeypatch):
     assert captured["auth"] == _AUTH
     assert captured["port"] == 9001
     assert captured["host"] == "127.0.0.1"
+
+
+# --- static bearer auth ------------------------------------------------------
+
+_TOKEN = "s3cret-token-0123456789"
+
+
+@pytest.mark.parametrize("tokens", [None, [], [""], ["   "], ["short"], [123]])
+def test_bearer_rejects_bad_tokens(tokens):
+    with pytest.raises(ValueError, match="tokens"):
+        mk_auth_provider({"type": "bearer", "tokens": tokens})
+
+
+def test_bearer_gate_is_fail_closed():
+    from starlette.testclient import TestClient
+
+    app = mk_http_app(
+        ["os.path:basename"], auth={"type": "bearer", "tokens": [_TOKEN]}
+    )
+    with TestClient(app) as c:
+        assert c.post("/mcp", json={}).status_code == 401
+        assert c.post("/mcp", json={}, headers={"Authorization": "Bearer "}).status_code == 401
+        bad = {"Authorization": "Bearer nope-nope-nope-nope"}
+        assert c.post("/mcp", json={}, headers=bad).status_code == 401
+        good = {"Authorization": f"Bearer {_TOKEN}"}
+        assert c.post("/mcp", json={}, headers=good).status_code != 401
+
+
+def test_run_quietly_disables_banner_and_update_check():
+    import fastmcp
+
+    from py2mcp.serve import run_quietly
+
+    seen = {}
+
+    class _Server:
+        def run(self, **kw):
+            seen.update(kw)
+
+    old = fastmcp.settings.check_for_updates
+    try:
+        run_quietly(_Server(), transport="stdio")
+        assert seen == {"transport": "stdio", "show_banner": False}
+        assert fastmcp.settings.check_for_updates == "off"
+        seen.clear()
+        run_quietly(_Server(), check_for_updates=True, transport="stdio")
+        assert seen == {"transport": "stdio"}
+    finally:
+        fastmcp.settings.check_for_updates = old
