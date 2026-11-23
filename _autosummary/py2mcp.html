@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../_static/documentation_options.js?v=17aaaefc"></script>
+    <script src="../_static/documentation_options.js?v=b3d22ae5"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -58,7 +58,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.20" />
+  <meta name="docsearch:version" content="0.1.21" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -547,7 +547,9 @@ arguments with <code class="docutils literal notranslate"><span class="pre">inpu
 <li><p><strong>handshakes</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Also record <code class="docutils literal notranslate"><span class="pre">initialize</span></code> requests (as <code class="docutils literal notranslate"><span class="pre">event:</span>
 <span class="pre">&quot;initialize&quot;</span></code> with the client’s name/version, and <code class="docutils literal notranslate"><span class="pre">outcome</span></code>
 <code class="docutils literal notranslate"><span class="pre">error</span></code> if the handshake failed), so a connector that is <em>enabled</em>
-can be told from one that is <em>used</em>.</p></li>
+can be told from one that is <em>used</em>. Only clients that perform the
+<code class="docutils literal notranslate"><span class="pre">initialize</span></code> handshake are seen: a fastmcp&gt;=4 client in its default
+<code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> mode negotiates via <code class="docutils literal notranslate"><span class="pre">server/discover</span></code> and sends none.</p></li>
 </ul>
 </dd>
 </dl>

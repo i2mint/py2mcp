@@ -1,4 +1,4 @@
-> built 2026-11-23 02:55 UTC from 462f37f (main) · py2mcp 0.1.20. Details: build_info.json
+> built 2026-11-23 04:40 UTC from 8c25838 (main) · py2mcp 0.1.21. Details: build_info.json
 
 # index.html.md
 
@@ -388,7 +388,9 @@ FastMCP middleware: one record per tool call (and per handshake) to `sink`.
   * **handshakes** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Also record `initialize` requests (as `event:
     "initialize"` with the client’s name/version, and `outcome`
     `error` if the handshake failed), so a connector that is *enabled*
-    can be told from one that is *used*.
+    can be told from one that is *used*. Only clients that perform the
+    `initialize` handshake are seen: a fastmcp>=4 client in its default
+    `"auto"` mode negotiates via `server/discover` and sends none.
 
 Error text (an exception message, or an `is_error` result’s text) is
 recorded only when `include_args` is true and `redact` is empty, because
@@ -2063,7 +2065,9 @@ FastMCP middleware: one record per tool call (and per handshake) to `sink`.
   * **handshakes** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Also record `initialize` requests (as `event:
     "initialize"` with the client’s name/version, and `outcome`
     `error` if the handshake failed), so a connector that is *enabled*
-    can be told from one that is *used*.
+    can be told from one that is *used*. Only clients that perform the
+    `initialize` handshake are seen: a fastmcp>=4 client in its default
+    `"auto"` mode negotiates via `server/discover` and sends none.
 
 Error text (an exception message, or an `is_error` result’s text) is
 recorded only when `include_args` is true and `redact` is empty, because
@@ -2438,16 +2442,18 @@ set). Set and delete return a short confirmation string.
 
 # About this build
 
-This documentation was built on **2026-11-23 02:55 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/462f37f54b48cb38e0d4656b51e2805c0e84b858"><code>462f37f</code></a> on branch <code>main</code>, for **py2mcp 0.1.20** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 04:40 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/8c25838925632bfe1e52aa1eb47635d9bf96303b"><code>8c25838</code></a> on branch <code>main</code>, for **py2mcp 0.1.21** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.1.21) is behind the latest release on PyPI (0.1.22): `pip install py2mcp` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/462f37f54b48cb38e0d4656b51e2805c0e84b858"><code>462f37f54b48cb38e0d4656b51e2805c0e84b858</code></a> |
+| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/8c25838925632bfe1e52aa1eb47635d9bf96303b"><code>8c25838925632bfe1e52aa1eb47635d9bf96303b</code></a> |
 | Branch              | <code>main</code>                                                                                                                                    |
 | Tags at this commit | none                                                                                                                                                 |
 | Working tree        | clean                                                                                                                                                |
@@ -2458,9 +2464,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/py2mcp</code>                                                                 |
-| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/45102797199">45102797199</a>        |
+| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/45113110275">45113110275</a>        |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>462f37f54b48cb38e0d4656b51e2805c0e84b858</code> (in the history of the built commit) |
+| Event commit | <code>8c25838925632bfe1e52aa1eb47635d9bf96303b</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2485,13 +2491,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/py2mcp/0.1.20/">0.1.20</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/py2mcp/0.1.22/">0.1.22</a>, newer than the documented version (0.1.21).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/py2mcp && cd py2mcp
-git checkout 462f37f54b48cb38e0d4656b51e2805c0e84b858
+git checkout 8c25838925632bfe1e52aa1eb47635d9bf96303b
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

@@ -118,7 +118,9 @@ FastMCP middleware: one record per tool call (and per handshake) to `sink`.
   * **handshakes** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Also record `initialize` requests (as `event:
     "initialize"` with the client’s name/version, and `outcome`
     `error` if the handshake failed), so a connector that is *enabled*
-    can be told from one that is *used*.
+    can be told from one that is *used*. Only clients that perform the
+    `initialize` handshake are seen: a fastmcp>=4 client in its default
+    `"auto"` mode negotiates via `server/discover` and sends none.
 
 Error text (an exception message, or an `is_error` result’s text) is
 recorded only when `include_args` is true and `redact` is empty, because

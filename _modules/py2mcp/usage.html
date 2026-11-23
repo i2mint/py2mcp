@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../_static/documentation_options.js?v=17aaaefc"></script>
+    <script src="../../_static/documentation_options.js?v=b3d22ae5"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -411,7 +411,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.20" />
+  <meta name="docsearch:version" content="0.1.21" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -1192,7 +1192,9 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        handshakes: Also record ``initialize`` requests (as ``event:</span>
 <span class="sd">            "initialize"`` with the client's name/version, and ``outcome``</span>
 <span class="sd">            ``error`` if the handshake failed), so a connector that is *enabled*</span>
-<span class="sd">            can be told from one that is *used*.</span>
+<span class="sd">            can be told from one that is *used*. Only clients that perform the</span>
+<span class="sd">            ``initialize`` handshake are seen: a fastmcp&gt;=4 client in its default</span>
+<span class="sd">            ``"auto"`` mode negotiates via ``server/discover`` and sends none.</span>
 
 <span class="sd">    Error text (an exception message, or an ``is_error`` result's text) is</span>
 <span class="sd">    recorded only when ``include_args`` is true and ``redact`` is empty, because</span>
@@ -1310,13 +1312,17 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">handshakes</span><span class="p">:</span>
             <span class="k">return</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">client</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"clientInfo"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># MCP SDK v2 (fastmcp&gt;=4) renamed these fields to snake_case.</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"client_info"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="n">params</span><span class="p">,</span> <span class="s2">"clientInfo"</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="p">)</span>
         <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_record</span><span class="p">(</span><span class="s2">"initialize"</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
         <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">"client"</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
                 <span class="s2">"client_version"</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="s2">"version"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-                <span class="s2">"protocol"</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"protocolVersion"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="s2">"protocol"</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"protocol_version"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"protocolVersion"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="p">}</span>
         <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
