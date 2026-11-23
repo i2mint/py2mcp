@@ -458,7 +458,9 @@ class UsageLogger(Middleware):
         handshakes: Also record ``initialize`` requests (as ``event:
             "initialize"`` with the client's name/version, and ``outcome``
             ``error`` if the handshake failed), so a connector that is *enabled*
-            can be told from one that is *used*.
+            can be told from one that is *used*. Only clients that perform the
+            ``initialize`` handshake are seen: a fastmcp>=4 client in its default
+            ``"auto"`` mode negotiates via ``server/discover`` and sends none.
 
     Error text (an exception message, or an ``is_error`` result's text) is
     recorded only when ``include_args`` is true and ``redact`` is empty, because
@@ -576,13 +578,17 @@ class UsageLogger(Middleware):
         if not self.handshakes:
             return await call_next(context)
         params = getattr(context.message, "params", None)
-        client = getattr(params, "clientInfo", None)
+        # MCP SDK v2 (fastmcp>=4) renamed these fields to snake_case.
+        client = getattr(params, "client_info", None) or getattr(
+            params, "clientInfo", None
+        )
         record = self._base_record("initialize", context)
         record.update(
             {
                 "client": getattr(client, "name", None),
                 "client_version": getattr(client, "version", None),
-                "protocol": getattr(params, "protocolVersion", None),
+                "protocol": getattr(params, "protocol_version", None)
+                or getattr(params, "protocolVersion", None),
             }
         )
         try:
