@@ -40,7 +40,7 @@ dependencies = [
     # fails to import ("cannot import name 'FastMCP' from 'fastmcp'"), so 4.x has not
     # been supported here yet. Lift it deliberately, with the suite green, not by
     # assumption.
-    "fastmcp>=3.2,<4",
+    "fastmcp>=3.2",
 ]
 
 [project.urls]

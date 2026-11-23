@@ -9,6 +9,7 @@ read-back, plus the ``py2mcp usage`` CLI. See i2mint/py2mcp#20.
 from __future__ import annotations
 
 import asyncio
+import inspect
 import json
 import logging
 from datetime import date, timedelta
@@ -53,10 +54,20 @@ def soft_fail(x: int) -> ToolResult:
     return ToolResult(content="nope", is_error=True)
 
 
+def _client(server):
+    # fastmcp>=4 negotiates the modern era by default (``server/discover``, no
+    # ``initialize`` request at all); these tests exercise the ``initialize``
+    # handshake, so pin the legacy era where the client has the knob (fastmcp 3 has
+    # no ``mode`` and always handshakes).
+    if "mode" in inspect.signature(Client.__init__).parameters:
+        return Client(server, mode="legacy")
+    return Client(server)
+
+
 def _run(server, calls):
     async def go():
         out = []
-        async with Client(server) as client:
+        async with _client(server) as client:
             for name, args in calls:
                 try:
                     out.append(await client.call_tool(name, args))
@@ -237,7 +248,9 @@ def test_session_is_none_on_the_in_memory_transport_before_a_request():
     records = []
     _run(_server(records), [("search", {"q": "x"})])
     init, call = records[0], records[1]
-    assert init["session"] is None  # initialize precedes any session
+    # fastmcp 3: initialize precedes any session. fastmcp 4 may already have one.
+    # Either way reading it must not have raised or created a different one.
+    assert init["session"] is None or init["session"] == call["session"]
     assert call["session"] and call["request"]
 
 
