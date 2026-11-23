@@ -1,4 +1,4 @@
-> built 2026-11-22 22:19 UTC from f7634b4 (main) · py2mcp 0.1.20. Details: build_info.json
+> built 2026-11-23 02:55 UTC from 462f37f (main) · py2mcp 0.1.20. Details: build_info.json
 
 # index.html.md
 
@@ -104,10 +104,7 @@ serve_stdio(["mypkg.tools:summarize", "mypkg.tools:translate"], name="My Tools")
 # or:  python -m py2mcp --config py2mcp_config.json
 ```
 
-**Remote (Streamable HTTP + OAuth 2.1)** — for a hosted MCP server reached from a
-vendor’s cloud (e.g. a claude.ai custom connector). The server is an OAuth 2.1
-**resource server**: it *validates* a managed IdP’s JWTs (audience-bound per
-RFC 8707) and never issues tokens itself.
+**Remote (Streamable HTTP + OAuth 2.1)** — for a hosted MCP server reached from a vendor’s cloud (e.g. a claude.ai custom connector). The server is an OAuth 2.1 **resource server**: it *validates* a managed IdP’s JWTs (audience-bound per RFC 8707) and never issues tokens itself.
 
 ```python
 from py2mcp.http import mk_http_app
@@ -127,8 +124,7 @@ app = mk_http_app(["mypkg.tools:summarize"], name="My Connector", auth=AUTH)
 #   uvicorn server.app:app --host 0.0.0.0 --port 8000   (behind TLS)
 ```
 
-`serve_http(...)` builds and runs it in-process (FastMCP/uvicorn). Both wrap
-FastMCP’s native transports/OAuth — py2mcp does not reinvent them.
+`serve_http(...)` builds and runs it in-process (FastMCP/uvicorn). Both wrap FastMCP’s native transports/OAuth — py2mcp does not reinvent them.
 
 ## Middleware (metering, logging, rate-limiting)
 
@@ -151,10 +147,7 @@ mcp = mk_mcp_server([render, estimate], middleware=[UsageMeter()])
 #         serve_http(...), serve_stdio(...)
 ```
 
-On the remote path `auth=` (transport-level) runs first, so a middleware can read
-the authenticated caller via `fastmcp.server.dependencies.get_access_token()`.
-Middleware is a *programmatic* hook — it takes Python objects, so it isn’t wired
-through the `python -m py2mcp` CLI / JSON-config path (unlike `refs`/`name`/`auth`).
+On the remote path `auth=` (transport-level) runs first, so a middleware can read the authenticated caller via `fastmcp.server.dependencies.get_access_token()`. Middleware is a *programmatic* hook — it takes Python objects, so it isn’t wired through the `python -m py2mcp` CLI / JSON-config path (unlike `refs`/`name`/`auth`).
 
 ## Usage logging (who called which tool, with what, and what came back)
 
@@ -176,11 +169,7 @@ With no `sink=`, records go to one JSON-lines file per day under `$XDG_DATA_HOME
 
 ## Instructions (the server’s model-facing description)
 
-Every builder also accepts `instructions=` — a natural-language string surfaced to
-the connecting client/model as the server’s [`instructions`](https://gofastmcp.com/servers/server),
-attached at construction exactly like `auth=`/`middleware=`. It’s the place to say
-what the tools are for and the intended workflow, so a model can orient itself
-without calling a tool:
+Every builder also accepts `instructions=` — a natural-language string surfaced to the connecting client/model as the server’s [`instructions`](https://gofastmcp.com/servers/server), attached at construction exactly like `auth=`/`middleware=`. It’s the place to say what the tools are for and the intended workflow, so a model can orient itself without calling a tool:
 
 <!-- wads-docs: skip fragment; continues the middleware example -->
 ```python
@@ -192,16 +181,11 @@ mcp = mk_mcp_server(
 #                 serve_http(...), serve_stdio(...)
 ```
 
-Like `middleware=`, it’s a programmatic argument (not yet wired through the
-`python -m py2mcp` CLI / JSON-config path).
+Like `middleware=`, it’s a programmatic argument (not yet wired through the `python -m py2mcp` CLI / JSON-config path).
 
 ## Prompts and resources
 
-Every builder also accepts `prompts=` and `resources=`, so a server that ships MCP
-[prompts](https://gofastmcp.com/servers/prompts) and
-[resources](https://gofastmcp.com/servers/resources) alongside its tools can be
-built declaratively in one call, instead of reaching past the builder to register
-them by hand on the returned `FastMCP` object:
+Every builder also accepts `prompts=` and `resources=`, so a server that ships MCP [prompts](https://gofastmcp.com/servers/prompts) and [resources](https://gofastmcp.com/servers/resources) alongside its tools can be built declaratively in one call, instead of reaching past the builder to register them by hand on the returned `FastMCP` object:
 
 <!-- wads-docs: skip fragment; continues the middleware example -->
 ```python
@@ -222,16 +206,11 @@ mcp = mk_mcp_server(
 #                  serve_http(...), serve_stdio(...)
 ```
 
-`prompts` accepts a single callable or an iterable, normalized the same way `funcs`
-is for tools. `resources` is a `{uri: callable}` mapping — each callable is invoked
-to produce that resource’s content when a client reads its URI.
+`prompts` accepts a single callable or an iterable, normalized the same way `funcs` is for tools. `resources` is a `{uri: callable}` mapping — each callable is invoked to produce that resource’s content when a client reads its URI.
 
 ## “Add to Claude” install links
 
-Once a server is hosted, the last mile is getting a human to add it. There’s no
-true one-click install for an unlisted connector (listing requires Anthropic
-review), but a prefilled link opens the add-connector modal with the name and
-URL already filled in, so the user only has to confirm:
+Once a server is hosted, the last mile is getting a human to add it. There’s no true one-click install for an unlisted connector (listing requires Anthropic review), but a prefilled link opens the add-connector modal with the name and URL already filled in, so the user only has to confirm:
 
 ```python
 from py2mcp import claude_install_link, markdown_install_badge
@@ -245,17 +224,11 @@ markdown_install_badge("snout", "https://example.com/api/snout_mcp/mcp")
 claude_install_link("snout", "...", admin=True)  # org-wide page, not per-user
 ```
 
-Both are pure string functions (stdlib only, no server needed). Three caveats
-the link itself can’t express:
+Both are pure string functions (stdlib only, no server needed). Three caveats the link itself can’t express:
 
-- Custom connectors are a **paid-plan** feature, so the link goes nowhere for a
-  Free-plan user.
-- `admin=True` targets the org-wide install page — the right one when an admin
-  is rolling a connector out to a workspace, the wrong one for a personal install.
-- **A link is not an access grant.** If the server is an OAuth resource server
-  with an allowlist (see above), someone not on it can follow the link, complete
-  the flow, and still be refused. Hand out the link together with whatever adds
-  them to the allowlist.
+- Custom connectors are a **paid-plan** feature, so the link goes nowhere for a Free-plan user.
+- `admin=True` targets the org-wide install page — the right one when an admin is rolling a connector out to a workspace, the wrong one for a personal install.
+- **A link is not an access grant.** If the server is an OAuth resource server with an allowlist (see above), someone not on it can follow the link, complete the flow, and still be refused. Hand out the link together with whatever adds them to the allowlist.
 
 ## License
 
@@ -2465,7 +2438,7 @@ set). Set and delete return a short confirmation string.
 
 # About this build
 
-This documentation was built on **2026-11-22 22:19 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/f7634b432c22347c37d3a0b6cc606f3318e2cf76"><code>f7634b4</code></a> on branch <code>main</code>, for **py2mcp 0.1.20** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 02:55 UTC** from commit <a href="https://github.com/i2mint/py2mcp/commit/462f37f54b48cb38e0d4656b51e2805c0e84b858"><code>462f37f</code></a> on branch <code>main</code>, for **py2mcp 0.1.20** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2474,7 +2447,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/f7634b432c22347c37d3a0b6cc606f3318e2cf76"><code>f7634b432c22347c37d3a0b6cc606f3318e2cf76</code></a> |
+| Commit              | <a href="https://github.com/i2mint/py2mcp/commit/462f37f54b48cb38e0d4656b51e2805c0e84b858"><code>462f37f54b48cb38e0d4656b51e2805c0e84b858</code></a> |
 | Branch              | <code>main</code>                                                                                                                                    |
 | Tags at this commit | none                                                                                                                                                 |
 | Working tree        | clean                                                                                                                                                |
@@ -2485,9 +2458,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/py2mcp</code>                                                                 |
-| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/45076912671">45076912671</a>        |
+| Run          | <a href="https://github.com/i2mint/py2mcp/actions/runs/45102797199">45102797199</a>        |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>f7634b432c22347c37d3a0b6cc606f3318e2cf76</code> (in the history of the built commit) |
+| Event commit | <code>462f37f54b48cb38e0d4656b51e2805c0e84b858</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2518,7 +2491,7 @@ Latest release: <a href="https://pypi.org/project/py2mcp/0.1.20/">0.1.20</a>, th
 
 ```bash
 git clone https://github.com/i2mint/py2mcp && cd py2mcp
-git checkout f7634b432c22347c37d3a0b6cc606f3318e2cf76
+git checkout 462f37f54b48cb38e0d4656b51e2805c0e84b858
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

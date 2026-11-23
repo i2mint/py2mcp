@@ -100,10 +100,7 @@ serve_stdio(["mypkg.tools:summarize", "mypkg.tools:translate"], name="My Tools")
 # or:  python -m py2mcp --config py2mcp_config.json
 ```
 
-**Remote (Streamable HTTP + OAuth 2.1)** — for a hosted MCP server reached from a
-vendor’s cloud (e.g. a claude.ai custom connector). The server is an OAuth 2.1
-**resource server**: it *validates* a managed IdP’s JWTs (audience-bound per
-RFC 8707) and never issues tokens itself.
+**Remote (Streamable HTTP + OAuth 2.1)** — for a hosted MCP server reached from a vendor’s cloud (e.g. a claude.ai custom connector). The server is an OAuth 2.1 **resource server**: it *validates* a managed IdP’s JWTs (audience-bound per RFC 8707) and never issues tokens itself.
 
 ```python
 from py2mcp.http import mk_http_app
@@ -123,8 +120,7 @@ app = mk_http_app(["mypkg.tools:summarize"], name="My Connector", auth=AUTH)
 #   uvicorn server.app:app --host 0.0.0.0 --port 8000   (behind TLS)
 ```
 
-`serve_http(...)` builds and runs it in-process (FastMCP/uvicorn). Both wrap
-FastMCP’s native transports/OAuth — py2mcp does not reinvent them.
+`serve_http(...)` builds and runs it in-process (FastMCP/uvicorn). Both wrap FastMCP’s native transports/OAuth — py2mcp does not reinvent them.
 
 ## Middleware (metering, logging, rate-limiting)
 
@@ -147,10 +143,7 @@ mcp = mk_mcp_server([render, estimate], middleware=[UsageMeter()])
 #         serve_http(...), serve_stdio(...)
 ```
 
-On the remote path `auth=` (transport-level) runs first, so a middleware can read
-the authenticated caller via `fastmcp.server.dependencies.get_access_token()`.
-Middleware is a *programmatic* hook — it takes Python objects, so it isn’t wired
-through the `python -m py2mcp` CLI / JSON-config path (unlike `refs`/`name`/`auth`).
+On the remote path `auth=` (transport-level) runs first, so a middleware can read the authenticated caller via `fastmcp.server.dependencies.get_access_token()`. Middleware is a *programmatic* hook — it takes Python objects, so it isn’t wired through the `python -m py2mcp` CLI / JSON-config path (unlike `refs`/`name`/`auth`).
 
 ## Usage logging (who called which tool, with what, and what came back)
 
@@ -172,11 +165,7 @@ With no `sink=`, records go to one JSON-lines file per day under `$XDG_DATA_HOME
 
 ## Instructions (the server’s model-facing description)
 
-Every builder also accepts `instructions=` — a natural-language string surfaced to
-the connecting client/model as the server’s [`instructions`](https://gofastmcp.com/servers/server),
-attached at construction exactly like `auth=`/`middleware=`. It’s the place to say
-what the tools are for and the intended workflow, so a model can orient itself
-without calling a tool:
+Every builder also accepts `instructions=` — a natural-language string surfaced to the connecting client/model as the server’s [`instructions`](https://gofastmcp.com/servers/server), attached at construction exactly like `auth=`/`middleware=`. It’s the place to say what the tools are for and the intended workflow, so a model can orient itself without calling a tool:
 
 <!-- wads-docs: skip fragment; continues the middleware example -->
 ```python
@@ -188,16 +177,11 @@ mcp = mk_mcp_server(
 #                 serve_http(...), serve_stdio(...)
 ```
 
-Like `middleware=`, it’s a programmatic argument (not yet wired through the
-`python -m py2mcp` CLI / JSON-config path).
+Like `middleware=`, it’s a programmatic argument (not yet wired through the `python -m py2mcp` CLI / JSON-config path).
 
 ## Prompts and resources
 
-Every builder also accepts `prompts=` and `resources=`, so a server that ships MCP
-[prompts](https://gofastmcp.com/servers/prompts) and
-[resources](https://gofastmcp.com/servers/resources) alongside its tools can be
-built declaratively in one call, instead of reaching past the builder to register
-them by hand on the returned `FastMCP` object:
+Every builder also accepts `prompts=` and `resources=`, so a server that ships MCP [prompts](https://gofastmcp.com/servers/prompts) and [resources](https://gofastmcp.com/servers/resources) alongside its tools can be built declaratively in one call, instead of reaching past the builder to register them by hand on the returned `FastMCP` object:
 
 <!-- wads-docs: skip fragment; continues the middleware example -->
 ```python
@@ -218,16 +202,11 @@ mcp = mk_mcp_server(
 #                  serve_http(...), serve_stdio(...)
 ```
 
-`prompts` accepts a single callable or an iterable, normalized the same way `funcs`
-is for tools. `resources` is a `{uri: callable}` mapping — each callable is invoked
-to produce that resource’s content when a client reads its URI.
+`prompts` accepts a single callable or an iterable, normalized the same way `funcs` is for tools. `resources` is a `{uri: callable}` mapping — each callable is invoked to produce that resource’s content when a client reads its URI.
 
 ## “Add to Claude” install links
 
-Once a server is hosted, the last mile is getting a human to add it. There’s no
-true one-click install for an unlisted connector (listing requires Anthropic
-review), but a prefilled link opens the add-connector modal with the name and
-URL already filled in, so the user only has to confirm:
+Once a server is hosted, the last mile is getting a human to add it. There’s no true one-click install for an unlisted connector (listing requires Anthropic review), but a prefilled link opens the add-connector modal with the name and URL already filled in, so the user only has to confirm:
 
 ```python
 from py2mcp import claude_install_link, markdown_install_badge
@@ -241,17 +220,11 @@ markdown_install_badge("snout", "https://example.com/api/snout_mcp/mcp")
 claude_install_link("snout", "...", admin=True)  # org-wide page, not per-user
 ```
 
-Both are pure string functions (stdlib only, no server needed). Three caveats
-the link itself can’t express:
+Both are pure string functions (stdlib only, no server needed). Three caveats the link itself can’t express:
 
-- Custom connectors are a **paid-plan** feature, so the link goes nowhere for a
-  Free-plan user.
-- `admin=True` targets the org-wide install page — the right one when an admin
-  is rolling a connector out to a workspace, the wrong one for a personal install.
-- **A link is not an access grant.** If the server is an OAuth resource server
-  with an allowlist (see above), someone not on it can follow the link, complete
-  the flow, and still be refused. Hand out the link together with whatever adds
-  them to the allowlist.
+- Custom connectors are a **paid-plan** feature, so the link goes nowhere for a Free-plan user.
+- `admin=True` targets the org-wide install page — the right one when an admin is rolling a connector out to a workspace, the wrong one for a personal install.
+- **A link is not an access grant.** If the server is an OAuth resource server with an allowlist (see above), someone not on it can follow the link, complete the flow, and still be refused. Hand out the link together with whatever adds them to the allowlist.
 
 ## License
 

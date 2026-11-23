@@ -426,10 +426,7 @@
 <span class="c1"># or:  python -m py2mcp --config py2mcp_config.json</span>
 </pre></div>
 </div>
-<p><strong>Remote (Streamable HTTP + OAuth 2.1)</strong> — for a hosted MCP server reached from a
-vendor’s cloud (e.g. a claude.ai custom connector). The server is an OAuth 2.1
-<strong>resource server</strong>: it <em>validates</em> a managed IdP’s JWTs (audience-bound per
-RFC 8707) and never issues tokens itself.</p>
+<p><strong>Remote (Streamable HTTP + OAuth 2.1)</strong> — for a hosted MCP server reached from a vendor’s cloud (e.g. a claude.ai custom connector). The server is an OAuth 2.1 <strong>resource server</strong>: it <em>validates</em> a managed IdP’s JWTs (audience-bound per RFC 8707) and never issues tokens itself.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_http_app</span>
 
 <span class="n">AUTH</span> <span class="o">=</span> <span class="p">{</span>
@@ -447,8 +444,7 @@ RFC 8707) and never issues tokens itself.</p>
 <span class="c1">#   uvicorn server.app:app --host 0.0.0.0 --port 8000   (behind TLS)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">serve_http(...)</span></code> builds and runs it in-process (FastMCP/uvicorn). Both wrap
-FastMCP’s native transports/OAuth — py2mcp does not reinvent them.</p>
+<p><code class="docutils literal notranslate"><span class="pre">serve_http(...)</span></code> builds and runs it in-process (FastMCP/uvicorn). Both wrap FastMCP’s native transports/OAuth — py2mcp does not reinvent them.</p>
 </section>
 <section id="middleware-metering-logging-rate-limiting">
 <h2>Middleware (metering, logging, rate-limiting)<a class="headerlink" href="#middleware-metering-logging-rate-limiting" title="Link to this heading">#</a></h2>
@@ -469,10 +465,7 @@ FastMCP’s native transports/OAuth — py2mcp does not reinvent them.</p>
 <span class="c1">#         serve_http(...), serve_stdio(...)</span>
 </pre></div>
 </div>
-<p>On the remote path <code class="docutils literal notranslate"><span class="pre">auth=</span></code> (transport-level) runs first, so a middleware can read
-the authenticated caller via <code class="docutils literal notranslate"><span class="pre">fastmcp.server.dependencies.get_access_token()</span></code>.
-Middleware is a <em>programmatic</em> hook — it takes Python objects, so it isn’t wired
-through the <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">py2mcp</span></code> CLI / JSON-config path (unlike <code class="docutils literal notranslate"><span class="pre">refs</span></code>/<code class="docutils literal notranslate"><span class="pre">name</span></code>/<code class="docutils literal notranslate"><span class="pre">auth</span></code>).</p>
+<p>On the remote path <code class="docutils literal notranslate"><span class="pre">auth=</span></code> (transport-level) runs first, so a middleware can read the authenticated caller via <code class="docutils literal notranslate"><span class="pre">fastmcp.server.dependencies.get_access_token()</span></code>. Middleware is a <em>programmatic</em> hook — it takes Python objects, so it isn’t wired through the <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">py2mcp</span></code> CLI / JSON-config path (unlike <code class="docutils literal notranslate"><span class="pre">refs</span></code>/<code class="docutils literal notranslate"><span class="pre">name</span></code>/<code class="docutils literal notranslate"><span class="pre">auth</span></code>).</p>
 </section>
 <section id="usage-logging-who-called-which-tool-with-what-and-what-came-back">
 <h2>Usage logging (who called which tool, with what, and what came back)<a class="headerlink" href="#usage-logging-who-called-which-tool-with-what-and-what-came-back" title="Link to this heading">#</a></h2>
@@ -492,11 +485,7 @@ through the <code class="docutils literal notranslate"><span class="pre">python<
 </section>
 <section id="instructions-the-server-s-model-facing-description">
 <span id="instructions-the-servers-model-facing-description"></span><h2>Instructions (the server’s model-facing description)<a class="headerlink" href="#instructions-the-server-s-model-facing-description" title="Link to this heading">#</a></h2>
-<p>Every builder also accepts <code class="docutils literal notranslate"><span class="pre">instructions=</span></code> — a natural-language string surfaced to
-the connecting client/model as the server’s <a class="reference external" href="https://gofastmcp.com/servers/server"><code class="docutils literal notranslate"><span class="pre">instructions</span></code></a>,
-attached at construction exactly like <code class="docutils literal notranslate"><span class="pre">auth=</span></code>/<code class="docutils literal notranslate"><span class="pre">middleware=</span></code>. It’s the place to say
-what the tools are for and the intended workflow, so a model can orient itself
-without calling a tool:</p>
+<p>Every builder also accepts <code class="docutils literal notranslate"><span class="pre">instructions=</span></code> — a natural-language string surfaced to the connecting client/model as the server’s <a class="reference external" href="https://gofastmcp.com/servers/server"><code class="docutils literal notranslate"><span class="pre">instructions</span></code></a>, attached at construction exactly like <code class="docutils literal notranslate"><span class="pre">auth=</span></code>/<code class="docutils literal notranslate"><span class="pre">middleware=</span></code>. It’s the place to say what the tools are for and the intended workflow, so a model can orient itself without calling a tool:</p>
 <!-- wads-docs: skip fragment; continues the middleware example -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mcp</span> <span class="o">=</span> <span class="n">mk_mcp_server</span><span class="p">(</span>
     <span class="p">[</span><span class="n">render</span><span class="p">,</span> <span class="n">estimate</span><span class="p">],</span>
@@ -506,16 +495,11 @@ without calling a tool:</p>
 <span class="c1">#                 serve_http(...), serve_stdio(...)</span>
 </pre></div>
 </div>
-<p>Like <code class="docutils literal notranslate"><span class="pre">middleware=</span></code>, it’s a programmatic argument (not yet wired through the
-<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">py2mcp</span></code> CLI / JSON-config path).</p>
+<p>Like <code class="docutils literal notranslate"><span class="pre">middleware=</span></code>, it’s a programmatic argument (not yet wired through the <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">py2mcp</span></code> CLI / JSON-config path).</p>
 </section>
 <section id="prompts-and-resources">
 <h2>Prompts and resources<a class="headerlink" href="#prompts-and-resources" title="Link to this heading">#</a></h2>
-<p>Every builder also accepts <code class="docutils literal notranslate"><span class="pre">prompts=</span></code> and <code class="docutils literal notranslate"><span class="pre">resources=</span></code>, so a server that ships MCP
-<a class="reference external" href="https://gofastmcp.com/servers/prompts">prompts</a> and
-<a class="reference external" href="https://gofastmcp.com/servers/resources">resources</a> alongside its tools can be
-built declaratively in one call, instead of reaching past the builder to register
-them by hand on the returned <code class="docutils literal notranslate"><span class="pre">FastMCP</span></code> object:</p>
+<p>Every builder also accepts <code class="docutils literal notranslate"><span class="pre">prompts=</span></code> and <code class="docutils literal notranslate"><span class="pre">resources=</span></code>, so a server that ships MCP <a class="reference external" href="https://gofastmcp.com/servers/prompts">prompts</a> and <a class="reference external" href="https://gofastmcp.com/servers/resources">resources</a> alongside its tools can be built declaratively in one call, instead of reaching past the builder to register them by hand on the returned <code class="docutils literal notranslate"><span class="pre">FastMCP</span></code> object:</p>
 <!-- wads-docs: skip fragment; continues the middleware example -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">summarize_request</span><span class="p">(</span><span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">"Summarize the latest on </span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s2">."</span>
@@ -534,16 +518,11 @@ them by hand on the returned <code class="docutils literal notranslate"><span cl
 <span class="c1">#                  serve_http(...), serve_stdio(...)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">prompts</span></code> accepts a single callable or an iterable, normalized the same way <code class="docutils literal notranslate"><span class="pre">funcs</span></code>
-is for tools. <code class="docutils literal notranslate"><span class="pre">resources</span></code> is a <code class="docutils literal notranslate"><span class="pre">{uri:</span> <span class="pre">callable}</span></code> mapping — each callable is invoked
-to produce that resource’s content when a client reads its URI.</p>
+<p><code class="docutils literal notranslate"><span class="pre">prompts</span></code> accepts a single callable or an iterable, normalized the same way <code class="docutils literal notranslate"><span class="pre">funcs</span></code> is for tools. <code class="docutils literal notranslate"><span class="pre">resources</span></code> is a <code class="docutils literal notranslate"><span class="pre">{uri:</span> <span class="pre">callable}</span></code> mapping — each callable is invoked to produce that resource’s content when a client reads its URI.</p>
 </section>
 <section id="add-to-claude-install-links">
 <h2>“Add to Claude” install links<a class="headerlink" href="#add-to-claude-install-links" title="Link to this heading">#</a></h2>
-<p>Once a server is hosted, the last mile is getting a human to add it. There’s no
-true one-click install for an unlisted connector (listing requires Anthropic
-review), but a prefilled link opens the add-connector modal with the name and
-URL already filled in, so the user only has to confirm:</p>
+<p>Once a server is hosted, the last mile is getting a human to add it. There’s no true one-click install for an unlisted connector (listing requires Anthropic review), but a prefilled link opens the add-connector modal with the name and URL already filled in, so the user only has to confirm:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">claude_install_link</span><span class="p">,</span> <span class="n">markdown_install_badge</span>
 
 <span class="n">claude_install_link</span><span class="p">(</span><span class="s2">"snout"</span><span class="p">,</span> <span class="s2">"https://example.com/api/snout_mcp/mcp"</span><span class="p">)</span>
@@ -555,17 +534,11 @@ URL already filled in, so the user only has to confirm:</p>
 <span class="n">claude_install_link</span><span class="p">(</span><span class="s2">"snout"</span><span class="p">,</span> <span class="s2">"..."</span><span class="p">,</span> <span class="n">admin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># org-wide page, not per-user</span>
 </pre></div>
 </div>
-<p>Both are pure string functions (stdlib only, no server needed). Three caveats
-the link itself can’t express:</p>
+<p>Both are pure string functions (stdlib only, no server needed). Three caveats the link itself can’t express:</p>
 <ul class="simple">
-<li><p>Custom connectors are a <strong>paid-plan</strong> feature, so the link goes nowhere for a
-Free-plan user.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">admin=True</span></code> targets the org-wide install page — the right one when an admin
-is rolling a connector out to a workspace, the wrong one for a personal install.</p></li>
-<li><p><strong>A link is not an access grant.</strong> If the server is an OAuth resource server
-with an allowlist (see above), someone not on it can follow the link, complete
-the flow, and still be refused. Hand out the link together with whatever adds
-them to the allowlist.</p></li>
+<li><p>Custom connectors are a <strong>paid-plan</strong> feature, so the link goes nowhere for a Free-plan user.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">admin=True</span></code> targets the org-wide install page — the right one when an admin is rolling a connector out to a workspace, the wrong one for a personal install.</p></li>
+<li><p><strong>A link is not an access grant.</strong> If the server is an OAuth resource server with an allowlist (see above), someone not on it can follow the link, complete the flow, and still be refused. Hand out the link together with whatever adds them to the allowlist.</p></li>
 </ul>
 </section>
 <section id="license">
@@ -577,7 +550,7 @@ them to the allowlist.</p></li>
 </section>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 22:19 UTC from <a href="https://github.com/i2mint/py2mcp/commit/f7634b432c22347c37d3a0b6cc606f3318e2cf76">f7634b4</a> (main) · py2mcp 0.1.20 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-23 02:55 UTC from <a href="https://github.com/i2mint/py2mcp/commit/462f37f54b48cb38e0d4656b51e2805c0e84b858">462f37f</a> (main) · py2mcp 0.1.20 · <a href="about-this-build.html">about this build</a></p>
 
                 </article>
               
